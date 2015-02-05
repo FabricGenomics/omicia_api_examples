@@ -12,23 +12,25 @@ OMICIA_API_LOGIN = os.environ['OMICIA_API_LOGIN']
 OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
 OMICIA_API_URL = os.environ['OMICIA_API_URL']
 
+
 def upload_genome_to_project(project_id, label, sex, file_format, file_name):
     """Use the Omicia API to add a genome, in vcf format, to a project.
     Returns the newly uploaded genome's id.
     """
 
     #Construct request
-    url = "{}/projects/{}/upload?genome_label={}&genome_sex={}\
-           &assembly_version=hg19&format={}"
+    url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}" \
+          "&assembly_version=hg19&format={}"
     url = url.format(OMICIA_API_URL, project_id, label, sex, file_format)
 
     with open(file_name, 'rb') as file_handle:
         files = {'file_name': file_handle}
         auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
         #Post request and return id of newly uploaded genome
-        result = requests.post(url, files=files, auth=auth)
+        result = requests.put(url, files=files, auth=auth)
         json_data = json.loads(result.text)
         return json_data["genome_id"]
+
 
 def main(argv):
     """main function. Upload a specified VCF file to a specified project.
