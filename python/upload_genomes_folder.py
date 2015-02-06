@@ -66,7 +66,7 @@ def main(argv):
     """main function. Upload VCF files from a folder to a specified project.
     """
     if len(argv) < 2:
-        sys.exit("Usage: python upload_vcf.py <project_id> <folder>")
+        sys.exit("Usage: python upload_genomes_folder.py <project_id> <folder>")
     project_id = argv[0]
     folder = argv[1]
 

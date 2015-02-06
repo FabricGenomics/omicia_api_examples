@@ -76,7 +76,7 @@ def main(argv):
     using a manifest to specify each genome's attributes.
     """
     if len(argv) != 2:
-        sys.exit("Usage: python upload_vcf.py <project_id> <folder>")
+        sys.exit("Usage: python upload_genomes_folder_with_manifest.py <project_id> <folder>")
     project_id = argv[0]
     folder = argv[1]
 
