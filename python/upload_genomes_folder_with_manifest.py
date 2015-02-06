@@ -28,7 +28,7 @@ def get_manifest_info(folder):
     manifest_info = {}
     with open(folder + '/manifest.csv') as f:
         reader = csv.reader(f)
-        next(reader, None)  # skip the header
+        next(reader, None)  # Skip the header
         for row in reader:
             genome_filename = row[0]
             manifest_info[genome_filename] = {"genome_label": row[1],
@@ -43,12 +43,13 @@ def upload_genomes_to_project(project_id, folder):
     the given project id
     """
 
-    # Assuming there is a manifest file, this will generate
+    # Assuming there is a manifest file, generate an object containing its info
     manifest_info = get_manifest_info(folder)
 
     # List where returned genome JSON information will be stored
     genome_json_objects = []
 
+    # Upload each genome to the desired project
     for genome_file_name in manifest_info:
         genome_attrs = manifest_info[genome_file_name]
         url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id={}&assembly_version=hg19&format={}"
@@ -62,7 +63,7 @@ def upload_genomes_to_project(project_id, folder):
         with open(folder + "/" + genome_file_name, 'rb') as file_handle:
             files = {'file_name': file_handle}
             auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
-            # Post request and store id of newly uploaded genome
+            # Post request and store newly uploaded genome's information
             result = requests.put(url, files=files, auth=auth)
             json_data = json.loads(result.text)
             genome_json_objects.append(json_data)
@@ -70,9 +71,10 @@ def upload_genomes_to_project(project_id, folder):
 
 
 def main(argv):
-    """main function. Upload VCF files from a folder to a specified project.
+    """Main function. Upload VCF files from a folder to a specified project,
+    using a manifest to specify each genome's attributes.
     """
-    if len(argv) < 2:
+    if len(argv) != 2:
         sys.exit("Usage: python upload_vcf.py <project_id> <folder>")
     project_id = argv[0]
     folder = argv[1]
