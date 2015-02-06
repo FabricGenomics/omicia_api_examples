@@ -4,7 +4,8 @@ must contain five columns with headers. The first column should
 contain the genome filename, the second the genome label, the third
 the genome's internal_id, the fourth its sex ('male', 'female' or
 'unspecified', and the fifth should contain its format ('vcf', 'vcf.gz',
-or 'vcf.b2z')
+or 'vcf.b2z'). This manifest must be stored in the same folder as
+all of the genomes it describes, and must be named 'manifest.csv.'
 """
 
 import csv
