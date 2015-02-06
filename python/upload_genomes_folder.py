@@ -40,14 +40,12 @@ def upload_genomes_to_project(project_id, folder):
     """upload all of the genomes in the given folder to the project with
     the given project id
     """
-    # Construct request
     genome_files = get_genome_files(folder)
     # List where returned genome JSON information will be stored
     genome_json_objects = []
 
     for genome_file in genome_files:
-        url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id=\
-               &assembly_version=hg19&format={}"
+        url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id=&assembly_version=hg19&format={}"
         url = url.format(OMICIA_API_URL,
                          project_id,
                          genome_file["genome_label"],
