@@ -74,7 +74,7 @@ def launch_panel_report(genome_id, filter_id, panel_id,
 
     auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
-    # Con
+    # Construct url and request
     url = "{}/reports/".format(OMICIA_API_URL)
     url_payload = {'report_type': "Panel Report",
                    'genome_id': int(genome_id),
