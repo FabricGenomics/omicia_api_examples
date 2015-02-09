@@ -93,22 +93,11 @@ def launch_family_report(mother_genome_id, father_genome_id,
                          patient_info_file_name):
     """Launch a family report. Return the JSON response.
     """
-    print mother_genome_id
-    print father_genome_id
-    print proband_genome_id
-    print proband_sex
-    print score_indels
-    print reporting_cutoff
-    print accession_id
-    print patient_info_file_name
-
     # If a patient information csv file is provided, use it to generate a
     # representative JSON object
     if patient_info_file_name:
         patient_info = generate_patient_info_json(patient_info_file_name)
-        print patient_info
 
-        """
     auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
     # Construct url and request
@@ -117,10 +106,10 @@ def launch_family_report(mother_genome_id, father_genome_id,
                    'mother_genome_id': int(mother_genome_id),
                    'father_genome_id': int(father_genome_id),
                    'proband_genome_id': int(proband_genome_id),
-                   'proband_sex': proband_sex,
+                   'proband_sex': ('f' if proband_sex == 'female' else 'm'),
                    'background': 'FULL',
-                   'score_indels': score_indels,
-                   'reporting_cutoff': reporting_cutoff,
+                   'score_indels': bool(score_indels),
+                   'reporting_cutoff': int(reporting_cutoff),
                    'accession_id': accession_id}
 
     # If patient information was not provided, make a post request to reports
@@ -134,7 +123,7 @@ def launch_family_report(mother_genome_id, father_genome_id,
 
     json_data = json.loads(result.text)
     return json_data
-"""
+
 
 def upload_genome(project_id, genome_info, family_folder):
     """Upload a genome from a given folder to a specified project
@@ -149,10 +138,9 @@ def upload_genome(project_id, genome_info, family_folder):
 
     # Upload genome
     with open(family_folder + "/" + genome_info['genome_filename'], 'rb') as file_handle:
-        files = {'file_name': file_handle}
         auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
         # Post request and store newly uploaded genome's information
-        result = requests.put(url, files=files, params=payload, auth=auth)
+        result = requests.put(url, data=file_handle, params=payload, auth=auth)
         json_data = json.loads(result.text)
         return json_data["genome_id"]
 
@@ -165,22 +153,19 @@ def upload_genomes_to_project(project_id, family_folder):
     family_manifest_info = get_family_manifest_info(family_folder)
 
     # Use the family genome information to upload each genome to the project
-    mother_genome_id = upload_genome(project_id,
-                                     family_manifest_info['mother'],
-                                     family_folder)
-
-    father_genome_id = upload_genome(project_id,
-                                     family_manifest_info['father'],
-                                     family_folder)
-
-    proband_genome_id = upload_genome(project_id,
-                                      family_manifest_info['proband'],
-                                      family_folder)
+    mother_genome_id = \
+        upload_genome(project_id, family_manifest_info['mother'], family_folder)
+    father_genome_id = \
+        upload_genome(project_id, family_manifest_info['father'], family_folder)
+    proband_genome_id = \
+        upload_genome(project_id, family_manifest_info['proband'], family_folder)
 
     return {'mother_genome_id': mother_genome_id,
             'father_genome_id': father_genome_id,
-            'proband_genome': {'id': proband_genome_id,
-                               'sex': family_manifest_info['proband']['genome_sex']}
+            'proband_genome':
+                {'id': proband_genome_id,
+                 'sex': family_manifest_info['proband']['genome_sex']
+                }
             }
 
 
@@ -216,6 +201,7 @@ def main(argv):
         reporting_cutoff,
         accession_id,
         patient_info_file_name)
+    print family_report_json
 
 
 if __name__ == "__main__":
