@@ -51,7 +51,7 @@ CURLOPTS="-s -q"
 URL=https://$login:$password@api.omicia.com
 PROJECT_ID=$2
 
-for f in "$1"/*.vcf; do
+for f in "$1"/*.vcf.gz; do
     if [[ -f $f ]]
     then
         FNAME=${f##*/}
@@ -60,8 +60,7 @@ for f in "$1"/*.vcf; do
         LABEL=${LABEL:-$default}
         echo Uploading ${f}: label ${LABEL}
         SEX=unspecified
-        OUT=`$CURL $CURLOPTS "$URL/projects/$PROJECT_ID/upload?genome_label=$LABEL&genome_sex=$SEX&filename=$FILE&assembly_version=hg19&format=vcf" --upload-file $f`
-        #echo $OUT
+        OUT=`$CURL $CURLOPTS "$URL/projects/$PROJECT_ID/genomes?genome_label=$LABEL&genome_sex=$SEX&filename=$FILE&assembly_version=hg19&format=vcf.gz" --upload-file $f`
     fi
 done
 
