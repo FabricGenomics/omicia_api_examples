@@ -1,6 +1,15 @@
-"""Create a new family report from an new genome trio. Optionally, include
-a file containing patient (proband) information to populate patient information
-fields in the clinical report. This file should be a csv formatted in this way:
+"""Create a new family report from an new genome trio. This requires putting all
+three family genomes in a folder along with a descriptor file titled 'family_manifest.csv,'
+which should have the following format:
+
+filename,label,external_id,sex,format
+NA19238.vcf.gz,CG Yoruban Mother,1,female,vcf.gz
+NA19239.vcf.gz,CG Yoruban Father,2,male,vcf.gz
+NA19240.vcf.gz,CG Yoruban Daughter,3,female,vcf.gz
+
+Optionally, include a file containing patient (proband) information to populate
+patient information fields in the clinical report. This file should be a csv
+formatted in this way:
 
 Opal Patient Information,value
 Patient Last Name,John
