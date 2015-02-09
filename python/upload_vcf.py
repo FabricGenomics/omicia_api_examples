@@ -12,6 +12,7 @@ OMICIA_API_LOGIN = os.environ['OMICIA_API_LOGIN']
 OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
 OMICIA_API_URL = os.environ['OMICIA_API_URL']
 
+
 def upload_genome_to_project(project_id, label, sex, file_format, file_name, external_id=""):
     """Use the Omicia API to add a genome, in vcf format, to a project.
     Returns the newly uploaded genome's id.
@@ -30,6 +31,7 @@ def upload_genome_to_project(project_id, label, sex, file_format, file_name, ext
         json_data = json.loads(result.text)
         return json_data["genome_id"]
 
+
 def main(argv):
     """main function. Upload a specified VCF file to a specified project.
     """
@@ -45,8 +47,8 @@ def main(argv):
         external_id = argv[5]
     else:
         external_id = ""
-    genome_id = upload_genome_to_project(project_id, label, sex, \
-    	                                file_format, file_name, external_id)
+    genome_id = upload_genome_to_project(project_id, label, sex,
+                                         file_format, file_name, external_id)
     print genome_id
 
 if __name__ == "__main__":
