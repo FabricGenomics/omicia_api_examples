@@ -1,7 +1,6 @@
 """Upload multiple genomes to an existing project from a folder.
 """
 
-import json
 import os
 import requests
 from requests.auth import HTTPBasicAuth

@@ -12,7 +12,6 @@ Example:
 """
 
 import csv
-import json
 import os
 import requests
 from requests.auth import HTTPBasicAuth
