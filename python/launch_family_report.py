@@ -23,6 +23,9 @@ Specimen Type,Blood
 Date Specimen Collected,9/9/14
 Date Specimen Received,9/13/14
 Ordering Physician,Paul Billings
+
+If you are having trouble with using either csv file, make sure its
+line endings are newlines (\n) and not the deprecated carriage returns (\r)
 """
 
 import csv
@@ -234,6 +237,9 @@ def main(argv):
 
     # Confirm launched report data
     sys.stdout.write("\n")
+
+    if "clinical_report" not in family_report_json.keys():
+        sys.exit("Failed to launch. Check report parameters for correctness.")
     clinical_report = family_report_json['clinical_report']
     sys.stdout.write('Launched Family Report:\n'
                      'test_type: {}\n'

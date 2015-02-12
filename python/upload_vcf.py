@@ -29,6 +29,7 @@ def upload_genome_to_project(project_id, label, sex, file_format, file_name, ext
            &assembly_version=hg19&format={}"
     url = url.format(OMICIA_API_URL, project_id, label, sex, external_id, file_format)
 
+    sys.stdout.write("Uploading genome...")
     with open(file_name, 'rb') as file_handle:
         #Post request and return id of newly uploaded genome
         result = requests.put(url, auth=auth, data=file_handle)
@@ -40,7 +41,7 @@ def main(argv):
     """
     if len(argv) < 5:
         sys.exit("Usage: python upload_vcf.py <project_id> <label>"
-                 "<sex> <format> <file.vcf>")
+                 "<sex (male|female|unspecified)> <format> <file.vcf>")
     project_id = argv[0]
     label = argv[1]
     sex = argv[2]

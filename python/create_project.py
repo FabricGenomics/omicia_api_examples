@@ -43,12 +43,12 @@ def main(argv):
     """
 
     if len(argv) != 3:
-        sys.exit("Usage: python create_project.py <name> <desc> <sharerole>")
+        sys.exit("Usage: python create_project.py <name> <desc> <sharerole (CONTRIBUTOR|VIEWER|NONE)>")
     name = argv[0]
     description = argv[1]
     share_role = argv[2]
     project_id = create_project(name, description, share_role)
-    sys.stdout.write(project_id)
+    sys.stdout.write("Project id: {}\n".format(project_id))
 
 if __name__ == "__main__":
     main(sys.argv[1:])
