@@ -51,7 +51,7 @@ def upload_genomes_to_project(project_id, folder):
     genome_json_objects = []
 
     # Upload each genome to the desired project
-    for genome_file_name in manifest_info:
+    for genome_file_name in manifest_info.keys():
         genome_attrs = manifest_info[genome_file_name]
         url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id={}&assembly_version=hg19&format={}"
         url = url.format(OMICIA_API_URL,

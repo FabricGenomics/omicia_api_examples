@@ -14,6 +14,9 @@ Specimen Type,Blood
 Date Specimen Collected,9/9/14
 Date Specimen Received,9/13/14
 Ordering Physician,Paul Billings
+
+If you are having trouble with the patient information file, make sure its
+line endings are newlines (\n) and not the deprecated carriage returns (\r)
 """
 
 import csv
@@ -24,9 +27,31 @@ from requests.auth import HTTPBasicAuth
 import sys
 
 #Load environment variables for request authentication parameters
+if "OMICIA_API_PASSWORD" not in os.environ:
+    sys.exit("OMICIA_API_PASSWORD environment variable missing")
+
+if "OMICIA_API_LOGIN" not in os.environ:
+    sys.exit("OMICIA_API_LOGIN environment variable missing")
+
 OMICIA_API_LOGIN = os.environ['OMICIA_API_LOGIN']
 OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
-OMICIA_API_URL = os.environ['OMICIA_API_URL']
+OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
+auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
+
+# A map between the row numbers and fields from the patient information csv
+patient_info_row_map = {
+    0: 'last_name',
+    1: 'first_name',
+    2: 'dob',
+    3: 'accession_id',
+    4: 'sex',
+    5: 'ethnicity',
+    6: 'indication_for_testing',
+    7: 'specimen_type',
+    8: 'date_collected',
+    9: 'date_received',
+    10: 'ordering_physician'
+}
 
 
 def generate_patient_info_json(patient_info_file_name):
@@ -37,27 +62,8 @@ def generate_patient_info_json(patient_info_file_name):
     with open(patient_info_file_name) as f:
         reader = csv.reader(f)
         next(reader, None)  # Skip the header
-        for i,row in enumerate(reader):
-            if i == 0:
-                patient_info['last_name'] = row[1]
-            elif i == 1:
-                patient_info['first_name'] = row[1]
-            elif i == 2:
-                patient_info['dob'] = row[1]
-            elif i == 4:
-                patient_info['sex'] = row[1]
-            elif i == 5:
-                patient_info['ethnicity'] = row[1]
-            elif i == 6:
-                patient_info['indication_for_testing'] = row[1]
-            elif i == 7:
-                patient_info['specimen_type'] = row[1]
-            elif i == 8:
-                patient_info['date_collected'] = row[1]
-            elif i == 9:
-                patient_info['date_received'] = row[1]
-            elif i == 10:
-                patient_info['ordering_physician'] = row[1]
+        for i, row in enumerate(reader):
+            patient_info[patient_info_row_map[i]] = row[1]
     return patient_info
 
 
@@ -72,8 +78,6 @@ def launch_panel_report(genome_id, filter_id, panel_id,
     if patient_info_file_name:
         patient_info = generate_patient_info_json(patient_info_file_name)
 
-    auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
-
     # Construct url and request
     url = "{}/reports/".format(OMICIA_API_URL)
     url_payload = {'report_type': "Panel Report",
@@ -82,6 +86,9 @@ def launch_panel_report(genome_id, filter_id, panel_id,
                    'panel_id': int(panel_id),
                    'accession_id': accession_id}
 
+    sys.stdout.write("Launching report...")
+    sys.stdout.write("\n\n")
+    sys.stdout.flush()
     # If patient information was not provided, make a post request to reports
     # without a patient information parameter in the url
     if not patient_info_file_name:
@@ -91,8 +98,7 @@ def launch_panel_report(genome_id, filter_id, panel_id,
         url_payload['patient_info'] = patient_info
         result = requests.post(url, auth=auth, data=json.dumps(url_payload))
 
-    json_data = json.loads(result.text)
-    return json_data
+    return result.json()
 
 
 def main(argv):
@@ -114,15 +120,39 @@ def main(argv):
     else:
         patient_info_file_name = None
 
-    panel_report_json = launch_panel_report(genome_id,
-                        filter_id,
-                        panel_id,
-                        accession_id,
-                        patient_info_file_name)
+    json_reponse = launch_panel_report(genome_id,
+                                            filter_id,
+                                            panel_id,
+                                            accession_id,
+                                            patient_info_file_name)
 
-    # Print out the json object. This represents a confirmation of the
+    clinical_report = json_reponse['clinical_report']
+
+    # Print out the object's fields. This represents a confirmation of the
     # information for the launched report.
-    print panel_report_json
+    sys.stdout.write('Launched Clinical Report:\n'
+                     'test_type: {}\n'
+                     'accession_id: {}\n'
+                     'created_on: {}\n'
+                     'created_by: {}\n'
+                     'status: {}\n'
+                     'filter_id: {}\n'
+                     'panel_id: {}\n'
+                     'workspace_id: {}\n'
+                     'sample_collected_date: {}\n'
+                     'sample_received_date: {}\n'
+                     'include_cosmic: {}\n'
+                     .format(clinical_report.get('test_type','Missing'),
+                             clinical_report.get('accession_id','Missing'),
+                             clinical_report.get('created_on','Missing'),
+                             clinical_report.get('created_by','Missing'),
+                             clinical_report.get('status','Missing'),
+                             clinical_report.get('filter_id','Missing'),
+                             clinical_report.get('panel_id','Missing'),
+                             clinical_report.get('workspace_id','Missing'),
+                             clinical_report.get('sample_collected_date','Missing'),
+                             clinical_report.get('sample_received_date','Missing'),
+                             clinical_report.get('include_cosmic','Missing')))
 
 
 if __name__ == "__main__":
