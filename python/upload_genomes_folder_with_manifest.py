@@ -48,9 +48,9 @@ def get_manifest_info(folder):
         for row in reader:
             genome_filename = row[0]
             manifest_info[genome_filename] = {"genome_label": row[1],
-                                               "external_id": row[2],
-                                               "genome_sex": row[3],
-                                               "format": row[4]}
+                                              "external_id": row[2],
+                                              "genome_sex": row[3],
+                                              "format": row[4]}
     return manifest_info
 
 
