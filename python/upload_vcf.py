@@ -8,9 +8,16 @@ from requests.auth import HTTPBasicAuth
 import sys
 
 #Load environment variables for request authentication parameters
+if "OMICIA_API_PASSWORD" not in os.environ:
+    sys.exit("OMICIA_API_PASSWORD environment variable missing")
+
+if "OMICIA_API_LOGIN" not in os.environ:
+    sys.exit("OMICIA_API_LOGIN environment variable missing")
+
 OMICIA_API_LOGIN = os.environ['OMICIA_API_LOGIN']
 OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
-OMICIA_API_URL = os.environ['OMICIA_API_URL']
+OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
+auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 
 def upload_genome_to_project(project_id, label, sex, file_format, file_name, external_id=""):
@@ -24,12 +31,9 @@ def upload_genome_to_project(project_id, label, sex, file_format, file_name, ext
     url = url.format(OMICIA_API_URL, project_id, label, sex, external_id, file_format)
 
     with open(file_name, 'rb') as file_handle:
-        files = {'file_name': file_handle}
-        auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
         #Post request and return id of newly uploaded genome
-        result = requests.put(url, files=files, auth=auth)
-        json_data = json.loads(result.text)
-        return json_data["genome_id"]
+        result = requests.put(url, auth=auth, data=file_handle)
+        return result.json()["genome_id"]
 
 
 def main(argv):
@@ -49,7 +53,7 @@ def main(argv):
         external_id = ""
     genome_id = upload_genome_to_project(project_id, label, sex,
                                          file_format, file_name, external_id)
-    print genome_id
+    sys.stdout.write("genome_id: {}".format(genome_id))
 
 if __name__ == "__main__":
     main(sys.argv[1:])
