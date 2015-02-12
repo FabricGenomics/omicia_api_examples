@@ -1,16 +1,22 @@
 """Query for a report by id to see its status.
 """
 
-import json
 import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
 
 #Load environment variables for request authentication parameters
+if "OMICIA_API_PASSWORD" not in os.environ:
+    sys.exit("OMICIA_API_PASSWORD environment variable missing")
+
+if "OMICIA_API_LOGIN" not in os.environ:
+    sys.exit("OMICIA_API_LOGIN environment variable missing")
+
 OMICIA_API_LOGIN = os.environ['OMICIA_API_LOGIN']
 OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
-OMICIA_API_URL = os.environ['OMICIA_API_URL']
+OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
+auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 
 def get_report(report_id):
@@ -21,10 +27,8 @@ def get_report(report_id):
     url = url.format(OMICIA_API_URL,
                      report_id)
 
-    auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
     result = requests.get(url, auth=auth)
-    json_data = json.loads(result.text)
-    return json_data
+    return result.json()
 
 
 def main(argv):
@@ -37,7 +41,7 @@ def main(argv):
     report = get_report(report_id)
 
     # Access the JSON object's 'status' attribute
-    print report['status']
+    sys.stdout.write(report['status'])
 
 if __name__ == "__main__":
     main(sys.argv[1:])
