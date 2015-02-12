@@ -67,6 +67,7 @@ family_info_row_map = {
     2: 'proband'
 }
 
+
 def get_family_manifest_info(family_folder):
     """Generate an object containing the data from the manifest.csv
     file in the genomes folder, including each filename along with

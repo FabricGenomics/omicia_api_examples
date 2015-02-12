@@ -1,15 +1,22 @@
 """Create a new project.
 """
 
-import json
 import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
 
+# Load environment variables for request authentication parameters
+if "OMICIA_API_PASSWORD" not in os.environ:
+    sys.exit("OMICIA_API_PASSWORD environment variable missing")
+
+if "OMICIA_API_LOGIN" not in os.environ:
+    sys.exit("OMICIA_API_LOGIN environment variable missing")
+
 OMICIA_API_LOGIN = os.environ['OMICIA_API_LOGIN']
 OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
-OMICIA_API_URL = os.environ['OMICIA_API_URL']
+OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
+auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 def create_project(name, description, share_role):
     """Use the Omicia API to create a new project.
@@ -17,20 +24,19 @@ def create_project(name, description, share_role):
 
     :param name: str for project name
     :param description: str for project description
-    :param share_role: str -- either "ADMIN" or "MEMBER"
+    :param share_role: str -- "CONTRIBUTOR," "VIEWER" or "NONE"
     """
 
-	#Construct request
+    # Construct request
     url = "{}/projects/"
     url = url.format(OMICIA_API_URL)
-    payload = {'project_name': name, 'description': description, \
+    payload = {'project_name': name,
+               'description': description,
                'share_role': share_role}
-    auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
-    #Post request and return newly created project's id
+    # Post request and return newly created project's id
     result = requests.post(url, headers=payload, data=payload, auth=auth)
-    json_data = json.loads(result.text)
-    return json_data["id"]
+    return result.json()["id"]
 
 def main(argv):
     """main function, creates a project with a command-line specified name
@@ -42,7 +48,7 @@ def main(argv):
     description = argv[1]
     share_role = argv[2]
     project_id = create_project(name, description, share_role)
-    print project_id
+    sys.stdout.write(project_id)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
