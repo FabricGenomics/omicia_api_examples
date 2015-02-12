@@ -101,7 +101,8 @@ def generate_patient_info_json(patient_info_file_name):
         reader = csv.reader(f)
         next(reader, None)  # Skip the header
         for i, row in enumerate(reader):
-            patient_info[patient_info_row_map[i]] = row[1]
+            if i < 11:
+                patient_info[patient_info_row_map[i]] = row[1]
     return patient_info
 
 
