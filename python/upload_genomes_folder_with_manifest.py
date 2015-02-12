@@ -7,8 +7,13 @@ the genome's internal_id, the fourth its sex ('male', 'female' or
 or 'vcf.b2z'). This manifest must be stored in the same folder as
 all of the genomes it describes, and must be named 'manifest.csv.'
 
-Example:
-
+Example manifest.csv contents:
+filename,label,external_id,sex,format
+TR4091_exome_copy.vcf.gz,abc1,55,male,vcf.gz
+TR4091_exome.vcf,abc2,56,female,vcf
+TR4092_exome.vcf,abc3,57,unspecified,vcf
+TR4093_exome.vcf,abc4,58,female,vcf
+TR4094_exome.vcf,abc5,59,male,vcf
 """
 
 import csv
