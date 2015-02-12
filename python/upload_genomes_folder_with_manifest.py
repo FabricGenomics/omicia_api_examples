@@ -6,6 +6,9 @@ the genome's internal_id, the fourth its sex ('male', 'female' or
 'unspecified', and the fifth should contain its format ('vcf', 'vcf.gz',
 or 'vcf.b2z'). This manifest must be stored in the same folder as
 all of the genomes it describes, and must be named 'manifest.csv.'
+
+Example:
+
 """
 
 import csv
@@ -16,9 +19,16 @@ from requests.auth import HTTPBasicAuth
 import sys
 
 #Load environment variables for request authentication parameters
+if "OMICIA_API_PASSWORD" not in os.environ:
+    sys.exit("OMICIA_API_PASSWORD environment variable missing")
+
+if "OMICIA_API_LOGIN" not in os.environ:
+    sys.exit("OMICIA_API_LOGIN environment variable missing")
+
 OMICIA_API_LOGIN = os.environ['OMICIA_API_LOGIN']
 OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
-OMICIA_API_URL = os.environ['OMICIA_API_URL']
+OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
+auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 
 def get_manifest_info(folder):
@@ -26,6 +36,11 @@ def get_manifest_info(folder):
     file in the genomes folder, including each filename along with
     its genome label, external id, sex, and format.
     """
+
+    # First check to make sure there is in fact a manifest.csv file
+    if 'manifest.csv' not in os.listdir(folder):
+        sys.exit("No manifest.csv file in folder provided.")
+
     manifest_info = {}
     with open(folder + '/manifest.csv') as f:
         reader = csv.reader(f)
@@ -51,6 +66,7 @@ def upload_genomes_to_project(project_id, folder):
     genome_json_objects = []
 
     # Upload each genome to the desired project
+    sys.stdout.write("Uploading")
     for genome_file_name in manifest_info.keys():
         genome_attrs = manifest_info[genome_file_name]
         url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id={}&assembly_version=hg19&format={}"
@@ -62,12 +78,12 @@ def upload_genomes_to_project(project_id, folder):
                          genome_attrs["format"])
 
         with open(folder + "/" + genome_file_name, 'rb') as file_handle:
-            files = {'file_name': file_handle}
-            auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
             # Post request and store newly uploaded genome's information
-            result = requests.put(url, files=files, auth=auth)
-            json_data = json.loads(result.text)
-            genome_json_objects.append(json_data)
+            result = requests.put(url, auth=auth, data=file_handle)
+            sys.stdout.write(".")
+            sys.stdout.flush()
+            genome_json_objects.append(result.json())
+    sys.stdout.write("\n")
     return genome_json_objects
 
 
@@ -82,12 +98,13 @@ def main(argv):
 
     genome_objects = upload_genomes_to_project(project_id, folder)
 
-    # Output genome labels, ids, external_id, and size
+    # Output genome labels, ids, external ids, and sizes
     for genome_object in genome_objects:
-        print {"genome_label": genome_object["genome_label"],
-               "genome_id": genome_object["genome_id"],
-               "external_id": genome_object["external_id"],
-               "size": genome_object["size"]}
+        sys.stdout.write("genome_label: {}, genome_id: {}, external_id: {}, size: {} \n"
+                         .format(genome_object.get('genome_label', 'Missing'),
+                                 genome_object.get('genome_id', 'Missing'),
+                                 genome_object.get('external_id', 'Missing'),
+                                 genome_object.get('size', 'Missing')))
 
 if __name__ == "__main__":
     main(sys.argv[1:])

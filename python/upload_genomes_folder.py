@@ -17,6 +17,7 @@ if "OMICIA_API_LOGIN" not in os.environ:
 OMICIA_API_LOGIN = os.environ['OMICIA_API_LOGIN']
 OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
 OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
+auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 
 def get_genome_files(folder):
@@ -48,7 +49,6 @@ def upload_genomes_to_project(project_id, folder):
 
     # List where returned genome JSON information will be stored
     genome_json_objects = []
-    auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
     sys.stdout.write("Uploading")
     for genome_file in get_genome_files(folder):
