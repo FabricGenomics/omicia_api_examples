@@ -105,7 +105,7 @@ def main(argv):
     """Main function, creates a panel report.
     """
     if len(argv) < 4:
-        sys.exit("Usage: python launch_panel_report.py \
+        sys.exit("Usage: python launch_panel_report_existing_genome.py \
         <genome_id> <filter_id> <panel_id> <accession_id>\
         optional: <patient_info_file>")
     genome_id = argv[0]

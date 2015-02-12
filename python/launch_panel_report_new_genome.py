@@ -122,8 +122,8 @@ def main(argv):
     """Main function, uploads a geneome and creates a panel report using it.
     """
     if len(argv) < 8:
-        sys.exit("Usage: python launch_panel_report.py \
-        <project_id> <label> <sex> <format> <genome.vcf> \
+        sys.exit("Usage: python launch_panel_report_new_genome.py <project_id>\
+        <label> <sex (male|female|unspecified)> <format> <genome.vcf>\
         <filter_id> <panel_id> <accession_id>\
         optional: <patient_info_file>")
     project_id = argv[0]

@@ -40,7 +40,7 @@ def main(argv):
     """main function. Upload a specified VCF file to a specified project.
     """
     if len(argv) < 5:
-        sys.exit("Usage: python upload_vcf.py <project_id> <label>"
+        sys.exit("Usage: python upload_genome.py <project_id> <label>"
                  "<sex (male|female|unspecified)> <format> <file.vcf>")
     project_id = argv[0]
     label = argv[1]
