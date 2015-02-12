@@ -33,10 +33,39 @@ from requests.auth import HTTPBasicAuth
 import sys
 
 #Load environment variables for request authentication parameters
+if "OMICIA_API_PASSWORD" not in os.environ:
+    sys.exit("OMICIA_API_PASSWORD environment variable missing")
+
+if "OMICIA_API_LOGIN" not in os.environ:
+    sys.exit("OMICIA_API_LOGIN environment variable missing")
+
 OMICIA_API_LOGIN = os.environ['OMICIA_API_LOGIN']
 OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
-OMICIA_API_URL = os.environ['OMICIA_API_URL']
+OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
+auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
+
+# A map between the row numbers and fields from the patient information csv
+patient_info_row_map = {
+    0: 'last_name',
+    1: 'first_name',
+    2: 'dob',
+    3: 'accession_id',
+    4: 'sex',
+    5: 'ethnicity',
+    6: 'indication_for_testing',
+    7: 'specimen_type',
+    8: 'date_collected',
+    9: 'date_received',
+    10: 'ordering_physician'
+}
+
+# A map between the row numbers and family member from the family manifest csv
+family_info_row_map = {
+    0: 'mother',
+    1: 'father',
+    2: 'proband'
+}
 
 def get_family_manifest_info(family_folder):
     """Generate an object containing the data from the manifest.csv
@@ -48,19 +77,14 @@ def get_family_manifest_info(family_folder):
         reader = csv.reader(f)
         next(reader, None)  # Skip the header
         for i, row in enumerate(reader):
-            if i == 0:
-                family_member = "mother"
-            elif i == 1:
-                family_member = "father"
-            elif i == 2:
-                family_member = "proband"
-            else:
-                break
-            family_manifest_info[family_member] = {"genome_filename": row[0],
-                                                   "genome_label": row[1],
-                                                   "external_id": row[2],
-                                                   "genome_sex": row[3],
-                                                   "format": row[4]}
+            if i < 3:
+                # family_member is mother, father, or proband
+                family_member = family_info_row_map[i]
+                family_manifest_info[family_member] = {"genome_filename": row[0],
+                                                       "genome_label": row[1],
+                                                       "external_id": row[2],
+                                                       "genome_sex": row[3],
+                                                       "format": row[4]}
     return family_manifest_info
 
 
@@ -72,27 +96,8 @@ def generate_patient_info_json(patient_info_file_name):
     with open(patient_info_file_name) as f:
         reader = csv.reader(f)
         next(reader, None)  # Skip the header
-        for i,row in enumerate(reader):
-            if i == 0:
-                patient_info['last_name'] = row[1]
-            elif i == 1:
-                patient_info['first_name'] = row[1]
-            elif i == 2:
-                patient_info['dob'] = row[1]
-            elif i == 4:
-                patient_info['sex'] = row[1]
-            elif i == 5:
-                patient_info['ethnicity'] = row[1]
-            elif i == 6:
-                patient_info['indication_for_testing'] = row[1]
-            elif i == 7:
-                patient_info['specimen_type'] = row[1]
-            elif i == 8:
-                patient_info['date_collected'] = row[1]
-            elif i == 9:
-                patient_info['date_received'] = row[1]
-            elif i == 10:
-                patient_info['ordering_physician'] = row[1]
+        for i, row in enumerate(reader):
+            patient_info[patient_info_row_map[i]] = row[1]
     return patient_info
 
 
@@ -107,8 +112,6 @@ def launch_family_report(mother_genome_id, father_genome_id,
     if patient_info_file_name:
         patient_info = generate_patient_info_json(patient_info_file_name)
 
-    auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
-
     # Construct url and request
     url = "{}/reports/".format(OMICIA_API_URL)
     url_payload = {'report_type': "Family Report",
@@ -121,6 +124,7 @@ def launch_family_report(mother_genome_id, father_genome_id,
                    'reporting_cutoff': int(reporting_cutoff),
                    'accession_id': accession_id}
 
+    sys.stdout.write("Launching family report...\n")
     # If patient information was not provided, make a post request to reports
     # without a patient information parameter in the url
     if not patient_info_file_name:
@@ -130,8 +134,7 @@ def launch_family_report(mother_genome_id, father_genome_id,
         url_payload['patient_info'] = patient_info
         result = requests.post(url, auth=auth, data=json.dumps(url_payload))
 
-    json_data = json.loads(result.text)
-    return json_data
+    return result.json()
 
 
 def upload_genome(project_id, genome_info, family_folder):
@@ -147,11 +150,11 @@ def upload_genome(project_id, genome_info, family_folder):
 
     # Upload genome
     with open(family_folder + "/" + genome_info['genome_filename'], 'rb') as file_handle:
-        auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
         # Post request and store newly uploaded genome's information
         result = requests.put(url, data=file_handle, params=payload, auth=auth)
-        json_data = json.loads(result.text)
-        return json_data["genome_id"]
+        sys.stdout.write(".")
+        sys.stdout.flush()
+        return result.json()["genome_id"]
 
 
 def upload_genomes_to_project(project_id, family_folder):
@@ -162,19 +165,26 @@ def upload_genomes_to_project(project_id, family_folder):
     family_manifest_info = get_family_manifest_info(family_folder)
 
     # Use the family genome information to upload each genome to the project
+    sys.stdout.write("Uploading")
+    sys.stdout.flush()
     mother_genome_id = \
         upload_genome(project_id, family_manifest_info['mother'], family_folder)
+
     father_genome_id = \
         upload_genome(project_id, family_manifest_info['father'], family_folder)
+
     proband_genome_id = \
         upload_genome(project_id, family_manifest_info['proband'], family_folder)
+
+    sys.stdout.write("\n")
 
     return {'mother_genome_id': mother_genome_id,
             'father_genome_id': father_genome_id,
             'proband_genome':
-                {'id': proband_genome_id,
-                 'sex': family_manifest_info['proband']['genome_sex']
-                }
+            {
+            'id': proband_genome_id,
+            'sex': family_manifest_info['proband']['genome_sex']
+            }
             }
 
 
@@ -192,7 +202,17 @@ def main(argv):
     accession_id = argv[4]
 
     family_genome_ids = upload_genomes_to_project(project_id, family_folder)
-    print family_genome_ids
+
+    # Confirm uploaded genomes' data
+    sys.stdout.write("Uploaded 3 genomes:\n")
+    sys.stdout.write("mother_genome_id: {}\n"
+                     "father_genome_id: {}\n"
+                     "proband_genome_id: {}\n"
+                     "proband_sex: {}\n"
+                     .format(family_genome_ids['mother_genome_id'],
+                             family_genome_ids['father_genome_id'],
+                             family_genome_ids['proband_genome']['id'],
+                             family_genome_ids['proband_genome']['sex']))
 
     # If a patient information file name is provided, use it. Otherwise
     # leave it empty as a None object.
@@ -210,8 +230,51 @@ def main(argv):
         reporting_cutoff,
         accession_id,
         patient_info_file_name)
-    print family_report_json
 
+    # Confirm launched report data
+    sys.stdout.write("\n")
+    clinical_report = family_report_json['clinical_report']
+    sys.stdout.write('Launched Family Report:\n'
+                     'test_type: {}\n'
+                     'accession_id: {}\n'
+                     'created_on: {}\n'
+                     'created_by: {}\n'
+                     'status: {}\n'
+                     'filter_id: {}\n'
+                     'panel_id: {}\n'
+                     'workspace_id: {}\n'
+                     'sample_collected_date: {}\n'
+                     'sample_received_date: {}\n'
+                     'include_cosmic: {}\n'
+                     .format(clinical_report.get('test_type','Missing'),
+                             clinical_report.get('accession_id','Missing'),
+                             clinical_report.get('created_on','Missing'),
+                             clinical_report.get('created_by','Missing'),
+                             clinical_report.get('status','Missing'),
+                             clinical_report.get('filter_id','Missing'),
+                             clinical_report.get('panel_id','Missing'),
+                             clinical_report.get('workspace_id','Missing'),
+                             clinical_report.get('sample_collected_date','Missing'),
+                             clinical_report.get('sample_received_date','Missing'),
+                             clinical_report.get('include_cosmic','Missing')))
 
+    # Confirm launched VAAST analysis data
+    sys.stdout.write("\n")
+    vaast_report = family_report_json['analysis']
+    sys.stdout.write('Launched analysis:\n'
+                     'report_type: {}\n'
+                     'run_date: {}\n'
+                     'report_status: {}\n'
+                     'pipeline_version: {}\n'
+                     'project_id: {}\n'
+                     'genome_id: {}\n'
+                     'id: {}\n'
+                     .format(vaast_report.get('report_type', 'Missing'),
+                             vaast_report.get('run_date', 'Missing'),
+                             vaast_report.get('report_status', 'Missing'),
+                             vaast_report.get('pipeline_version', 'Missing'),
+                             vaast_report.get('project_id', 'Missing'),
+                             vaast_report.get('genome_id', 'Missing'),
+                             vaast_report.get('id', 'Missing')))
 if __name__ == "__main__":
     main(sys.argv[1:])
