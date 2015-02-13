@@ -29,7 +29,7 @@ def upload_genome_to_project(project_id, label, sex, file_format, file_name, ext
            &assembly_version=hg19&format={}"
     url = url.format(OMICIA_API_URL, project_id, label, sex, external_id, file_format)
 
-    sys.stdout.write("Uploading genome...")
+    sys.stdout.write("Uploading genome...\n")
     with open(file_name, 'rb') as file_handle:
         #Post request and return id of newly uploaded genome
         result = requests.put(url, auth=auth, data=file_handle)
@@ -53,7 +53,7 @@ def main(argv):
         external_id = ""
     genome_id = upload_genome_to_project(project_id, label, sex,
                                          file_format, file_name, external_id)
-    sys.stdout.write("genome_id: {}".format(genome_id))
+    sys.stdout.write("genome_id: {}\n".format(genome_id))
 
 if __name__ == "__main__":
     main(sys.argv[1:])

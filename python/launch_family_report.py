@@ -77,6 +77,11 @@ def get_family_manifest_info(family_folder):
     its genome label, external id, sex, and format.
     """
     family_manifest_info = {}
+
+    # First check to make sure there is in fact a family_manifest.csv file
+    if 'family_manifest.csv' not in os.listdir(family_folder):
+        sys.exit("No family_manifest.csv file in folder provided.")
+
     with open(family_folder + '/family_manifest.csv') as f:
         reader = csv.reader(f)
         next(reader, None)  # Skip the header
