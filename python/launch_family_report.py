@@ -273,21 +273,6 @@ def main(argv):
 
     # Confirm launched VAAST analysis data
     sys.stdout.write("\n")
-    vaast_report = family_report_json['analysis']
-    sys.stdout.write('Launched analysis:\n'
-                     'report_type: {}\n'
-                     'run_date: {}\n'
-                     'report_status: {}\n'
-                     'pipeline_version: {}\n'
-                     'project_id: {}\n'
-                     'genome_id: {}\n'
-                     'id: {}\n'
-                     .format(vaast_report.get('report_type', 'Missing'),
-                             vaast_report.get('run_date', 'Missing'),
-                             vaast_report.get('report_status', 'Missing'),
-                             vaast_report.get('pipeline_version', 'Missing'),
-                             vaast_report.get('project_id', 'Missing'),
-                             vaast_report.get('genome_id', 'Missing'),
-                             vaast_report.get('id', 'Missing')))
+    
 if __name__ == "__main__":
     main(sys.argv[1:])
