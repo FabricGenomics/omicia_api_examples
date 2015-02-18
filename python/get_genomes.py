@@ -37,27 +37,35 @@ def main(argv):
     if len(argv) != 1:
         sys.exit("Usage: python get_genomes.py <project_id>")
     project_id = argv[0]
-    genome_objects = get_genomes(project_id)
-    for genome in genome_objects['objects']:
-        sys.stdout.write('name: {}\n'
-                         'upload_date: {}\n'
-                         'genome_status: {}\n'
-                         'report_count: {}\n'
-                         'uploaded_by: {}\n'
-                         'is_upgraded: {}\n'
-                         'project_id: {}\n'
-                         'external_id: {}\n'
-                         'id: {}\n'
-                         .format(genome['name'],
-                                 genome['upload_date'],
-                                 genome['genome_status'],
-                                 genome['report_count'],
-                                 genome['uploaded_by'],
-                                 genome['is_upgraded'],
-                                 genome['project_id'],
-                                 genome['external_id'],
-                                 genome['id']))
-        sys.stdout.write('\n')
+
+    json_response = get_genomes(project_id)
+
+    try:
+        for genome in json_response['objects']:
+            sys.stdout.write('name: {}\n'
+                             'upload_date: {}\n'
+                             'genome_status: {}\n'
+                             'report_count: {}\n'
+                             'uploaded_by: {}\n'
+                             'is_upgraded: {}\n'
+                             'project_id: {}\n'
+                             'external_id: {}\n'
+                             'id: {}\n'
+                             .format(genome.get('name', 'Missing'),
+                                     genome.get('upload_date', 'Missing'),
+                                     genome.get('genome_status', 'Missing'),
+                                     genome.get('report_count', 'Missing'),
+                                     genome.get('uploaded_by', 'Missing'),
+                                     genome.get('is_upgraded', 'Missing'),
+                                     genome.get('project_id', 'Missing'),
+                                     genome.get('external_id', 'Missing'),
+                                     genome.get('id', 'Missing')))
+            sys.stdout.write('\n')
+    except KeyError:
+        if json_response['description']:
+            sys.stdout.write("Error: {}\n".format(json_response['description']))
+        else:
+            sys.stdout.write('Something went wrong ...')
 
 if __name__ == "__main__":
     main(sys.argv[1:])
