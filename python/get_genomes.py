@@ -1,4 +1,4 @@
-"""Create a new project.
+"""Get all genomes in a project.
 """
 
 import os
