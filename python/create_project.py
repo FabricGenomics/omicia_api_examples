@@ -36,7 +36,7 @@ def create_project(name, description, share_role):
 
     # Post request and return newly created project's id
     result = requests.post(url, headers=payload, data=payload, auth=auth)
-    return result.json()["id"]
+    return result.json()
 
 def main(argv):
     """main function, creates a project with a command-line specified name
@@ -47,8 +47,17 @@ def main(argv):
     name = argv[0]
     description = argv[1]
     share_role = argv[2]
-    project_id = create_project(name, description, share_role)
-    sys.stdout.write("Project id: {}\n".format(project_id))
+
+    json_response = create_project(name, description, share_role)
+    try:
+        project_id = json_response["id"]
+        sys.stdout.write("Project id: {}\n".format(project_id))
+    except KeyError:
+        if json_response['description']:
+            sys.stdout.write('Error: {}\n'.format(json_response['description']))
+        else:
+            sys.stdout.write('Something went wrong...')
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])

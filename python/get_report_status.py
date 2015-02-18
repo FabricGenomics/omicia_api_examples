@@ -38,10 +38,16 @@ def main(argv):
         sys.exit("Usage: python get_report.py <report_id>")
     report_id = argv[0]
 
-    report = get_report(report_id)
+    json_response = get_report(report_id)
 
     # Access the JSON object's 'status' attribute
-    sys.stdout.write(report['status'])
+    try:
+        sys.stdout.write("Report Status: {}\n".format(json_response['status']))
+    except KeyError:
+        if json_response['description']:
+            sys.stderr.write('Error: {}\n'.format(json_response['description']))
+        else:
+            sys.stderr.write('Something went wrong...')
 
 if __name__ == "__main__":
     main(sys.argv[1:])

@@ -33,7 +33,7 @@ def upload_genome_to_project(project_id, label, sex, file_format, file_name, ext
     with open(file_name, 'rb') as file_handle:
         #Post request and return id of newly uploaded genome
         result = requests.put(url, auth=auth, data=file_handle)
-        return result.json()["genome_id"]
+        return result.json()
 
 
 def main(argv):
@@ -51,9 +51,17 @@ def main(argv):
         external_id = argv[5]
     else:
         external_id = ""
-    genome_id = upload_genome_to_project(project_id, label, sex,
+    json_response = upload_genome_to_project(project_id, label, sex,
                                          file_format, file_name, external_id)
-    sys.stdout.write("genome_id: {}\n".format(genome_id))
+
+    try:
+        genome_id = json_response["genome_id"]
+        sys.stdout.write("genome_id: {}\n".format(genome_id))
+    except KeyError:
+        if json_response['description']:
+            sys.stdout.write('Error: {}\n'.format(json_response['description']))
+        else:
+            sys.stdout.write('Something went wrong...')
 
 if __name__ == "__main__":
     main(sys.argv[1:])
