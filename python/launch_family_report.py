@@ -124,7 +124,7 @@ def launch_family_report(mother_genome_id, father_genome_id,
 
     # Construct url and request
     url = "{}/reports/".format(OMICIA_API_URL)
-    url_payload = {'report_type': "Family Report",
+    url_payload = {'report_type': "Family Report, Trio",
                    'mother_genome_id': int(mother_genome_id),
                    'father_genome_id': int(father_genome_id),
                    'proband_genome_id': int(proband_genome_id),
@@ -245,6 +245,7 @@ def main(argv):
     sys.stdout.write("\n")
 
     if "clinical_report" not in family_report_json.keys():
+        print family_report_json
         sys.exit("Failed to launch. Check report parameters for correctness.")
     clinical_report = family_report_json['clinical_report']
     sys.stdout.write('Launched Family Report:\n'

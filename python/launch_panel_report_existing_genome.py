@@ -98,7 +98,6 @@ def launch_panel_report(genome_id, filter_id, panel_id,
     # If patient information was provided, add it to the request url
         url_payload['patient_info'] = patient_info
         result = requests.post(url, auth=auth, data=json.dumps(url_payload))
-
     return result.json()
 
 
