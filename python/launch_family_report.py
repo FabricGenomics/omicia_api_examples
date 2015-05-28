@@ -102,7 +102,7 @@ def generate_patient_info_json(patient_info_file_name):
     generate and return a JSON object representing its contents.
     """
     patient_info = {}
-    with open(patient_info_file_name) as f:
+    with open(patient_info_file_name, 'rU') as f:
         reader = csv.reader(f)
         next(reader, None)  # Skip the header
         for i, row in enumerate(reader):
