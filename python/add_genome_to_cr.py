@@ -60,7 +60,6 @@ def main(argv):
 
     cr_id = args.c
     proband_genome_id = args.p
-    mother_genome_id = father_genome_id = sibling_genome_id = None
     mother_genome_id = args.m
     father_genome_id = args.f
     sibling_genome_id = args.s
