@@ -73,6 +73,46 @@ def main(argv):
                                                   sibling_genome_id=sibling_genome_id,
                                                   vaast_report_id=vaast_report_id)
     print json_response
+    if "clinical_report" not in json_response.keys():
+        sys.exit("Failed to launch. Check report parameters for correctness.")
+    clinical_report = json_response['clinical_report']
+    sys.stdout.write('Clinical Report Info:\n'
+                     'id: {}\n'
+                     'test_type: {}\n'
+                     'accession_id: {}\n'
+                     'created_on: {}\n'
+                     'created_by: {}\n'
+                     'filter_id: {}\n'
+                     'filter_name: {}\n'
+                     'panel_id: {}\n'
+                     'workspace_id: {}\n'
+                     'sample_collected_date: {}\n'
+                     'sample_received_date: {}\n'
+                     'include_cosmic: {}\n'
+                     'vaast_report_id: {}\n'
+                     'mother_genome_id: {}\n'
+                     'father_genome_id: {}\n'
+                     'genome_id: {}\n'
+                     'status: {}\n'
+                     'version: {}\n'
+                     .format(clinical_report.get('id', 'Missing'),
+                             clinical_report.get('test_type','Missing'),
+                             clinical_report.get('accession_id','Missing'),
+                             clinical_report.get('created_on','Missing'),
+                             clinical_report.get('created_by','Missing'),
+                             clinical_report.get('filter_id','Missing'),
+                             clinical_report.get('filter_name', 'Missing'),
+                             clinical_report.get('panel_id','Missing'),
+                             clinical_report.get('workspace_id','Missing'),
+                             clinical_report.get('sample_collected_date','Missing'),
+                             clinical_report.get('sample_received_date','Missing'),
+                             clinical_report.get('include_cosmic','Missing'),
+                             clinical_report.get('vaast_report_id', 'Missing'),
+                             clinical_report.get('mother_genome_id', 'Missing'),
+                             clinical_report.get('father_genome_id', 'Missing'),
+                             clinical_report.get('genome_id', 'Missing'),
+                             clinical_report.get('status', 'Missing'),
+                             clinical_report.get('version', 'Missing')))
 
 if __name__ == "__main__":
     main(sys.argv[1:])
