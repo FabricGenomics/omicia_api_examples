@@ -1,4 +1,5 @@
-"""Upload a genome to an existing project.
+"""Populate a report's custom fields.
+Usage: post_patient_fields.py 2029 '{"Patient Name": "Eric", "Gender": "Male", "Accession Number": "1234"}'
 """
 
 import os
@@ -21,38 +22,35 @@ OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 
-def add_fields_to_cr(cr_id):
+def add_fields_to_cr(cr_id, patient_fields):
     """Use the Omicia API to fill in custom patient fields for a clinical report
     """
-
     #Construct request
     url = "{}/reports/{}/patient_fields"
     url = url.format(OMICIA_API_URL, cr_id)
-    url_payload = {'proband_genome_id': proband_genome_id,
-                   'mother_genome_id': mother_genome_id,
-                   'father_genome_id': father_genome_id,
-                   'sibling_genome_id': sibling_genome_id,
-                   'vaast_report_id': vaast_report_id}
-
+    url_payload = patient_fields
+    print url_payload
     sys.stdout.write("Adding custom patient fields to report...")
     sys.stdout.write("\n\n")
     sys.stdout.flush()
     # If patient information was not provided, make a post request to reports
     # without a patient information parameter in the url
-    result = requests.put(url, auth=auth, data=json.dumps(url_payload))
+    result = requests.post(url, auth=auth, data=url_payload)
     return result.json()
-
 
 def main(argv):
     """main function. Upload a specified VCF file to a specified project.
     """
     parser = argparse.ArgumentParser(description='Fill patient info fields for existing clinical reports.')
     parser.add_argument('c', metavar='clinical_report_id', type=int)
+    parser.add_argument('f', metavar='patient_fields', type=str)
     args = parser.parse_args()
 
     cr_id = args.c
+    patient_fields = args.f
 
-    json_response = add_fields_to_cr(cr_id)
+    json_response = add_fields_to_cr(cr_id, patient_fields)
+    print json_response
 
 if __name__ == "__main__":
     main(sys.argv[1:])
