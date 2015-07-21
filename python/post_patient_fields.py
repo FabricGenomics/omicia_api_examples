@@ -38,7 +38,8 @@ def add_fields_to_cr(cr_id, patient_fields):
     result = requests.post(url, auth=auth, data=url_payload)
     return result.json()
 
-def main(argv):
+
+def main():
     """main function. Upload a specified VCF file to a specified project.
     """
     parser = argparse.ArgumentParser(description='Fill patient info fields for existing clinical reports.')
@@ -53,4 +54,4 @@ def main(argv):
     print json_response
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()
