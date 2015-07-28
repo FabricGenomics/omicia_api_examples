@@ -69,7 +69,6 @@ def main(argv):
                      'accession_id: {}\n'
                      'created_on: {}\n'
                      'created_by: {}\n'
-                     'status: {}\n'
                      'filter_id: {}\n'
                      'filter_name: {}\n'
                      'panel_id: {}\n'
