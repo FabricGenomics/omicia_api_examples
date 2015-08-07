@@ -1,4 +1,5 @@
-"""Get a report's custom fields.
+"""Add a quality control data entry to a clinical report.
+Usage: post_qc_data.py 2029 '{"Cluster Density": "170", "Clusters PF": ".82"}'
 """
 
 import os
@@ -21,28 +22,35 @@ OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 
-def add_fields_to_cr(cr_id):
+def add_fields_to_cr(cr_id, qc_fields):
     """Use the Omicia API to fill in custom patient fields for a clinical report
     """
     #Construct request
-    url = "{}/reports/{}/patient_fields"
+    url = "{}/reports/{}/qc_data"
     url = url.format(OMICIA_API_URL, cr_id)
+    url_payload = qc_fields
 
+    sys.stdout.write("Adding quality control data entry to report...")
+    sys.stdout.write("\n\n")
     sys.stdout.flush()
-    result = requests.get(url, auth=auth)
+    # If patient information was not provided, make a post request to reports
+    # without a patient information parameter in the url
+    result = requests.post(url, auth=auth, data=url_payload)
     return result.json()
 
 
 def main():
     """main function. Upload a specified VCF file to a specified project.
     """
-    parser = argparse.ArgumentParser(description='View custom fields for existing clinical reports.')
+    parser = argparse.ArgumentParser(description='Add a quality control data entry to a clinical report')
     parser.add_argument('c', metavar='clinical_report_id', type=int)
+    parser.add_argument('f', metavar='qc_fields', type=str)
     args = parser.parse_args()
 
     cr_id = args.c
+    qc_fields = args.f
 
-    json_response = add_fields_to_cr(cr_id)
+    json_response = add_fields_to_cr(cr_id, qc_fields)
     print json_response
 
 if __name__ == "__main__":
