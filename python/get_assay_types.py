@@ -44,7 +44,7 @@ def get_assay_types():
 
 
 def main(argv):
-    """main function, get all genomes in a project.
+    """main function, get all assay_types in a project.
     """
 
     if len(argv) > 1:
