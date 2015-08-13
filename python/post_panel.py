@@ -58,7 +58,7 @@ def put_panel(panel_id, name, description, methodology=None,
                               "fda_disclosure": fda_disclosure,
                               "test_code": test_code})
 
-    sys.stdout.write("Editing a new panel...")
+    sys.stdout.write("Editing panel {}...".format(panel_id))
     sys.stdout.write("\n\n")
     sys.stdout.flush()
     # If patient information was not provided, make a post request to reports
@@ -110,16 +110,20 @@ def main():
 
     # If a panel ID was not specified, post a new panel
     if panel_id is None:
+        if name is None or description is None:
+            sys.stdout.write("Name (--n) and description (--d) must be "
+                             "specified in order to create a panel.\n")
+            sys.exit()
         json_response = post_panel(name,
                                    description,
                                    methodology=methodology,
                                    limitations=limitations,
                                    fda_disclosure=fda_disclosure,
                                    test_code=test_code)
-        panel_object = json.loads(json_response)
-        panel_id = panel_object.get('id')
+        sys.stdout.write(json_response)
+        sys.stdout.write('\n')
+        panel_id = json.loads(json_response).get('id')
 
-        sys.stdout.write("Created panel with ID {}.".format(panel_id))
     else:
         json_response = put_panel(panel_id,
                                   name,
@@ -129,6 +133,7 @@ def main():
                                   fda_disclosure=fda_disclosure,
                                   test_code=test_code)
         sys.stdout.write(json_response)
+        sys.stdout.write('\n')
 
     if gene_symbols:
         json_response = add_gene_symbols_to_panel(panel_id, gene_symbols)
