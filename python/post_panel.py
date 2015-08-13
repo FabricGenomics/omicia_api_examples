@@ -132,8 +132,11 @@ def main():
                                   limitations=limitations,
                                   fda_disclosure=fda_disclosure,
                                   test_code=test_code)
-        sys.stdout.write(json_response)
-        sys.stdout.write('\n')
+        try:
+            sys.stdout.write(json_response)
+            sys.stdout.write('\n')
+        except TypeError:
+            sys.stdout.write("Unexpected error. Perhaps the panel you specified no longer exists?\n\n")
 
     if gene_symbols:
         json_response = add_gene_symbols_to_panel(panel_id, gene_symbols)
