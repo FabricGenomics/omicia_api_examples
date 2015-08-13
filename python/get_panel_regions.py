@@ -1,4 +1,4 @@
-"""Get a report's custom fields.
+"""Get a clinical report's qc entries.
 """
 
 import os
@@ -21,12 +21,12 @@ OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 
-def add_fields_to_cr(cr_id):
-    """Use the Omicia API to fill in custom patient fields for a clinical report
+def get_panel_regions(panel_id):
+    """Use the Omicia API to get the regions for a panel.
     """
     #Construct request
-    url = "{}/reports/{}/patient_fields"
-    url = url.format(OMICIA_API_URL, cr_id)
+    url = "{}/panels/{}/regions"
+    url = url.format(OMICIA_API_URL, panel_id)
 
     sys.stdout.flush()
     result = requests.get(url, auth=auth)
@@ -34,16 +34,19 @@ def add_fields_to_cr(cr_id):
 
 
 def main():
-    """main function. Upload a specified VCF file to a specified project.
+    """Main function. Get the regions in a panel and print out their gene symbols.
     """
-    parser = argparse.ArgumentParser(description='View custom fields for existing clinical reports.')
-    parser.add_argument('c', metavar='clinical_report_id', type=int)
+    parser = argparse.ArgumentParser(description='View quality control entries for existing clinical reports.')
+    parser.add_argument('p', metavar='panel_id', type=int)
     args = parser.parse_args()
 
-    cr_id = args.c
+    panel_id = args.p
 
-    json_response = add_fields_to_cr(cr_id)
-    print json_response
+    json_response = get_panel_regions(panel_id)
+    panel_regions = json.loads(json_response)
+
+    for panel_region in panel_regions:
+        sys.stdout.write('symbol: {}\n'.format(panel_region.get('symbol')))
 
 if __name__ == "__main__":
     main()
