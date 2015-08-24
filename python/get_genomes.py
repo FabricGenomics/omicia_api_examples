@@ -63,7 +63,7 @@ def main(argv):
             sys.stdout.write('\n')
     except KeyError:
         if json_response['description']:
-            sys.stdout.write("Error: {}\n".format(json_response['description']))
+            sys.stdout.write("Error: {}\n".format(json_response))
         else:
             sys.stdout.write('Something went wrong ...')
 
