@@ -50,18 +50,49 @@ auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 # A map between the row numbers and fields from the patient information csv
 patient_info_row_map = {
-    0: 'last_name',
-    1: 'first_name',
-    2: 'dob',
-    3: 'accession_id',
-    4: 'sex',
-    5: 'ethnicity',
-    6: 'indication_for_testing',
-    7: 'specimen_type',
-    8: 'date_collected',
-    9: 'date_received',
-    10: 'ordering_physician'
+    0: 'Last Name',
+    1: 'First Name',
+    2: 'Patient DOB',
+    3: 'Accession ID',
+    4: 'Patient Sex',
+    5: 'Patient Ethnicity',
+    6: 'Indication for Testing',
+    7: 'Specimen Type',
+    8: 'Date Specimen Collected',
+    9: 'Date Specimen Received',
+    10: 'Ordering Physician'
 }
+
+
+def generate_patient_info_json(patient_info_file_name):
+    """Given a properly formatted csv file containing the patient information,
+    generate and return a JSON object representing its contents.
+    """
+    patient_info = {}
+    with open(patient_info_file_name, 'rU') as f:
+        reader = csv.reader(f)
+        next(reader, None)  # Skip the header
+        for i, row in enumerate(reader):
+            if i < 11:
+                patient_info[patient_info_row_map[i]] = row[1]
+    return patient_info
+
+
+def add_fields_to_cr(cr_id, patient_fields):
+    """Use the Omicia API to fill in custom patient fields for a clinical report
+    e.g. patient_fields: '{"Patient Name": "Eric", "Gender": "Male", "Accession Number": "1234"}'
+    """
+    #Construct request
+    url = "{}/reports/{}/patient_fields"
+    url = url.format(OMICIA_API_URL, cr_id)
+    url_payload = json.dumps(patient_fields)
+
+    sys.stdout.write("Adding custom patient fields to report...")
+    sys.stdout.write("\n\n")
+    sys.stdout.flush()
+    result = requests.post(url, auth=auth, data=url_payload)
+    return result.json()
+
 
 # A map between the row numbers and family member from the family manifest csv
 family_info_row_map = {
@@ -97,34 +128,14 @@ def get_family_manifest_info(family_folder):
     return family_manifest_info
 
 
-def generate_patient_info_json(patient_info_file_name):
-    """Given a properly formatted csv file containing the patient information,
-    generate and return a JSON object representing its contents.
-    """
-    patient_info = {}
-    with open(patient_info_file_name, 'rU') as f:
-        reader = csv.reader(f)
-        next(reader, None)  # Skip the header
-        for i, row in enumerate(reader):
-            if i < 11:
-                patient_info[patient_info_row_map[i]] = row[1]
-    return patient_info
-
-
 def launch_family_report(mother_genome_id, father_genome_id,
                          proband_genome_id, proband_sex, score_indels,
-                         reporting_cutoff, accession_id,
-                         patient_info_file_name):
+                         reporting_cutoff, accession_id):
     """Launch a family report. Return the JSON response.
     """
-    # If a patient information csv file is provided, use it to generate a
-    # representative JSON object
-    if patient_info_file_name:
-        patient_info = generate_patient_info_json(patient_info_file_name)
-
     # Construct url and request
     url = "{}/reports/".format(OMICIA_API_URL)
-    url_payload = {'report_type': "Family Report, Trio",
+    url_payload = {'report_type': "Trio",
                    'mother_genome_id': int(mother_genome_id),
                    'father_genome_id': int(father_genome_id),
                    'proband_genome_id': int(proband_genome_id),
@@ -135,14 +146,7 @@ def launch_family_report(mother_genome_id, father_genome_id,
                    'accession_id': accession_id}
 
     sys.stdout.write("Launching family report...\n")
-    # If patient information was not provided, make a post request to reports
-    # without a patient information parameter in the url
-    if not patient_info_file_name:
-        result = requests.post(url, auth=auth, data=json.dumps(url_payload))
-    else:
-    # If patient information was provided, add it to the request url
-        url_payload['patient_info'] = patient_info
-        result = requests.post(url, auth=auth, data=json.dumps(url_payload))
+    result = requests.post(url, auth=auth, data=json.dumps(url_payload))
 
     return result.json()
 
@@ -238,8 +242,7 @@ def main(argv):
         family_genome_ids['proband_genome']['sex'],
         score_indels,
         reporting_cutoff,
-        accession_id,
-        patient_info_file_name)
+        accession_id)
 
     # Confirm launched report data
     sys.stdout.write("\n")
@@ -248,6 +251,14 @@ def main(argv):
         print family_report_json
         sys.exit("Failed to launch. Check report parameters for correctness.")
     clinical_report = family_report_json['clinical_report']
+
+     # If a patient information csv file is provided, use it to generate a
+    # representative JSON object and add the patient fields to the report
+    if patient_info_file_name:
+        clinical_report_id = clinical_report.get('id')
+        patient_info = generate_patient_info_json(patient_info_file_name)
+        add_fields_to_cr(clinical_report_id, patient_info)
+
     sys.stdout.write('Launched Family Report:\n'
                      'id: {}\n'
                      'test_type: {}\n'
