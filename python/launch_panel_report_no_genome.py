@@ -20,13 +20,14 @@ OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
 OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
+
 def launch_panel_report(filter_id, panel_id, accession_id):
     """Launch a genomeless panel report given filter id, and panel id
     parameters. Return the JSON response.
     """
     # Construct url and request
     url = "{}/reports/".format(OMICIA_API_URL)
-    url_payload = {'report_type': "Panel Report",
+    url_payload = {'report_type': "panel",
                    'genome_id': None,
                    'filter_id': int(filter_id),
                    'panel_id': int(panel_id),

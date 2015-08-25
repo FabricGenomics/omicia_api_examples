@@ -25,7 +25,7 @@ def launch_family_report(score_indels, reporting_cutoff, accession_id):
     """
     # Construct url and request
     url = "{}/reports/".format(OMICIA_API_URL)
-    url_payload = {'report_type': "Family Report, Trio",
+    url_payload = {'report_type': "Trio",
                    'mother_genome_id': None,
                    'father_genome_id': None,
                    'proband_genome_id': None,
