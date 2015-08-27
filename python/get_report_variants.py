@@ -1,7 +1,7 @@
 """Get a clinical report's variants.
 Usages: python get_report_variants.py 1542
         python get_report_variants.py 1542 --status "FAILED_CONFIRMATION,REVIEWED"
-        python get_report_variants.py 1542 --status "CONFIRMED"
+        python get_report_variants.py 1542 --status "CONFIRMED" --format "VCF"
 """
 
 import os
