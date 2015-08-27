@@ -25,7 +25,7 @@ auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 
 def get_cr_variants(cr_id, statuses):
-    """Use the Omicia API to fill in custom patient fields for a clinical report
+    """Use the Omicia API to get report variants.
     """
     #Construct request
     url = "{}/reports/{}/variants"
@@ -45,7 +45,7 @@ def get_cr_variants(cr_id, statuses):
 
 
 def main():
-    """main function. Upload a specified VCF file to a specified project.
+    """Main function. Get report variants, all or filtering by status.
     """
     parser = argparse.ArgumentParser(description='Get variants for existing clinical reports.')
     parser.add_argument('cr_id', metavar='clinical_report_id', type=int)
@@ -62,7 +62,7 @@ def main():
     try:
         variants = json_reponse['objects']
         for variant in variants:
-            print variant
+            print json.dumps(variant)
             print '\n'
     except KeyError:
         print json_reponse
