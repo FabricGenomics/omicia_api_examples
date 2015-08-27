@@ -69,16 +69,16 @@ def main():
     response = get_cr_variants(cr_id, statuses, _format)
     if _format == 'VCF':
         for block in response.iter_content(1024):
-            print block
+            sys.stdout.write(block)
     else:
         try:
             response_json = response.json()
             variants = response_json['objects']
             for variant in variants:
-                print json.dumps(variant)
-                print '\n'
+                sys.stdout.write(json.dumps(variant))
+                sys.stdout.write('\n')
         except KeyError:
-            print response.json()
+            sys.stderr.write(response.json())
 
 
 if __name__ == "__main__":
