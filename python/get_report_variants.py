@@ -1,4 +1,7 @@
 """Get a clinical report's variants.
+Usages: python get_report_variants.py 1542
+        python get_report_variants.py 1542 --status "FAILED_CONFIRMATION,REVIEWED"
+        python get_report_variants.py 1542 --status "CONFIRMED"
 """
 
 import os
@@ -21,15 +24,20 @@ OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 
-def get_cr_variants(cr_id, status):
+def get_cr_variants(cr_id, statuses):
     """Use the Omicia API to fill in custom patient fields for a clinical report
     """
     #Construct request
     url = "{}/reports/{}/variants"
     url = url.format(OMICIA_API_URL, cr_id)
 
-    if status:
-        url = url + "?status={}".format(status)
+    # Generate the url to be able to query for multiple statuses
+    if statuses:
+        url = url + "?"
+        for i, status in enumerate(statuses):
+            if i > 0:
+                url = url + "&"
+            url = url + "status={}".format(status)
 
     sys.stdout.flush()
     result = requests.get(url, auth=auth)
@@ -48,11 +56,17 @@ def main():
     cr_id = args.cr_id
     status = args.status
 
-    json_reponse = get_cr_variants(cr_id, status)
-    variants = json_reponse['objects']
-    for variant in variants:
-        print variant
-        print '\n'
+    statuses = status.split(",") if status else None
+
+    json_reponse = get_cr_variants(cr_id, statuses)
+    try:
+        variants = json_reponse['objects']
+        for variant in variants:
+            print variant
+            print '\n'
+    except KeyError:
+        print json_reponse
+
 
 if __name__ == "__main__":
     main()
