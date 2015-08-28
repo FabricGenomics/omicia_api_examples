@@ -48,7 +48,7 @@ def set_cr_variants(cr_id, file_name, _format):
         return result.json()
 
 def main():
-    """Main function. Get report variants, all or filtering by status.
+    """Main function. Set report variants statuses.
     """
     parser = argparse.ArgumentParser(description='Get variants for existing clinical reports.')
     parser.add_argument('cr_id', metavar='clinical_report_id', type=int)
