@@ -1,5 +1,11 @@
 __author__ = 'erickofman'
-"""Usage: python api_smoke_test.py family_folder family_folder/NA19240_small.vcf.gz 727 1506 205781"""
+"""Usage: python api_smoke_test.py ../omicia_api_examples/python family_folder family_folder/NA19240_small.vcf.gz 727 1506 205781
+
+On test1 in API Testing Workspace:
+python api_smoke_test.py ../omicia_api_examples/python family_folder family_folder/NA19240_small.vcf.gz 727 1881 206280
+
+Make sure to cancel any VAAST jobs that are launched as a byproduct of running this script.
+"""
 
 import sys
 import subprocess
@@ -160,8 +166,6 @@ def test_launch_family_report_new_genomes(path, project_id, family_folder):
                          stdout=subprocess.PIPE)
     output, err = p.communicate()
     output_lines = output.split('\n')
-
-    print output
 
     assert(re.match("Uploading...", output_lines[0]))
     assert(re.match("Uploaded 3 genomes:", output_lines[1]))
