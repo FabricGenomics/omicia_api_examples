@@ -267,7 +267,6 @@ def main(argv):
                      'created_by: {}\n'
                      'status: {}\n'
                      'filter_id: {}\n'
-                     'filter_name: {}\n'
                      'panel_id: {}\n'
                      'workspace_id: {}\n'
                      'sample_collected_date: {}\n'
@@ -286,7 +285,6 @@ def main(argv):
                              clinical_report.get('created_by','Missing'),
                              clinical_report.get('status','Missing'),
                              clinical_report.get('filter_id','Missing'),
-                             clinical_report.get('filter_name', 'Missing'),
                              clinical_report.get('panel_id','Missing'),
                              clinical_report.get('workspace_id','Missing'),
                              clinical_report.get('sample_collected_date','Missing'),
