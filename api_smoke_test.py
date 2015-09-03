@@ -35,7 +35,7 @@ GET_REPORT_PATIENT_FIELDS = "get_patient_fields.py"
 POST_REPORT_PATIENT_FIELDS = "post_patient_fields.py"
 POST_QC_DATA_ENTRY = "post_qc_data.py"
 GET_REPORT_STATUS = "get_report_status.py"
-
+POST_PANEL = "post_panel.py"
 
 def print_ok_output(output):
     """Print the parameter in OKGREEN color"""
@@ -347,6 +347,40 @@ def test_get_report_status(path, clinical_report_id, status):
     assert(re.match("{}".format(status), returned_status))
     print_ok_output(output)
 
+def test_post_panel(path, month, day):
+    """Test creating a new panel"""
+    sys.stdout.write("{}: Testing creating a panel...\n".format(GET_REPORT_STATUS))
+    p = subprocess.Popen(["python",
+                          os.path.join(path, POST_PANEL),
+                          "--n",
+                          "newpanel{}/{}".format(month, day),
+                          "--d",
+                          "newdescription",
+                          "--m",
+                          "methodology",
+                          "--l",
+                          "limitations",
+                          "--f",
+                          "fda_disclosure",
+                          "--t",
+                          "999",
+                          "--g",
+                          "BRCA1, BRCA2, APOE, AGRN, NOTFOUND"
+                          ],
+                         stdout=subprocess.PIPE)
+    output, err = p.communicate()
+    output_lines = output.split('\n')
+
+    assert(re.match("Creating a new panel...", output_lines[0]))
+    assert(re.match("\{.*\}", output_lines[2]))
+    assert(re.match("Adding regions to panel...", output_lines[3]))
+    assert(re.match("ambiguous : {}", output_lines[5]))
+    assert(re.match("not_found : \[u'NOTFOUND'\]", output_lines[6]))
+    assert(re.match("already_added : \[\]", output_lines[7]))
+    assert(re.match("added : \[u'BRCA1', u'AGRN', u'BRCA2', u'APOE'\]", output_lines[8]))
+
+    print_ok_output(output)
+
 
 if __name__ == '__main__':
     month = datetime.datetime.today().month
@@ -370,6 +404,7 @@ if __name__ == '__main__':
     panel_id = args.panel_id
     genome_id = args.genome_id
 
+    
     if not project_id:
         #1.  Test project creation
         project_id = test_create_project(path, month, day)
@@ -413,3 +448,7 @@ if __name__ == '__main__':
 
     #14. Test creation of a family report with no genomes
     test_launch_family_report_no_genomes(path, project_id, family_folder)
+
+
+    #15. Test creation of a panel
+    test_post_panel(path, month, day)
