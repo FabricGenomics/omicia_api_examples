@@ -50,6 +50,7 @@ def test_upload_genome(path, project_id, genome_vcf):
     output, err = p.communicate()
 
     output_lines = output.split('\n')
+  
     assert(output_lines[0] == "Uploading...")
     assert(re.match("genome_label: genome\d+/\d+, genome_id: \d+, size: \d+\.\d+ kB", output_lines[1]))
 
@@ -228,6 +229,7 @@ def test_launch_panel_report_existing_genome(path, filter_id, panel_id, genome_i
     output, err = p.communicate()
 
     output_lines = output.split('\n')
+
     assert(re.match("Launching report...", output_lines[0]))
     assert(re.match("Launched Clinical Report:", output_lines[2]))
     assert(re.match("id: \d+", output_lines[3]))
@@ -347,9 +349,10 @@ def test_get_report_status(path, clinical_report_id, status):
     assert(re.match("{}".format(status), returned_status))
     print_ok_output(output)
 
+
 def test_post_panel(path, month, day):
     """Test creating a new panel"""
-    sys.stdout.write("{}: Testing creating a panel...\n".format(GET_REPORT_STATUS))
+    sys.stdout.write("{}: Testing creating a panel...\n".format(POST_PANEL))
     p = subprocess.Popen(["python",
                           os.path.join(path, POST_PANEL),
                           "--n",
@@ -404,7 +407,6 @@ if __name__ == '__main__':
     panel_id = args.panel_id
     genome_id = args.genome_id
 
-    
     if not project_id:
         #1.  Test project creation
         project_id = test_create_project(path, month, day)
@@ -452,3 +454,4 @@ if __name__ == '__main__':
 
     #15. Test creation of a panel
     test_post_panel(path, month, day)
+    
