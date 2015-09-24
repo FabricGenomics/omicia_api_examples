@@ -1,4 +1,4 @@
-"""Create a new family report from an new genome trio. This requires putting all
+"""Create a new family report from an new genome quad. This requires putting all
 three family genomes in a folder along with a descriptor file titled 'family_manifest.csv,'
 which should have the following format:
 
