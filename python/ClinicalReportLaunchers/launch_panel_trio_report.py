@@ -1,4 +1,4 @@
-"""Create a new family report from an new genome trio. This requires putting all
+"""Create a new panel trio report from an new genome trio. This requires putting all
 three family genomes in a folder along with a descriptor file titled 'family_manifest.csv,'
 which should have the following format:
 
@@ -35,7 +35,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 import sys
 
-_MANIFEST_FILENAME = 'family_manifest.csv'
+_MANIFEST_FILENAME = 'panel_trio_manifest.csv'
 
 #Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -130,24 +130,24 @@ def get_family_manifest_info(family_folder):
     return family_manifest_info
 
 
-def launch_family_report(mother_genome_id, father_genome_id,
-                         proband_genome_id, proband_sex, score_indels,
-                         reporting_cutoff, accession_id):
+def launch_panel_trio_report(panel_id, filter_id, mother_genome_id, father_genome_id,
+                             proband_genome_id, proband_sex,
+                             reporting_cutoff, accession_id):
     """Launch a family report. Return the JSON response.
     """
     # Construct url and request
     url = "{}/reports/".format(OMICIA_API_URL)
-    url_payload = {'report_type': "Trio",
+    url_payload = {'report_type': "panel_trio",
+                   'panel_id': panel_id,
+                   'filter_id': filter_id,
                    'mother_genome_id': int(mother_genome_id),
                    'father_genome_id': int(father_genome_id),
                    'proband_genome_id': int(proband_genome_id),
                    'proband_sex': ('f' if proband_sex == 'female' else 'm'),
-                   'background': 'FULL',
-                   'score_indels': bool(score_indels),
                    'reporting_cutoff': int(reporting_cutoff),
                    'accession_id': accession_id}
 
-    sys.stdout.write("Launching family report...\n")
+    sys.stdout.write("Launching panel trio report...\n")
     result = requests.post(url, auth=auth, data=json.dumps(url_payload))
 
     return result.json()
@@ -197,10 +197,10 @@ def upload_genomes_to_project(project_id, family_folder):
     return {'mother_genome_id': mother_genome_id,
             'father_genome_id': father_genome_id,
             'proband_genome':
-            {
-            'id': proband_genome_id,
-            'sex': family_manifest_info['proband']['genome_sex']
-            }
+                {
+                    'id': proband_genome_id,
+                    'sex': family_manifest_info['proband']['genome_sex']
+                }
             }
 
 
@@ -208,14 +208,15 @@ def main(argv):
     """Main function, creates a panel report.
     """
     if len(argv) < 5:
-        sys.exit("Usage: python launch_family_report.py <project_id> \
-        <family_folder> <score_indels> <reporting_cutoff> <accession_id> \
+        sys.exit("Usage: python launch_family_report.py <project_id> <panel_id> <filter_id>\
+        <family_folder> <reporting_cutoff> <accession_id> \
         optional: <patient_info_file>")
     project_id = argv[0]
-    family_folder = argv[1]
-    score_indels = argv[2]
-    reporting_cutoff = argv[3]
-    accession_id = argv[4]
+    panel_id = argv[1]
+    filter_id = argv[2]
+    family_folder = argv[3]
+    reporting_cutoff = argv[4]
+    accession_id = argv[5]
 
     family_genome_ids = upload_genomes_to_project(project_id, family_folder)
 
@@ -232,17 +233,17 @@ def main(argv):
 
     # If a patient information file name is provided, use it. Otherwise
     # leave it empty as a None object.
-    if len(argv) == 6:
-        patient_info_file_name = argv[5]
+    if len(argv) == 7:
+        patient_info_file_name = argv[6]
     else:
         patient_info_file_name = None
 
-    family_report_json = launch_family_report(
+    family_report_json = launch_panel_trio_report(
+        panel_id, filter_id,
         family_genome_ids['mother_genome_id'],
         family_genome_ids['father_genome_id'],
         family_genome_ids['proband_genome']['id'],
         family_genome_ids['proband_genome']['sex'],
-        score_indels,
         reporting_cutoff,
         accession_id)
 
@@ -261,7 +262,7 @@ def main(argv):
         patient_info = generate_patient_info_json(patient_info_file_name)
         add_fields_to_cr(clinical_report_id, patient_info)
 
-    sys.stdout.write('Launched Family Report:\n'
+    sys.stdout.write('Launched Panel Trio Report:\n'
                      'id: {}\n'
                      'test_type: {}\n'
                      'accession_id: {}\n'
