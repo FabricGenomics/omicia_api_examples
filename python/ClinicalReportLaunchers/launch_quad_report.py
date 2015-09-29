@@ -1,11 +1,12 @@
-"""Create a new family report from an new genome trio. This requires putting all
+"""Create a new family report from an new genome quad. This requires putting all
 three family genomes in a folder along with a descriptor file titled 'family_manifest.csv,'
 which should have the following format:
 
-filename,label,external_id,sex,format
-NA19238.vcf.gz,CG Yoruban Mother,1,female,vcf.gz
-NA19239.vcf.gz,CG Yoruban Father,2,male,vcf.gz
-NA19240.vcf.gz,CG Yoruban Daughter,3,female,vcf.gz
+filename,label,external_id,sex,format,affected_status
+NA19238.vcf.gz,CG Yoruban Mother,1,female,vcf.gz,unaffected
+NA19239.vcf.gz,CG Yoruban Father,2,male,vcf.gz,unaffected
+NA19240.vcf.gz,CG Yoruban Daughter,3,female,vcf.gz,affected <---- this is the proband
+NA19241.vcf.gz,CG Yoruban Daughter,4,female,vcf.gz,[affected, unaffected]
 
 Optionally, include a file containing patient (proband) information to populate
 patient information fields in the clinical report. This file should be a csv
@@ -98,7 +99,8 @@ def add_fields_to_cr(cr_id, patient_fields):
 family_info_row_map = {
     0: 'mother',
     1: 'father',
-    2: 'proband'
+    2: 'proband',
+    3: 'sibling'
 }
 
 
@@ -117,29 +119,39 @@ def get_family_manifest_info(family_folder):
         reader = csv.reader(f)
         next(reader, None)  # Skip the header
         for i, row in enumerate(reader):
-            if i < 3:
+            if i < 4:
                 # family_member is mother, father, or proband
                 family_member = family_info_row_map[i]
                 family_manifest_info[family_member] = {"genome_filename": row[0],
                                                        "genome_label": row[1],
                                                        "external_id": row[2],
                                                        "genome_sex": row[3],
-                                                       "format": row[4]}
+                                                       "format": row[4],
+                                                       "affected": row[5] == 'affected'}
+
+    if not family_manifest_info['proband']['affected']:
+        sys.exit("The proband must be affected")
+    if family_manifest_info['mother']['affected'] or family_manifest_info['mother']['affected']:
+        sys.exit("The parents cannot be affected")
     return family_manifest_info
 
 
-def launch_family_report(mother_genome_id, father_genome_id,
-                         proband_genome_id, proband_sex, score_indels,
-                         reporting_cutoff, accession_id):
+def launch_family_report(mother_genome_id, father_genome_id, sibling_genome_id,
+                         sibling_sex, sibling_affected,
+                         proband_genome_id, proband_sex,
+                         score_indels, reporting_cutoff, accession_id):
     """Launch a family report. Return the JSON response.
     """
     # Construct url and request
     url = "{}/reports/".format(OMICIA_API_URL)
-    url_payload = {'report_type': "Trio",
+    url_payload = {'report_type': "Quad",
                    'mother_genome_id': int(mother_genome_id),
                    'father_genome_id': int(father_genome_id),
+                   'sibling_genome_id': int(sibling_genome_id),
                    'proband_genome_id': int(proband_genome_id),
                    'proband_sex': ('f' if proband_sex == 'female' else 'm'),
+                   'sibling_sex': ('f' if sibling_sex == 'female' else 'm'),
+                   'sibling_affected': 'true' if sibling_affected else 'false',
                    'background': 'FULL',
                    'score_indels': bool(score_indels),
                    'reporting_cutoff': int(reporting_cutoff),
@@ -190,15 +202,23 @@ def upload_genomes_to_project(project_id, family_folder):
     proband_genome_id = \
         upload_genome(project_id, family_manifest_info['proband'], family_folder)
 
+    sibling_genome_id = \
+        upload_genome(project_id, family_manifest_info['sibling'], family_folder)
+
     sys.stdout.write("\n")
 
     return {'mother_genome_id': mother_genome_id,
             'father_genome_id': father_genome_id,
+            'sibling_genome': {
+                'id': sibling_genome_id,
+                'sex': family_manifest_info['sibling']['genome_sex'],
+                'affected': family_manifest_info['sibling']['affected']
+            },
             'proband_genome':
-            {
-            'id': proband_genome_id,
-            'sex': family_manifest_info['proband']['genome_sex']
-            }
+                {
+                    'id': proband_genome_id,
+                    'sex': family_manifest_info['proband']['genome_sex']
+                }
             }
 
 
@@ -218,13 +238,19 @@ def main(argv):
     family_genome_ids = upload_genomes_to_project(project_id, family_folder)
 
     # Confirm uploaded genomes' data
-    sys.stdout.write("Uploaded 3 genomes:\n")
+    sys.stdout.write("Uploaded 4 genomes:\n")
     sys.stdout.write("mother_genome_id: {}\n"
                      "father_genome_id: {}\n"
+                     "sibling_genome_id: {}\n"
+                     "sibling_sex: {}\n"
+                     "sibling_affected: {}\n"
                      "proband_genome_id: {}\n"
                      "proband_sex: {}\n"
                      .format(family_genome_ids['mother_genome_id'],
                              family_genome_ids['father_genome_id'],
+                             family_genome_ids['sibling_genome']['id'],
+                             family_genome_ids['sibling_genome']['sex'],
+                             family_genome_ids['sibling_genome']['affected'],
                              family_genome_ids['proband_genome']['id'],
                              family_genome_ids['proband_genome']['sex']))
 
@@ -238,6 +264,9 @@ def main(argv):
     family_report_json = launch_family_report(
         family_genome_ids['mother_genome_id'],
         family_genome_ids['father_genome_id'],
+        family_genome_ids['sibling_genome']['id'],
+        family_genome_ids['sibling_genome']['sex'],
+        family_genome_ids['sibling_genome']['affected'],
         family_genome_ids['proband_genome']['id'],
         family_genome_ids['proband_genome']['sex'],
         score_indels,
@@ -275,6 +304,7 @@ def main(argv):
                      'vaast_report_id: {}\n'
                      'mother_genome_id: {}\n'
                      'father_genome_id: {}\n'
+                     'sibling_genome_id: {}\n'
                      'genome_id: {}\n'
                      'status: {}\n'
                      'version: {}\n'
@@ -293,6 +323,7 @@ def main(argv):
                              clinical_report.get('vaast_report_id', 'Missing'),
                              clinical_report.get('mother_genome_id', 'Missing'),
                              clinical_report.get('father_genome_id', 'Missing'),
+                             clinical_report.get('sibling_genome_id', 'Missing'),
                              clinical_report.get('genome_id', 'Missing'),
                              clinical_report.get('status', 'Missing'),
                              clinical_report.get('version', 'Missing')))
