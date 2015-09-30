@@ -25,7 +25,7 @@ Ordering Physician,Paul Billings
 If you are having trouble with using either csv file, make sure its
 line endings are newlines (\n) and not the deprecated carriage returns (\r)
 """
-
+import argparse
 import csv
 import json
 import os
@@ -100,36 +100,6 @@ family_info_row_map = {
 }
 
 
-def get_family_manifest_info(family_folder):
-    """Generate an object containing the data from the manifest.csv
-    file in the genomes folder, including each filename along with
-    its genome label, external id, sex, and format.
-    """
-    family_manifest_info = {}
-
-    # First check to make sure there is in fact a family_manifest.csv file
-    if MANIFEST_FILENAME not in os.listdir(family_folder):
-        sys.exit("No family_manifest.csv file in folder provided.")
-
-    with open(os.path.join(family_folder, MANIFEST_FILENAME)) as f:
-        reader = csv.reader(f)
-        next(reader, None)  # Skip the header
-        for i, row in enumerate(reader):
-            if i < 4:
-                # family_member is mother, father, or proband
-                family_member = family_info_row_map[i]
-                family_manifest_info[family_member] = {"genome_filename": row[0],
-                                                       "genome_label": row[1],
-                                                       "external_id": row[2],
-                                                       "genome_sex": row[3],
-                                                       "format": row[4],
-                                                       "affected": row[5] == 'affected'}
-
-    if not family_manifest_info['proband']['affected']:
-        sys.exit("The proband must be affected")
-    return family_manifest_info
-
-
 def launch_solo_report(proband_genome_id, proband_sex,
                        score_indels, reporting_cutoff, accession_id):
     """Launch a family report. Return the JSON response.
@@ -144,90 +114,78 @@ def launch_solo_report(proband_genome_id, proband_sex,
                    'reporting_cutoff': int(reporting_cutoff),
                    'accession_id': accession_id}
 
-    sys.stdout.write("Launching family report...\n")
+    sys.stdout.write("Launching solo report...\n")
     result = requests.post(url, auth=auth, data=json.dumps(url_payload))
 
     return result.json()
 
 
-def upload_genome(project_id, genome_info, family_folder):
+def upload_genome(project_id, genome_filename, genome_label, genome_sex, genome_external_id, genome_format):
     """Upload a genome from a given folder to a specified project
     """
     # Construct url and request
     url = "{}/projects/{}/genomes?".format(OMICIA_API_URL, project_id)
-    payload = {'genome_label': genome_info['genome_label'],
-               'genome_sex': genome_info['genome_sex'],
-               'external_id': genome_info['external_id'],
+    payload = {'genome_label': genome_label,
+               'genome_sex': 'male' if genome_sex == 'm' else 'female',
+               'external_id': genome_external_id,
                'assembly_version': 'hg19',
-               'format': genome_info['format']}
+               'format': genome_format}
 
     # Upload genome
-    with open(family_folder + "/" + genome_info['genome_filename'], 'rb') as file_handle:
+    with open(genome_filename, 'rb') as file_handle:
         # Post request and store newly uploaded genome's information
         result = requests.put(url, data=file_handle, params=payload, auth=auth)
-        sys.stdout.write(".")
-        sys.stdout.flush()
-        return result.json()["genome_id"]
-
-
-def upload_genomes_to_project(project_id, family_folder):
-    """Upload each of the three genomes in the folder containing the
-    family trio to the specified project
-    """
-     # Get information about each of the family members from the family manifest
-    family_manifest_info = get_family_manifest_info(family_folder)
-
-    # Use the family genome information to upload each genome to the project
-    sys.stdout.write("Uploading")
-    sys.stdout.flush()
-    proband_genome_id = \
-        upload_genome(project_id, family_manifest_info['proband'], family_folder)
-
-    sys.stdout.write("\n")
-
-    return {'proband_genome':
-                {
-                    'id': proband_genome_id,
-                    'sex': family_manifest_info['proband']['genome_sex']
-                }
-            }
+        genome_id = result.json()["genome_id"]
+        return genome_id
 
 
 def main(argv):
     """Main function, creates a panel report.
     """
-    if len(argv) < 5:
-        sys.exit("Usage: python launch_solo_report.py <project_id> \
-        <family_folder> <score_indels> <reporting_cutoff> <accession_id> \
-        optional: <patient_info_file>")
-    project_id = argv[0]
-    family_folder = argv[1]
-    score_indels = argv[2]
-    reporting_cutoff = argv[3]
-    accession_id = argv[4]
+    parser = argparse.ArgumentParser(description='Launch a VAAST solo clinical report.')
+    parser.add_argument('project_id', metavar='project_id', type=int)
+    parser.add_argument('genome_file', metavar='genome_filename', type=str)
+    parser.add_argument('genome_label', metavar='genome_label', type=str)
+    parser.add_argument('genome_sex', metavar='genome_sex', type=str)
+    parser.add_argument('genome_external_id', metavar='genome_external_id', type=str)
+    parser.add_argument('genome_format', metavar='genome_format', type=str)
+    parser.add_argument('score_indels', metavar='score_indels', type=bool)
+    parser.add_argument('reporting_cutoff', metavar='reporting_cutoff', type=int)
+    parser.add_argument('report_accession_id', metavar='report_accession_id', type=str)
+    parser.add_argument('--patient_info', metavar='patient_info', type=str)
 
-    family_genome_ids = upload_genomes_to_project(project_id, family_folder)
+    args = parser.parse_args()
 
+    project_id = args.project_id
+    genome = args.genome_file
+    genome_label = args.genome_label
+    genome_sex = args.genome_sex
+    genome_external_id = args.genome_external_id
+    genome_format = args.genome_format
+    score_indels = args.score_indels
+    reporting_cutoff = args.reporting_cutoff
+    accession_id = args.report_accession_id
+    patient_info_file_name = args.patient_info
+
+    proband_genome_id = upload_genome(project_id,
+                                        genome,
+                                        genome_label,
+                                        genome_sex,
+                                        genome_external_id,
+                                        genome_format)
     # Confirm uploaded genomes' data
-    sys.stdout.write("Uploaded 4 genomes:\n")
+    sys.stdout.write("Uploaded 1 genome:\n")
     sys.stdout.write("proband_genome_id: {}\n"
                      "proband_sex: {}\n"
-                     .format(family_genome_ids['proband_genome']['id'],
-                             family_genome_ids['proband_genome']['sex']))
-
-    # If a patient information file name is provided, use it. Otherwise
-    # leave it empty as a None object.
-    if len(argv) == 6:
-        patient_info_file_name = argv[5]
-    else:
-        patient_info_file_name = None
+                     .format(proband_genome_id,
+                             genome_sex))
 
     family_report_json = launch_solo_report(
-        family_genome_ids['proband_genome']['id'],
-        family_genome_ids['proband_genome']['sex'],
-        score_indels,
-        reporting_cutoff,
-        accession_id)
+                         proband_genome_id,
+                         genome_sex,
+                         score_indels,
+                         reporting_cutoff,
+                         accession_id)
 
     # Confirm launched report data
     sys.stdout.write("\n")
@@ -244,7 +202,7 @@ def main(argv):
         patient_info = generate_patient_info_json(patient_info_file_name)
         add_fields_to_cr(clinical_report_id, patient_info)
 
-    sys.stdout.write('Launched Family Report:\n'
+    sys.stdout.write('Launched Solo Report:\n'
                      'id: {}\n'
                      'test_type: {}\n'
                      'accession_id: {}\n'
