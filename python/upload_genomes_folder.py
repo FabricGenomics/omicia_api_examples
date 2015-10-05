@@ -80,7 +80,7 @@ def main(argv):
 
     # Output genome labels, ids, and sizes
     for genome_object in genome_objects:
-        sys.stdout.write("genome_label: {}, genome_id: {}, size: {}\n"
+        sys.stdout.write("genome_label: {}, genome_id: {}, size: {} \n"
                          .format(genome_object.get('genome_label', 'Missing'),
                                  genome_object.get('genome_id', 'Missing'),
                                  genome_object.get('size', 'Missing')))
