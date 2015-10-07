@@ -37,7 +37,7 @@ def get_cr_variants(cr_id, statuses, _format):
         for i, status in enumerate(statuses):
             if i > 0:
                 url += "&"
-            url = url + "status={}".format(status)
+            url = url + "status={}&extended=True".format(status)
 
     # Add a paremeter for format. If not set, default is json
     if _format == "VCF":
