@@ -41,7 +41,7 @@ def patch_cr_variant(cr_id, report_variant_id, patch_values):
 
 
 def main():
-    """Main function. Get report variants, all or filtering by status.
+    """Main function. Patch a report variant.
     """
     parser = argparse.ArgumentParser(description='Patch a variant in an existing clinical report.')
     parser.add_argument('cr_id', metavar='clinical_report_id', type=int)
