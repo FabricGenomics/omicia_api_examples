@@ -5,6 +5,7 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
+import simplejson as json
 
 #Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -38,7 +39,7 @@ def main(argv):
         sys.exit("Usage: python get_report.py <report_id>")
     report_id = argv[0]
 
-    json_response = get_report(report_id)
+    json_response = json.loads(get_report(report_id))
 
     # Access the JSON object's 'status' attribute
     try:

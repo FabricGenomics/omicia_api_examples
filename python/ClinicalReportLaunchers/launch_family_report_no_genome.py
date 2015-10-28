@@ -27,9 +27,6 @@ def launch_family_report(score_indels, reporting_cutoff, accession_id, sex, hpo_
     # Construct url and request
     url = "{}/reports/".format(OMICIA_API_URL)
 
-    print "hpo terms"
-    print hpo_terms
-
     url_payload = {'report_type': "Trio",
                    'mother_genome_id': None,
                    'father_genome_id': None,
@@ -78,7 +75,6 @@ def main(argv):
     sys.stdout.write("\n")
 
     if "clinical_report" not in family_report_json.keys():
-        print family_report_json
         sys.exit("Failed to launch. Check report parameters for correctness.")
     clinical_report = family_report_json['clinical_report']
     sys.stdout.write('Launched Family Report:\n'

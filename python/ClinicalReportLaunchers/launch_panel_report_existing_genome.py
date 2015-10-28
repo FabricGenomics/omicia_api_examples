@@ -19,6 +19,7 @@ If you are having trouble with the patient information file, make sure its
 line endings are newlines (\n) and not the deprecated carriage returns (\r)
 """
 
+import argparse
 import csv
 import json
 import os
@@ -108,21 +109,20 @@ def launch_panel_report(genome_id, filter_id, panel_id, accession_id):
 def main(argv):
     """Main function, creates a panel report.
     """
-    if len(argv) < 4:
-        sys.exit("Usage: python launch_panel_report_existing_genome.py \
-        <genome_id> <filter_id> <panel_id> <accession_id>\
-        optional: <patient_info_file>")
-    genome_id = argv[0]
-    filter_id = argv[1]
-    panel_id = argv[2]
-    accession_id = argv[3]
+    parser = argparse.ArgumentParser(description='Launch a Panel Report with no genome.')
+    parser.add_argument('genome_id', metavar='genome_id', type=int)
+    parser.add_argument('--filter_id', metavar='filter_id', type=int)
+    parser.add_argument('panel_id', metavar='panel_id', type=int)
+    parser.add_argument('accession_id', metavar='accession_id', type=str)
+    parser.add_argument('--patient_info_file', metavar='patient_info_file', type=str)
 
-    # If a patient information file name is provided, use it. Otherwise
-    # leave it empty as a None object.
-    if len(argv) == 5:
-        patient_info_file_name = argv[4]
-    else:
-        patient_info_file_name = None
+    args = parser.parse_args()
+
+    genome_id = args.genome_id
+    filter_id = args.filter_id
+    panel_id = args.panel_id
+    accession_id = args.accession_id
+    patient_info_file_name = args.patient_info_file
 
     json_response = launch_panel_report(genome_id,
                                         filter_id,

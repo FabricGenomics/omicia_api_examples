@@ -28,6 +28,7 @@ If you are having trouble with using either csv file, make sure its
 line endings are newlines (\n) and not the deprecated carriage returns (\r)
 """
 
+import argparse
 import csv
 import json
 import os
@@ -139,7 +140,7 @@ def launch_panel_trio_report(panel_id, filter_id, mother_genome_id, father_genom
     url = "{}/reports/".format(OMICIA_API_URL)
     url_payload = {'report_type': "panel_trio",
                    'panel_id': panel_id,
-                   'filter_id': filter_id,
+                   'filter_id': filter_id if filter_id else None,
                    'mother_genome_id': int(mother_genome_id),
                    'father_genome_id': int(father_genome_id),
                    'proband_genome_id': int(proband_genome_id),
@@ -207,16 +208,25 @@ def upload_genomes_to_project(project_id, family_folder):
 def main(argv):
     """Main function, creates a panel report.
     """
-    if len(argv) < 5:
-        sys.exit("Usage: python launch_family_report.py <project_id> <panel_id> <filter_id>\
-        <family_folder> <reporting_cutoff> <accession_id> \
-        optional: <patient_info_file>")
-    project_id = argv[0]
-    panel_id = argv[1]
-    filter_id = argv[2]
-    family_folder = argv[3]
-    reporting_cutoff = argv[4]
-    accession_id = argv[5]
+    parser = argparse.ArgumentParser(description='Launch a Panel Report with no genome.')
+    parser.add_argument('project_id', metavar='project_id', type=int)
+    parser.add_argument('panel_id', metavar='panel_id', type=int)
+    parser.add_argument('--filter_id', metavar='filter_id', type=int)
+    parser.add_argument('family_folder', metavar='family_folder', type=str)
+    parser.add_argument('reporting_cutoff', metavar='reporting_cutoff', type=int)
+    parser.add_argument('accession_id', metavar='accession_id', type=str)
+    parser.add_argument('--patient_info_file', metavar='patient_info_file', type=str)
+
+
+    args = parser.parse_args()
+
+    project_id = args.project_id
+    panel_id = args.panel_id
+    filter_id = args.filter_id
+    family_folder = args.family_folder
+    reporting_cutoff = args.reporting_cutoff
+    accession_id = args.accession_id
+    patient_info_file_name = args.patient_info_file
 
     family_genome_ids = upload_genomes_to_project(project_id, family_folder)
 
@@ -230,13 +240,6 @@ def main(argv):
                              family_genome_ids['father_genome_id'],
                              family_genome_ids['proband_genome']['id'],
                              family_genome_ids['proband_genome']['sex']))
-
-    # If a patient information file name is provided, use it. Otherwise
-    # leave it empty as a None object.
-    if len(argv) == 7:
-        patient_info_file_name = argv[6]
-    else:
-        patient_info_file_name = None
 
     family_report_json = launch_panel_trio_report(
         panel_id, filter_id,
@@ -255,7 +258,7 @@ def main(argv):
         sys.exit("Failed to launch. Check report parameters for correctness.")
     clinical_report = family_report_json['clinical_report']
 
-     # If a patient information csv file is provided, use it to generate a
+    # If a patient information csv file is provided, use it to generate a
     # representative JSON object and add the patient fields to the report
     if patient_info_file_name:
         clinical_report_id = clinical_report.get('id')
