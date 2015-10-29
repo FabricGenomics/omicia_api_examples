@@ -2,11 +2,12 @@
 """
 
 import csv
-import json
+import simplejson as json
 import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
+import argparse
 
 #Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -20,20 +21,25 @@ OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
 OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
-def launch_family_report(score_indels, reporting_cutoff, accession_id):
+def launch_family_report(score_indels, reporting_cutoff, accession_id, sex, hpo_terms):
     """Launch a family report. Return the JSON response.
     """
     # Construct url and request
     url = "{}/reports/".format(OMICIA_API_URL)
+
+    print "hpo terms"
+    print hpo_terms
+
     url_payload = {'report_type': "Trio",
                    'mother_genome_id': None,
                    'father_genome_id': None,
                    'proband_genome_id': None,
-                   'proband_sex': None,
+                   'proband_sex': sex,
                    'background': 'FULL',
                    'score_indels': bool(score_indels),
                    'reporting_cutoff': int(reporting_cutoff),
-                   'accession_id': accession_id}
+                   'accession_id': accession_id,
+                   'hpo_terms': json.dumps(hpo_terms)}
 
     sys.stdout.write("Launching family report...\n")
     result = requests.post(url, auth=auth, data=json.dumps(url_payload))
@@ -42,19 +48,31 @@ def launch_family_report(score_indels, reporting_cutoff, accession_id):
 
 
 def main(argv):
-    """Main function, creates a panel report.
+    """Launch a family report with no genomes.
     """
-    if len(argv) < 3:
-        sys.exit("Usage: python launch_family_report.py \
-        <score_indels> <reporting_cutoff> <accession_id>")
-    score_indels = argv[0]
-    reporting_cutoff = argv[1]
-    accession_id = argv[2]
+    parser = argparse.ArgumentParser(
+        description='Launch a family report with no genomes')
+    parser.add_argument('indels', metavar='score_indels')
+    parser.add_argument('cutoff', metavar='reporting_cutoff')
+    parser.add_argument('acc', metavar='accession_id')
+    parser.add_argument('sex', metavar='sex (m|f)')
+    parser.add_argument('--hpo', metavar='hpo_terms')
+    args = parser.parse_args()
+
+    score_indels = args.indels
+    reporting_cutoff = args.cutoff
+    accession_id = args.acc
+    sex = args.sex
+    hpo_terms = args.hpo or None
+    if hpo_terms is not None:
+        hpo_terms = hpo_terms.split(',')
 
     family_report_json = launch_family_report(
         score_indels,
         reporting_cutoff,
-        accession_id)
+        accession_id,
+        sex,
+        hpo_terms)
 
     # Confirm launched report data
     sys.stdout.write("\n")
