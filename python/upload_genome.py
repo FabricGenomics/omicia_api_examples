@@ -29,7 +29,7 @@ def upload_genome_to_project(project_id, label, sex, file_format, file_name, ext
            &assembly_version=hg19&format={}"
     url = url.format(OMICIA_API_URL, project_id, label, sex, external_id, file_format)
 
-    sys.stdout.write("Uploading...\n")
+    sys.stdout.write("Uploading genome...\n")
     with open(file_name, 'rb') as file_handle:
         #Post request and return id of newly uploaded genome
         result = requests.put(url, auth=auth, data=file_handle)
@@ -52,14 +52,11 @@ def main(argv):
     else:
         external_id = ""
     json_response = upload_genome_to_project(project_id, label, sex,
-                                             file_format, file_name, external_id)
+                                         file_format, file_name, external_id)
 
     try:
-        genome_object = json_response
-        sys.stdout.write("genome_label: {}, genome_id: {}, size: {}\n"
-                         .format(genome_object.get('genome_label', 'Missing'),
-                                 genome_object.get('genome_id', 'Missing'),
-                                 genome_object.get('size', 'Missing')))
+        genome_id = json_response["genome_id"]
+        sys.stdout.write("genome_id: {}\n".format(genome_id))
     except KeyError:
         if json_response['description']:
             sys.stdout.write('Error: {}\n'.format(json_response['description']))
