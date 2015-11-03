@@ -30,9 +30,11 @@ def patch_cr_variant(cr_id, report_variant_id, patch_values):
     url = "{}/reports/{}/variants/{}"
     url = url.format(OMICIA_API_URL, cr_id, report_variant_id)
 
-    patch_attributes = [key for key,value in patch_values.items()]
+    patch_attributes = [key for key, value in patch_values.items()]
     # Build the patch payload
-    url_payload = json.dumps([{"op": "replace", "path": "/{}".format(attribute), "value": patch_values.get(attribute)}
+    url_payload = json.dumps([{"op": "replace",
+                               "path": "/{}".format(attribute),
+                               "value": patch_values.get(attribute)}
                               for attribute in patch_attributes])
     headers = {"content-type": "application/json-patch+json"}
     sys.stdout.flush()
@@ -47,16 +49,19 @@ def main():
     parser.add_argument('cr_id', metavar='clinical_report_id', type=int)
     parser.add_argument('report_variant_id', metavar='report_variant_id', type=int)
     parser.add_argument('--status', metavar='status', type=str)
-
+    parser.add_argument('--to_report', metavar='to_report', type=int)
     args = parser.parse_args()
 
     cr_id = args.cr_id
     report_variant_id = args.report_variant_id
     status = args.status
+    to_report = args.to_report
 
     patch_values = {}
     if status:
         patch_values['status'] = status
+    if to_report:
+        patch_values['to_report'] = to_report
 
     response = patch_cr_variant(cr_id, report_variant_id, patch_values)
     try:
