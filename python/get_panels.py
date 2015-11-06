@@ -56,7 +56,7 @@ def main():
     panel_test_code = args.t
 
     json_response = get_panels(panel_name, panel_description, panel_test_code)
-    panel_ids = json.loads(json_response)
+    panel_ids = json_response
 
     sys.stdout.write('{}'.format(panel_ids))
 
