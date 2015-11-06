@@ -1,10 +1,12 @@
-upload.sh
----------
+#!/bin/bash
+
+#upload.sh
+#---------
 
 #Usage: upload.sh 131 "Sample123" male vcf file.vcg.gz
 
 CURL=/usr/bin/curl
-CURLOPTS=-s --data-urlencode
+CURLOPTS=-s
 
 URL=https://${OMICIA_API_LOGIN}:${OMICIA_API_PASSWORD}@api.omicia.com
 
@@ -17,5 +19,5 @@ FORMAT=$4
 FILE=$5
 
 #upload genome
-$CURL $CURLOPTS "$URL/projects/$PROJECT_ID/genomes?genome_label=$LABEL&genome_sex=$SEX&assembly_version=hg19&format=$FORMAT" --upload-file $FILE
+$CURL $CURLOPTS --data-urlencode "$URL/projects/$PROJECT_ID/genomes?genome_label=$LABEL&genome_sex=$SEX&assembly_version=hg19&format=$FORMAT" --upload-file $FILE
 echo
