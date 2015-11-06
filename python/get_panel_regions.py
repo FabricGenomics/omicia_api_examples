@@ -43,7 +43,7 @@ def main():
     panel_id = args.p
 
     json_response = get_panel_regions(panel_id)
-    panel_regions = json.loads(json_response)
+    panel_regions = json_response
 
     for panel_region in panel_regions:
         sys.stdout.write('symbol: {}\n'.format(panel_region.get('symbol')))
