@@ -1,7 +1,7 @@
 """Create a genomeless panel report.
 """
 
-import csv
+import argparse
 import json
 import os
 import requests
@@ -29,8 +29,8 @@ def launch_panel_report(filter_id, panel_id, accession_id):
     url = "{}/reports/".format(OMICIA_API_URL)
     url_payload = {'report_type': "panel",
                    'genome_id': None,
-                   'filter_id': int(filter_id),
-                   'panel_id': int(panel_id),
+                   'filter_id': filter_id,
+                   'panel_id': panel_id,
                    'accession_id': accession_id}
 
     sys.stdout.write("Launching report...")
@@ -40,20 +40,24 @@ def launch_panel_report(filter_id, panel_id, accession_id):
     return result.json()
 
 
-def main(argv):
+def main():
     """Main function, creates a panel report.
     """
-    if len(argv) < 3:
-        sys.exit("Usage: python launch_panel_report_existing_genome.py "
-                 "<filter_id> <panel_id> <accession_id>")
-    filter_id = argv[0]
-    panel_id = argv[1]
-    accession_id = argv[2]
+    parser = argparse.ArgumentParser(description='Launch a panel report with no genome.')
+    parser.add_argument('p', metavar='panel_id', type=int)
+    parser.add_argument('a', metavar='accession_id', type=str)
+    parser.add_argument('--f', metavar='filter_id', type=int)
+    args = parser.parse_args()
+
+    filter_id = args.f
+    panel_id = args.p
+    accession_id = args.a
 
     json_response = launch_panel_report(filter_id,
                                         panel_id,
                                         accession_id)
     if "clinical_report" not in json_response.keys():
+        print json_response
         sys.exit("Failed to launch. Check report parameters for correctness.")
     clinical_report = json_response['clinical_report']
 
@@ -85,4 +89,4 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()
