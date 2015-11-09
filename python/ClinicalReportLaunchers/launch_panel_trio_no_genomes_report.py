@@ -117,7 +117,8 @@ def launch_panel_trio_report(panel_id, filter_id, reporting_cutoff, accession_id
 
     return result.json()
 
-def main(argv):
+
+def main():
     """Main function, creates a panel report.
     """
     parser = argparse.ArgumentParser(description='Launch a panel trio report with no genome.')
@@ -193,4 +194,4 @@ def main(argv):
                              clinical_report.get('version', 'Missing')))
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()
