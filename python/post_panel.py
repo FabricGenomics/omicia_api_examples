@@ -133,7 +133,7 @@ def main():
                                   fda_disclosure=fda_disclosure,
                                   test_code=test_code)
         try:
-            sys.stdout.write(json_response)
+            sys.stdout.write(json.dumps(json_response))
             sys.stdout.write('\n')
         except TypeError:
             sys.stdout.write("Unexpected error. Perhaps the panel you specified no longer exists?\n\n")
