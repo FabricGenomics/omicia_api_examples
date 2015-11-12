@@ -68,7 +68,7 @@ def main():
         sys.stdout.write(response.text)
     except KeyError:
         sys.stderr.write(response.text)
-
+    sys.stdout.write('\n')
 
 if __name__ == "__main__":
     main()

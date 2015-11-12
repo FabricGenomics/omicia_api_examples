@@ -25,7 +25,6 @@ def add_variant_note(cr_id, report_variant_id, note):
     """Add an internal note to a clinical report variant
     """
     # Construct request
-    print note
     url = "{}/reports/{}/variants/{}/internal_notes"
     url = url.format(OMICIA_API_URL, cr_id, report_variant_id)
 
@@ -51,10 +50,10 @@ def main():
 
     response = add_variant_note(cr_id, report_variant_id, note)
     try:
-        sys.stdout.write(response.text)
+        sys.stdout.write(json.dumps(response.json(), indent=4))
     except KeyError:
         sys.stderr.write(response.text)
-
+    sys.stdout.write('\n')
 
 if __name__ == "__main__":
     main()
