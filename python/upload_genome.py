@@ -53,7 +53,6 @@ def main(argv):
         external_id = ""
     json_response = upload_genome_to_project(project_id, label, sex,
                                          file_format, file_name, external_id)
-
     try:
         genome_id = json_response["genome_id"]
         sys.stdout.write("genome_id: {}\n".format(genome_id))

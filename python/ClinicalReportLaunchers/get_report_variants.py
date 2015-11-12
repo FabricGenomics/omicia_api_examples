@@ -75,7 +75,7 @@ def main():
             response_json = response.json()
             variants = response_json['objects']
             for variant in variants:
-                sys.stdout.write(json.dumps(variant))
+                sys.stdout.write(json.dumps(variant, indent=4))
                 sys.stdout.write('\n')
         except KeyError:
             sys.stderr.write(response.json())
