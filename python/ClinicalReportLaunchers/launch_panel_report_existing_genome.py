@@ -19,6 +19,7 @@ If you are having trouble with the patient information file, make sure its
 line endings are newlines (\n) and not the deprecated carriage returns (\r)
 """
 
+import argparse
 import csv
 import json
 import os
@@ -91,9 +92,9 @@ def launch_panel_report(genome_id, filter_id, panel_id, accession_id):
     # Construct url and request
     url = "{}/reports/".format(OMICIA_API_URL)
     url_payload = {'report_type': "panel",
-                   'genome_id': int(genome_id),
-                   'filter_id': int(filter_id),
-                   'panel_id': int(panel_id),
+                   'genome_id': genome_id,
+                   'filter_id': filter_id,
+                   'panel_id': panel_id,
                    'accession_id': accession_id}
 
     sys.stdout.write("Launching report...")
@@ -108,21 +109,19 @@ def launch_panel_report(genome_id, filter_id, panel_id, accession_id):
 def main(argv):
     """Main function, creates a panel report.
     """
-    if len(argv) < 4:
-        sys.exit("Usage: python launch_panel_report_existing_genome.py \
-        <genome_id> <filter_id> <panel_id> <accession_id>\
-        optional: <patient_info_file>")
-    genome_id = argv[0]
-    filter_id = argv[1]
-    panel_id = argv[2]
-    accession_id = argv[3]
+    parser = argparse.ArgumentParser(description='Launch a panel report with no genome.')
+    parser.add_argument('g', metavar='genome_id', type=int)
+    parser.add_argument('p', metavar='panel_id', type=int)
+    parser.add_argument('a', metavar='accession_id', type=str)
+    parser.add_argument('--f', metavar='filter_id', type=int)
+    parser.add_argument('--patient_info_file', metavar='patient_info_file', type=str)
+    args = parser.parse_args()
 
-    # If a patient information file name is provided, use it. Otherwise
-    # leave it empty as a None object.
-    if len(argv) == 5:
-        patient_info_file_name = argv[4]
-    else:
-        patient_info_file_name = None
+    genome_id = args.g
+    filter_id = args.f
+    panel_id = args.p
+    accession_id = args.a
+    patient_info_file_name = args.patient_info_file
 
     json_response = launch_panel_report(genome_id,
                                         filter_id,
@@ -143,6 +142,7 @@ def main(argv):
     # Print out the object's fields. This represents a confirmation of the
     # information for the launched report.
     sys.stdout.write('Launched Clinical Report:\n'
+                     'id: {}\n'
                      'test_type: {}\n'
                      'accession_id: {}\n'
                      'created_on: {}\n'
@@ -154,7 +154,8 @@ def main(argv):
                      'sample_collected_date: {}\n'
                      'sample_received_date: {}\n'
                      'include_cosmic: {}\n'
-                     .format(clinical_report.get('test_type', 'Missing'),
+                     .format(clinical_report.get('id', 'Missing'),
+                             clinical_report.get('test_type', 'Missing'),
                              clinical_report.get('accession_id', 'Missing'),
                              clinical_report.get('created_on', 'Missing'),
                              clinical_report.get('created_by', 'Missing'),
