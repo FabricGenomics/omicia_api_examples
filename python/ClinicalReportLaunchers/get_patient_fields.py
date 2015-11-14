@@ -43,7 +43,8 @@ def main():
     cr_id = args.c
 
     json_response = add_fields_to_cr(cr_id)
-    print json_response
+    for field in json_response:
+        sys.stdout.write("{}: {}\n".format(field.keys()[0], field.values()[0]))
 
 if __name__ == "__main__":
     main()

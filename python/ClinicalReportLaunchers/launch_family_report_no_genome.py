@@ -27,9 +27,6 @@ def launch_family_report(score_indels, reporting_cutoff, accession_id, sex, hpo_
     # Construct url and request
     url = "{}/reports/".format(OMICIA_API_URL)
 
-    print "hpo terms"
-    print hpo_terms
-
     url_payload = {'report_type': "Trio",
                    'mother_genome_id': None,
                    'father_genome_id': None,
@@ -87,9 +84,11 @@ def main(argv):
                      'accession_id: {}\n'
                      'created_on: {}\n'
                      'created_by: {}\n'
+                     'status: {}\n'
                      'filter_id: {}\n'
-                     'filter_name: {}\n'
                      'panel_id: {}\n'
+                     'hpo_terms: {}\n'
+                     'filter_name: {}\n'
                      'workspace_id: {}\n'
                      'sample_collected_date: {}\n'
                      'sample_received_date: {}\n'
@@ -98,16 +97,17 @@ def main(argv):
                      'mother_genome_id: {}\n'
                      'father_genome_id: {}\n'
                      'genome_id: {}\n'
-                     'status: {}\n'
                      'version: {}\n'
                      .format(clinical_report.get('id', 'Missing'),
                              clinical_report.get('test_type','Missing'),
                              clinical_report.get('accession_id','Missing'),
                              clinical_report.get('created_on','Missing'),
                              clinical_report.get('created_by','Missing'),
+                             clinical_report.get('status', 'Missing'),
                              clinical_report.get('filter_id','Missing'),
-                             clinical_report.get('filter_name', 'Missing'),
                              clinical_report.get('panel_id','Missing'),
+                             clinical_report.get('hpo_terms', 'Missing'),
+                             clinical_report.get('filter_name', 'Missing'),
                              clinical_report.get('workspace_id','Missing'),
                              clinical_report.get('sample_collected_date','Missing'),
                              clinical_report.get('sample_received_date','Missing'),
@@ -116,7 +116,6 @@ def main(argv):
                              clinical_report.get('mother_genome_id', 'Missing'),
                              clinical_report.get('father_genome_id', 'Missing'),
                              clinical_report.get('genome_id', 'Missing'),
-                             clinical_report.get('status', 'Missing'),
                              clinical_report.get('version', 'Missing')))
 
 if __name__ == "__main__":

@@ -120,7 +120,7 @@ def main():
                                    limitations=limitations,
                                    fda_disclosure=fda_disclosure,
                                    test_code=test_code)
-        sys.stdout.write(json_response)
+        sys.stdout.write(json.dumps(json_response))
         sys.stdout.write('\n')
         panel_id = json_response.get('id')
 

@@ -64,6 +64,7 @@ def main():
     # Print out the object's fields. This represents a confirmation of the
     # information for the launched report.
     sys.stdout.write('Launched Clinical Report:\n'
+                     'id: {}\n'
                      'test_type: {}\n'
                      'accession_id: {}\n'
                      'created_on: {}\n'
@@ -75,7 +76,8 @@ def main():
                      'sample_collected_date: {}\n'
                      'sample_received_date: {}\n'
                      'include_cosmic: {}\n'
-                     .format(clinical_report.get('test_type', 'Missing'),
+                     .format(clinical_report.get('id', 'Missing'),
+                             clinical_report.get('test_type', 'Missing'),
                              clinical_report.get('accession_id', 'Missing'),
                              clinical_report.get('created_on', 'Missing'),
                              clinical_report.get('created_by', 'Missing'),

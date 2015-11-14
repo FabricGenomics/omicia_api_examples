@@ -19,6 +19,7 @@ If you are having trouble with the patient information file, make sure its
 line endings are newlines (\n) and not the deprecated carriage returns (\r)
 """
 
+import argparse
 import csv
 import json
 import os
@@ -91,9 +92,9 @@ def launch_panel_report(genome_id, filter_id, panel_id, accession_id):
     # Construct url and request
     url = "{}/reports/".format(OMICIA_API_URL)
     url_payload = {'report_type': "panel",
-                   'genome_id': int(genome_id),
-                   'filter_id': int(filter_id),
-                   'panel_id': int(panel_id),
+                   'genome_id': genome_id,
+                   'filter_id': filter_id,
+                   'panel_id': panel_id,
                    'accession_id': accession_id}
 
     sys.stdout.write("Launching report...")
@@ -123,26 +124,27 @@ def upload_genome_to_project(project_id, label, sex, file_format, file_name):
 def main(argv):
     """Main function, uploads a geneome and creates a panel report using it.
     """
-    if len(argv) < 8:
-        sys.exit("Usage: python launch_panel_report_new_genome.py <project_id>\
-        <label> <sex (male|female|unspecified)> <format> <genome.vcf>\
-        <filter_id> <panel_id> <accession_id>\
-        optional: <patient_info_file>")
-    project_id = argv[0]
-    label = argv[1]
-    sex = argv[2]
-    file_format = argv[3]
-    genome_filename = argv[4]
-    filter_id = argv[5]
-    panel_id = argv[6]
-    accession_id = argv[7]
+    parser = argparse.ArgumentParser(description='Launch a panel report with no genome.')
+    parser.add_argument('project_id', metavar='project_id', type=int)
+    parser.add_argument('label', metavar='label', type=str)
+    parser.add_argument('sex', metavar='sex', type=str)
+    parser.add_argument('file_format', metavar='file_format', type=str)
+    parser.add_argument('genome_filename', metavar='genome_filename', type=str)
+    parser.add_argument('panel_id', metavar='panel_id', type=int)
+    parser.add_argument('accession_id', metavar='accession_id', type=str)
+    parser.add_argument('--filter_id', metavar='filter_id', type=int)
+    parser.add_argument('--patient_info_file', metavar='patient_info_file', type=str)
+    args = parser.parse_args()
 
-    # If a patient information file name is provided, use it. Otherwise
-    # leave it empty as a None object.
-    if len(argv) == 9:
-        patient_info_file_name = argv[8]
-    else:
-        patient_info_file_name = None
+    project_id = args.project_id
+    label = args.label
+    sex = args.sex
+    file_format = args.file_format
+    genome_filename = args.genome_filename
+    filter_id = args.filter_id
+    panel_id = args.panel_id
+    accession_id = args.accession_id
+    patient_info_file_name = args.patient_info_file
 
     # Upload genome
     genome_id = upload_genome_to_project(project_id, label, sex,
@@ -169,6 +171,7 @@ def main(argv):
     # Print out the object's fields. This represents a confirmation of the
     # information for the launched report.
     sys.stdout.write('Launched Clinical Report:\n'
+                     'id: {}\n'
                      'test_type: {}\n'
                      'accession_id: {}\n'
                      'created_on: {}\n'
@@ -180,7 +183,8 @@ def main(argv):
                      'sample_collected_date: {}\n'
                      'sample_received_date: {}\n'
                      'include_cosmic: {}\n'
-                     .format(clinical_report.get('test_type','Missing'),
+                     .format(clinical_report.get('id', 'Missing'),
+                             clinical_report.get('test_type','Missing'),
                              clinical_report.get('accession_id','Missing'),
                              clinical_report.get('created_on','Missing'),
                              clinical_report.get('created_by','Missing'),

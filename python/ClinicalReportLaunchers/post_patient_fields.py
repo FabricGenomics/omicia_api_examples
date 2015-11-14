@@ -49,7 +49,8 @@ def main():
     patient_fields = args.f
 
     json_response = add_fields_to_cr(cr_id, patient_fields)
-    print json_response
+    for field in json_response:
+        sys.stdout.write("{}: {}\n".format(field.keys()[0], field.values()[0]))
 
 if __name__ == "__main__":
     main()
