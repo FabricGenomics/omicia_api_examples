@@ -23,18 +23,26 @@ auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 def add_genome_to_clinical_report(clinical_report_id,
                                   proband_genome_id=None,
+                                  proband_sex=None,
                                   mother_genome_id=None,
                                   father_genome_id=None,
                                   sibling_genome_id=None,
+                                  sibling_affected=None,
+                                  duo_relation_genome_id=None,
+                                  duo_relation_affected=None,
                                   vaast_report_id=None):
     """Use the Omicia API to add genome(s) to a clinical report
     """
     # Construct url and request
     url = "{}/reports/{}".format(OMICIA_API_URL, clinical_report_id)
     url_payload = {'proband_genome_id': proband_genome_id,
+                   'proband_sex': proband_sex,
                    'mother_genome_id': mother_genome_id,
                    'father_genome_id': father_genome_id,
                    'sibling_genome_id': sibling_genome_id,
+                   'sibling_affected': sibling_affected,
+                   'duo_relation_genome_id': duo_relation_genome_id,
+                   'duo_realtion_affected': duo_relation_affected,
                    'vaast_report_id': vaast_report_id}
 
     sys.stdout.write("Adding genome(s) to report...")
@@ -55,7 +63,11 @@ def main(argv):
     parser.add_argument('--m', metavar='mother_genome_id', type=int)
     parser.add_argument('--f', metavar='father_genome_id', type=int)
     parser.add_argument('--s', metavar='sibling_genome_id', type=int)
+    parser.add_argument('--sibling_affected', metavar='sibling_affected', type=bool)
+    parser.add_argument('--d', metavar='duo_relation_genome_id', type=int)
+    parser.add_argument('--duo_affected', metavar='duo_relation_affected', type=bool)
     parser.add_argument('--v', metavar='vaast_report_id', type=int)
+    parser.add_argument('--sex', metavar='sex', type=str)
     args = parser.parse_args()
 
     cr_id = args.c
@@ -63,13 +75,21 @@ def main(argv):
     mother_genome_id = args.m
     father_genome_id = args.f
     sibling_genome_id = args.s
+    sibling_affected = args.sibling_affected
+    duo_relation_genome_id = args.d
+    duo_relation_affected = args.duo_affected
     vaast_report_id = args.v
+    proband_sex = args.sex
 
     json_response = add_genome_to_clinical_report(cr_id,
                                                   proband_genome_id=proband_genome_id,
+                                                  proband_sex=proband_sex,
                                                   mother_genome_id=mother_genome_id,
                                                   father_genome_id=father_genome_id,
                                                   sibling_genome_id=sibling_genome_id,
+                                                  sibling_affected=sibling_affected,
+                                                  duo_relation_genome_id=duo_relation_genome_id,
+                                                  duo_relation_affected=duo_relation_affected,
                                                   vaast_report_id=vaast_report_id)
     if "clinical_report" not in json_response.keys():
         sys.exit("Failed to launch. Check report parameters for correctness.")

@@ -21,16 +21,19 @@ OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
 OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
-def launch_family_report(score_indels, reporting_cutoff, accession_id, sex, hpo_terms):
+
+def launch_family_report(report_type, score_indels, reporting_cutoff, accession_id, sex, hpo_terms):
     """Launch a family report. Return the JSON response.
     """
     # Construct url and request
     url = "{}/reports/".format(OMICIA_API_URL)
 
-    url_payload = {'report_type': "Trio",
+    url_payload = {'report_type': report_type,
                    'mother_genome_id': None,
                    'father_genome_id': None,
                    'proband_genome_id': None,
+                   'sibling_genome_id': None,
+                   'duo_relation_genome_id': None,
                    'proband_sex': sex,
                    'background': 'FULL',
                    'score_indels': bool(score_indels),
@@ -49,6 +52,10 @@ def main(argv):
     """
     parser = argparse.ArgumentParser(
         description='Launch a family report with no genomes')
+    parser.add_argument('report_type',
+                        metavar='report_type',
+                        type=str,
+                        choices=['exome', 'Duo', 'Trio', 'Quad'])
     parser.add_argument('indels', metavar='score_indels')
     parser.add_argument('cutoff', metavar='reporting_cutoff')
     parser.add_argument('acc', metavar='accession_id')
@@ -56,6 +63,7 @@ def main(argv):
     parser.add_argument('--hpo', metavar='hpo_terms')
     args = parser.parse_args()
 
+    report_type = args.report_type
     score_indels = args.indels
     reporting_cutoff = args.cutoff
     accession_id = args.acc
@@ -65,6 +73,7 @@ def main(argv):
         hpo_terms = hpo_terms.split(',')
 
     family_report_json = launch_family_report(
+        report_type,
         score_indels,
         reporting_cutoff,
         accession_id,
