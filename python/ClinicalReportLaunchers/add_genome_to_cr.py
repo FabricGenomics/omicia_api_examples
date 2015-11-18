@@ -42,7 +42,7 @@ def add_genome_to_clinical_report(clinical_report_id,
                    'sibling_genome_id': sibling_genome_id,
                    'sibling_affected': sibling_affected,
                    'duo_relation_genome_id': duo_relation_genome_id,
-                   'duo_realtion_affected': duo_relation_affected,
+                   'duo_relation_affected': duo_relation_affected,
                    'vaast_report_id': vaast_report_id}
 
     sys.stdout.write("Adding genome(s) to report...")
@@ -63,11 +63,11 @@ def main(argv):
     parser.add_argument('--m', metavar='mother_genome_id', type=int)
     parser.add_argument('--f', metavar='father_genome_id', type=int)
     parser.add_argument('--s', metavar='sibling_genome_id', type=int)
-    parser.add_argument('--sibling_affected', metavar='sibling_affected', type=int)
+    parser.add_argument('--sibling_affected', metavar='sibling_affected', type=str, choices=['true', 'false'])
     parser.add_argument('--d', metavar='duo_relation_genome_id', type=int)
-    parser.add_argument('--duo_affected', metavar='duo_relation_affected', type=int)
+    parser.add_argument('--duo_affected', metavar='duo_relation_affected', type=str, choices=['true', 'false'])
     parser.add_argument('--v', metavar='vaast_report_id', type=int)
-    parser.add_argument('--sex', metavar='sex', type=str)
+    parser.add_argument('--sex', metavar='sex', type=str, choices=['f', 'm'])
     args = parser.parse_args()
 
     cr_id = args.c
