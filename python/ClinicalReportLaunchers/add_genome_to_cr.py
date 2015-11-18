@@ -1,4 +1,12 @@
-"""Upload a genome to an existing project.
+"""Add genomes to an existing clinical report.
+Example usages:
+
+* Adding male proband genome (id = 1) to a solo or panel report (clinical_report_id = 100)
+    python add_genome_to_cr.py --p 1 --sex m 100
+
+* Adding female proband (id =1), mother (id = 2) and father genome (id = 3) to a family or panel
+  trio report (clinical_report_id = 100)
+    python add_genome_to_cr.py --p 1 --sex f --f 2 --m 3 1000
 """
 
 import os
@@ -48,14 +56,12 @@ def add_genome_to_clinical_report(clinical_report_id,
     sys.stdout.write("Adding genome(s) to report...")
     sys.stdout.write("\n\n")
     sys.stdout.flush()
-    # If patient information was not provided, make a post request to reports
-    # without a patient information parameter in the url
     result = requests.put(url, auth=auth, data=json.dumps(url_payload))
     return result.json()
 
 
-def main(argv):
-    """main function. Upload a specified VCF file to a specified project.
+def main():
+    """Main function. Add genomes and metadata to an existing clinical report.
     """
     parser = argparse.ArgumentParser(description='Add genome ids or vaast report ids to existing clinical reports.')
     parser.add_argument('c', metavar='clinical_report_id', type=int)
@@ -92,6 +98,7 @@ def main(argv):
                                                   duo_relation_affected=duo_relation_affected,
                                                   vaast_report_id=vaast_report_id)
     if "clinical_report" not in json_response.keys():
+        sys.stderr(json_response)
         sys.exit("Failed to launch. Check report parameters for correctness.")
     clinical_report = json_response['clinical_report']
     sys.stdout.write('Clinical Report Info:\n'
@@ -133,4 +140,4 @@ def main(argv):
                              clinical_report.get('version', 'Missing')))
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()
