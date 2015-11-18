@@ -1,8 +1,8 @@
-"""Get all clinical reports, either with extended information or not.
-Fetching extended information for many reports could take a long time.
+"""Get all clinical reports, or search for reports by accession id or genome id.
 Example usages:
  python get_clinical_reports.py
- python get_clinical_reports.py --e true
+ python get_clinical_reports.py --a ABCA4
+ python get_clinical_reports.py --g 103
 """
 
 import os
