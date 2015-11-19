@@ -61,6 +61,7 @@ def add_genome_to_clinical_report(clinical_report_id,
                                   father_genome_id=None,
                                   sibling_genome_id=None,
                                   sibling_affected=None,
+                                  sibling_sex=None,
                                   duo_relation_genome_id=None,
                                   duo_relation_affected=None,
                                   vaast_report_id=None):
@@ -74,6 +75,7 @@ def add_genome_to_clinical_report(clinical_report_id,
                    'father_genome_id': father_genome_id,
                    'sibling_genome_id': sibling_genome_id,
                    'sibling_affected': sibling_affected,
+                   'sibling_sex': sibling_sex,
                    'duo_relation_genome_id': duo_relation_genome_id,
                    'duo_relation_affected': duo_relation_affected,
                    'vaast_report_id': vaast_report_id}
@@ -95,10 +97,11 @@ def main():
     parser.add_argument('--f', metavar='father_genome_id', type=int)
     parser.add_argument('--s', metavar='sibling_genome_id', type=int)
     parser.add_argument('--sibling_affected', metavar='sibling_affected', type=str, choices=['true', 'false'])
+    parser.add_argument('--sibling_sex', metavar='sibling_sex', type=str, choices=['m', 'f', 'u'])
     parser.add_argument('--d', metavar='duo_relation_genome_id', type=int)
     parser.add_argument('--duo_affected', metavar='duo_relation_affected', type=str, choices=['true', 'false'])
     parser.add_argument('--v', metavar='vaast_report_id', type=int)
-    parser.add_argument('--sex', metavar='sex', type=str, choices=['f', 'm'])
+    parser.add_argument('sex', metavar='sex', type=str, choices=['f', 'm', 'u'])
     args = parser.parse_args()
 
     cr_id = args.c
@@ -107,10 +110,19 @@ def main():
     father_genome_id = args.f
     sibling_genome_id = args.s
     sibling_affected = args.sibling_affected
+    sibling_sex = args.sibling_sex
     duo_relation_genome_id = args.d
     duo_relation_affected = args.duo_affected
     vaast_report_id = args.v
     proband_sex = args.sex
+
+    if sibling_genome_id is not None:
+        if sibling_sex is None:
+            sys.exit("Sibling sex must be specified as m (male), f (female) or u (unknown) if "
+                     "sibling genome is specified.")
+        if sibling_affected is None:
+            sys.exit("Sibling affected status must be true or false "
+                     "if sibling genome is specified.")
 
     json_response = add_genome_to_clinical_report(cr_id,
                                                   proband_genome_id=proband_genome_id,
@@ -119,6 +131,7 @@ def main():
                                                   father_genome_id=father_genome_id,
                                                   sibling_genome_id=sibling_genome_id,
                                                   sibling_affected=sibling_affected,
+                                                  sibling_sex=sibling_sex,
                                                   duo_relation_genome_id=duo_relation_genome_id,
                                                   duo_relation_affected=duo_relation_affected,
                                                   vaast_report_id=vaast_report_id)
