@@ -96,8 +96,8 @@ def launch_solo_report(proband_genome_id, proband_sex,
                    'proband_genome_id': int(proband_genome_id),
                    'proband_sex': proband_sex,
                    'background': 'FULL',
-                   'score_indels': bool(score_indels),
-                   'reporting_cutoff': int(reporting_cutoff),
+                   'score_indels': score_indels,
+                   'reporting_cutoff': reporting_cutoff,
                    'accession_id': accession_id}
 
     sys.stdout.write("Launching solo report...\n")
@@ -132,12 +132,12 @@ def main():
     parser.add_argument('project_id', metavar='project_id', type=int)
     parser.add_argument('genome_file', metavar='genome_filename', type=str)
     parser.add_argument('genome_label', metavar='genome_label', type=str)
-    parser.add_argument('genome_sex', metavar='genome_sex', type=str, choicies=['m', 'f'])
+    parser.add_argument('genome_sex', metavar='genome_sex', type=str, choices=['m', 'f'])
     parser.add_argument('genome_external_id', metavar='genome_external_id', type=str)
     parser.add_argument('genome_format', metavar='genome_format', type=str)
-    parser.add_argument('score_indels', metavar='score_indels', type=bool)
-    parser.add_argument('reporting_cutoff', metavar='reporting_cutoff', type=int)
     parser.add_argument('report_accession_id', metavar='report_accession_id', type=str)
+    parser.add_argument('--score_indels', metavar='score_indels', type=bool, default=False)
+    parser.add_argument('--reporting_cutoff', metavar='reporting_cutoff', type=int)
     parser.add_argument('--patient_info', metavar='patient_info', type=str)
 
     args = parser.parse_args()

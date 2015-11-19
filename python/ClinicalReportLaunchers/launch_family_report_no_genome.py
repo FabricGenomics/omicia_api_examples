@@ -9,7 +9,7 @@ from requests.auth import HTTPBasicAuth
 import sys
 import argparse
 
-#Load environment variables for request authentication parameters
+# Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
     sys.exit("OMICIA_API_PASSWORD environment variable missing")
 
@@ -36,8 +36,8 @@ def launch_family_report(report_type, score_indels, reporting_cutoff, accession_
                    'duo_relation_genome_id': None,
                    'proband_sex': sex,
                    'background': 'FULL',
-                   'score_indels': bool(score_indels),
-                   'reporting_cutoff': int(reporting_cutoff),
+                   'score_indels': score_indels,
+                   'reporting_cutoff': reporting_cutoff,
                    'accession_id': accession_id,
                    'hpo_terms': json.dumps(hpo_terms)}
 
@@ -47,7 +47,7 @@ def launch_family_report(report_type, score_indels, reporting_cutoff, accession_
     return result.json()
 
 
-def main(argv):
+def main():
     """Launch a family report with no genomes.
     """
     parser = argparse.ArgumentParser(
@@ -56,8 +56,8 @@ def main(argv):
                         metavar='report_type',
                         type=str,
                         choices=['exome', 'Duo', 'Trio', 'Quad'])
-    parser.add_argument('indels', metavar='score_indels')
-    parser.add_argument('cutoff', metavar='reporting_cutoff')
+    parser.add_argument('--indels', metavar='score_indels', type=bool, default=False)
+    parser.add_argument('--cutoff', metavar='reporting_cutoff', type=int)
     parser.add_argument('acc', metavar='accession_id')
     parser.add_argument('sex', metavar='sex (m|f)')
     parser.add_argument('--hpo', metavar='hpo_terms')
@@ -128,4 +128,4 @@ def main(argv):
                              clinical_report.get('version', 'Missing')))
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()
