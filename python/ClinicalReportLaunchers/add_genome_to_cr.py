@@ -7,6 +7,31 @@ Example usages:
 * Adding female proband (id =1), mother (id = 2) and father genome (id = 3) to a family or panel
   trio report (clinical_report_id = 100)
     python add_genome_to_cr.py --p 1 --sex f --f 2 --m 3 1000
+
+Sample console output:
+
+Adding genome(s) to report...
+
+Clinical Report Info:
+id: 3340
+test_type: panel
+accession_id: PGX15-010311
+created_on: 2015-11-18T17:02:39
+created_by: 185
+status: WAITING
+filter_id: None
+panel_id: 1987
+filter_name: None
+workspace_id: 233
+sample_collected_date: None
+sample_received_date: None
+include_cosmic: False
+vaast_report_id: None
+mother_genome_id: None
+father_genome_id: None
+genome_id: 206164
+version: 4
+
 """
 
 import os
