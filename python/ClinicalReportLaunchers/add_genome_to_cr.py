@@ -8,6 +8,8 @@ Example usages:
   trio report (clinical_report_id = 100)
     python add_genome_to_cr.py --p 1 --sex f --f 2 --m 3 1000
 
+If sibling genome is specified, then sibling sex and affected status must also be specified.
+
 Sample console output:
 
 Adding genome(s) to report...
