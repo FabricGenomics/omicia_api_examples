@@ -48,7 +48,7 @@ def launch_family_report(report_type, score_indels, reporting_cutoff, accession_
 
 
 def main():
-    """Launch a family report with no genomes.
+    """Launch a solo, trio, or quad family clinical report with no genomes.
     """
     parser = argparse.ArgumentParser(
         description='Launch a family report with no genomes')
@@ -59,7 +59,7 @@ def main():
     parser.add_argument('--indels', metavar='score_indels', type=bool, default=False)
     parser.add_argument('--cutoff', metavar='reporting_cutoff', type=int)
     parser.add_argument('acc', metavar='accession_id')
-    parser.add_argument('sex', metavar='sex (m|f)')
+    parser.add_argument('--sex', metavar='sex', type=str, choices=['m', 'f', 'u'])
     parser.add_argument('--hpo', metavar='hpo_terms')
     args = parser.parse_args()
 
