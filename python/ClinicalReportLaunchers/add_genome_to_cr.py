@@ -7,6 +7,53 @@ Example usages:
 * Adding female proband (id =1), mother (id = 2) and father genome (id = 3) to a family or panel
   trio report (clinical_report_id = 100)
     python add_genome_to_cr.py --p 1 --sex f --f 2 --m 3 1000
+
+Sample output:
+
+[
+    {
+        "filter_name": "None",
+        "father_variant_report_id": 15316,
+        "submitted_on": "2015-11-09T11:06:57",
+        "created_on": "2015-03-26T09:44:43",
+        "submitted_for_review_by": null,
+        "accession_id": "ek1",
+        "pipeline_version": "4.1.2.58",
+        "mother_variant_report_id": 15322,
+        "id": 1801,
+        "report_approved_date": "2015-11-09T11:12:45",
+        "duo_relation_variant_report_id": null,
+        "submitted_by": 185,
+        "duo_relation": null,
+        "duo_relation_genome_id": null,
+        "test_type": "Trio",
+        "created_by": 185,
+        "version": 4,
+        "has_refcalls": null,
+        "filter_id": null,
+        "vaast_report_id": 15321,
+        "status": "READY TO REVIEW",
+        "phevor_terms": null,
+        "qc_status": null,
+        "workspace_id": 233,
+        "variant_report_id": 15315,
+        "father_genome_id": 206032,
+        "sample_collected_date": "2015-02-03T08:00:00",
+        "submitted_for_review_on": null,
+        "sample_received_date": "2015-02-05T08:00:00",
+        "mother_genome_id": 206033,
+        "genome_id": 206031,
+        "panel_id": null,
+        "duo_affected": null,
+        "sibling_sex": null,
+        "assay_type_id": null,
+        "sibling_variant_report_id": null,
+        "include_cosmic": false,
+        "sibling_genome_id": null,
+        "sibling_affected": null
+    }
+]
+
 """
 
 import os
