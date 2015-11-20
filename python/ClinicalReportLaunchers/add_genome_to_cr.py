@@ -99,7 +99,7 @@ def main():
     parser.add_argument('--f', metavar='father_genome_id', type=int)
     parser.add_argument('--s', metavar='sibling_genome_id', type=int)
     parser.add_argument('--sibling_affected', metavar='sibling_affected', type=str, choices=['true', 'false'])
-    parser.add_argument('--sibling_sex', metavar='sibling_sex', type=str, choices=['m', 'f', 'u'])
+    parser.add_argument('--sibling_sex', metavar='sibling_sex', type=str, choices=['m', 'f'])
     parser.add_argument('--d', metavar='duo_relation_genome_id', type=int)
     parser.add_argument('--duo_affected', metavar='duo_relation_affected', type=str, choices=['true', 'false'])
     parser.add_argument('--v', metavar='vaast_report_id', type=int)
@@ -120,7 +120,7 @@ def main():
 
     if sibling_genome_id is not None:
         if sibling_sex is None:
-            sys.exit("Sibling sex must be specified as m (male), f (female) or u (unknown) if "
+            sys.exit("Sibling sex must be specified as m (male) or f (female) if "
                      "sibling genome is specified.")
         if sibling_affected is None:
             sys.exit("Sibling affected status must be true or false "
@@ -137,6 +137,7 @@ def main():
                                                   duo_relation_genome_id=duo_relation_genome_id,
                                                   duo_relation_affected=duo_relation_affected,
                                                   vaast_report_id=vaast_report_id)
+    print json_response
     if "clinical_report" not in json_response.keys():
         sys.stderr(json_response)
         sys.exit("Failed to launch. Check report parameters for correctness.")
