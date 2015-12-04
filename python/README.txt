@@ -21,9 +21,9 @@ the file in notepad or a similar text editing program and replace the line
 endings with newlines using the enter/return key. 
 
 The API also has these dependencies, which must be installed prior to making API calls using the Python examples.
- Linux:
+    Linux:
         libffi-dev
     Python:
-     pyopenssl version >=  0.13. I used 0.15.1 and worked well.
-     ndg-httpsclient
-     pyasn1
+        pyopenssl version >=  0.13. I used 0.15.1 and worked well.
+        ndg-httpsclient
+        pyasn1
