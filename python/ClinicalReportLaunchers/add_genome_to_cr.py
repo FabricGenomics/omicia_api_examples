@@ -66,7 +66,8 @@ def add_genome_to_clinical_report(clinical_report_id,
                                   sibling_sex=None,
                                   duo_relation_genome_id=None,
                                   duo_relation_affected=None,
-                                  vaast_report_id=None):
+                                  vaast_report_id=None,
+                                  filter_id=None):
     """Use the Omicia API to add genome(s) to a clinical report
     """
     # Construct url and request
@@ -81,6 +82,11 @@ def add_genome_to_clinical_report(clinical_report_id,
                    'duo_relation_genome_id': duo_relation_genome_id,
                    'duo_relation_affected': duo_relation_affected,
                    'vaast_report_id': vaast_report_id}
+    if filter_id is not None:
+        # Use the integer -1 to indicate that there should explicitly be no filter
+        if filter_id == -1:
+            filter_id = None
+        url_payload['filter_id'] = filter_id
 
     sys.stdout.write("Adding genome(s) to report...")
     sys.stdout.write("\n\n")
@@ -94,7 +100,7 @@ def main():
     """
     parser = argparse.ArgumentParser(description='Add genome ids or vaast report ids to existing clinical reports.')
     parser.add_argument('c', metavar='clinical_report_id', type=int)
-    parser.add_argument('--p', metavar='proband_genome_id', type=int)
+    parser.add_argument('p', metavar='proband_genome_id', type=int)
     parser.add_argument('--m', metavar='mother_genome_id', type=int)
     parser.add_argument('--f', metavar='father_genome_id', type=int)
     parser.add_argument('--s', metavar='sibling_genome_id', type=int)
@@ -103,6 +109,7 @@ def main():
     parser.add_argument('--d', metavar='duo_relation_genome_id', type=int)
     parser.add_argument('--duo_affected', metavar='duo_relation_affected', type=str, choices=['true', 'false'])
     parser.add_argument('--v', metavar='vaast_report_id', type=int)
+    parser.add_argument('--filter_id', metavar='filter_id', type=int)
     parser.add_argument('sex', metavar='sex', type=str, choices=['f', 'm', 'u'])
     args = parser.parse_args()
 
@@ -117,6 +124,7 @@ def main():
     duo_relation_affected = args.duo_affected
     vaast_report_id = args.v
     proband_sex = args.sex
+    filter_id = args.filter_id
 
     if sibling_genome_id is not None:
         if sibling_sex is None:
@@ -136,7 +144,8 @@ def main():
                                                   sibling_sex=sibling_sex,
                                                   duo_relation_genome_id=duo_relation_genome_id,
                                                   duo_relation_affected=duo_relation_affected,
-                                                  vaast_report_id=vaast_report_id)
+                                                  vaast_report_id=vaast_report_id,
+                                                  filter_id=filter_id)
     print json_response
     if "clinical_report" not in json_response.keys():
         sys.stderr(json_response)

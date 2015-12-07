@@ -118,6 +118,7 @@ def upload_genome_to_project(project_id, label, sex, file_format, file_name):
     with open(file_name, 'rb') as file_handle:
         #Post request and return id of newly uploaded genome
         result = requests.put(url, auth=auth, data=file_handle)
+        print result.json()
         return result.json()["genome_id"]
 
 

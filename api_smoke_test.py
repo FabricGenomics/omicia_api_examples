@@ -92,10 +92,10 @@ def test_upload_genomes_folder_with_manifest(path, project_id, family_folder):
     print_ok_output(output)
 
 
-def test_create_project(path, month, day):
+def test_create_project(path, month, day, certificate=None):
     """Test the api example script that creates a project"""
     sys.stdout.write("{}: Testing project creation...\n".format(CREATE_PROJECT))
-    p = subprocess.Popen(["python", os.path.join(path, CREATE_PROJECT), "SmokeTest{}/{}".format(month, day), "SmokeTestDescription", "CONTRIBUTOR"],
+    p = subprocess.Popen(["python", os.path.join(path, CREATE_PROJECT), "SmokeTest{}/{}".format(month, day), "SmokeTestDescription", "CONTRIBUTOR", "--c", certificate],
                          stdout=subprocess.PIPE)
     output, err = p.communicate()
 
@@ -397,6 +397,7 @@ if __name__ == '__main__':
     parser.add_argument('filter_id', metavar='filter_id', type=int)
     parser.add_argument('panel_id', metavar='panel_id', type=int)
     parser.add_argument('genome_id', metavar='genome_id', type=int)
+    parser.add_argument('--certificate', metavar='certificate', type=str, default=None)
     args = parser.parse_args()
 
     path = args.example_scripts_repo
@@ -406,10 +407,11 @@ if __name__ == '__main__':
     filter_id = args.filter_id
     panel_id = args.panel_id
     genome_id = args.genome_id
+    certificate = args.certificate
 
     if not project_id:
         #1.  Test project creation
-        project_id = test_create_project(path, month, day)
+        project_id = test_create_project(path, month, day, certificate=certificate)
 
     #2. Test upload one genome
     test_upload_genome(path, project_id, genome_vcf)
