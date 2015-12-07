@@ -37,7 +37,7 @@ def get_cr_variants(cr_id, statuses, _format):
         for i, status in enumerate(statuses):
             if i > 0:
                 url += "&"
-            url = url + "status={}".format(status)
+            url = url + "status={}&extended=True".format(status)
 
     # Add a paremeter for format. If not set, default is json
     if _format == "VCF":
@@ -75,7 +75,7 @@ def main():
             response_json = response.json()
             variants = response_json['objects']
             for variant in variants:
-                sys.stdout.write(json.dumps(variant))
+                sys.stdout.write(json.dumps(variant, indent=4))
                 sys.stdout.write('\n')
         except KeyError:
             sys.stderr.write(response.json())

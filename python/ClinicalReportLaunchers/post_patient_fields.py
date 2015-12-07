@@ -1,4 +1,5 @@
-"""Get a report's custom fields.
+"""Populate a report's custom fields.
+Usage: post_patient_fields.py 2029 '{"Patient Name": "Eric", "Gender": "Male", "Accession Number": "1234"}'
 """
 
 import os
@@ -21,29 +22,35 @@ OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 
-def add_fields_to_cr(cr_id):
+def add_fields_to_cr(cr_id, patient_fields):
     """Use the Omicia API to fill in custom patient fields for a clinical report
     """
     #Construct request
     url = "{}/reports/{}/patient_fields"
     url = url.format(OMICIA_API_URL, cr_id)
+    url_payload = patient_fields
 
+    sys.stdout.write("Adding custom patient fields to report...")
+    sys.stdout.write("\n\n")
     sys.stdout.flush()
-    result = requests.get(url, auth=auth)
+    result = requests.post(url, auth=auth, data=url_payload)
     return result.json()
 
 
 def main():
     """main function. Upload a specified VCF file to a specified project.
     """
-    parser = argparse.ArgumentParser(description='View custom fields for existing clinical reports.')
+    parser = argparse.ArgumentParser(description='Fill patient info fields for existing clinical reports.')
     parser.add_argument('c', metavar='clinical_report_id', type=int)
+    parser.add_argument('f', metavar='patient_fields', type=str)
     args = parser.parse_args()
 
     cr_id = args.c
+    patient_fields = args.f
 
-    json_response = add_fields_to_cr(cr_id)
-    print json_response
+    json_response = add_fields_to_cr(cr_id, patient_fields)
+    for field in json_response:
+        sys.stdout.write("{}: {}\n".format(field.keys()[0], field.values()[0]))
 
 if __name__ == "__main__":
     main()

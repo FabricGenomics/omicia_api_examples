@@ -120,9 +120,9 @@ def main():
                                    limitations=limitations,
                                    fda_disclosure=fda_disclosure,
                                    test_code=test_code)
-        sys.stdout.write(json_response)
+        sys.stdout.write(json.dumps(json_response))
         sys.stdout.write('\n')
-        panel_id = json.loads(json_response).get('id')
+        panel_id = json_response.get('id')
 
     else:
         json_response = put_panel(panel_id,
@@ -133,14 +133,14 @@ def main():
                                   fda_disclosure=fda_disclosure,
                                   test_code=test_code)
         try:
-            sys.stdout.write(json_response)
+            sys.stdout.write(json.dumps(json_response))
             sys.stdout.write('\n')
         except TypeError:
             sys.stdout.write("Unexpected error. Perhaps the panel you specified no longer exists?\n\n")
 
     if gene_symbols:
         json_response = add_gene_symbols_to_panel(panel_id, gene_symbols)
-        meta = json.loads(json_response)
+        meta = json_response
         for attribute, value in meta.iteritems():
             sys.stdout.write('{} : {}\n'.format(attribute, value))
 

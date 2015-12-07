@@ -1,6 +1,15 @@
-"""Create a new panel report from an uploaded genome. Optionally, include
-a file containing patient information to populate patient information
-fields in the clinical report. This file should be a csv formatted in this way:
+"""Create a new panel trio report from an new genome trio. This requires putting all
+three family genomes in a folder along with a descriptor file titled 'family_manifest.csv,'
+which should have the following format:
+
+filename,label,external_id,sex,format
+NA19238.vcf.gz,CG Yoruban Mother,1,female,vcf.gz
+NA19239.vcf.gz,CG Yoruban Father,2,male,vcf.gz
+NA19240.vcf.gz,CG Yoruban Daughter,3,female,vcf.gz
+
+Optionally, include a file containing patient (proband) information to populate
+patient information fields in the clinical report. This file should be a csv
+formatted in this way:
 
 Opal Patient Information,value
 Patient Last Name,John
@@ -15,16 +24,19 @@ Date Specimen Collected,9/9/14
 Date Specimen Received,9/13/14
 Ordering Physician,Paul Billings
 
-If you are having trouble with the patient information file, make sure its
+If you are having trouble with using either csv file, make sure its
 line endings are newlines (\n) and not the deprecated carriage returns (\r)
 """
 
+import argparse
 import csv
 import json
 import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
+
+_MANIFEST_FILENAME = 'panel_trio_manifest.csv'
 
 #Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -37,6 +49,7 @@ OMICIA_API_LOGIN = os.environ['OMICIA_API_LOGIN']
 OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
 OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
+
 
 # A map between the row numbers and fields from the patient information csv
 patient_info_row_map = {
@@ -84,91 +97,66 @@ def add_fields_to_cr(cr_id, patient_fields):
     return result.json()
 
 
-def launch_panel_report(genome_id, filter_id, panel_id, accession_id):
-    """Launch a panel report given genome id, filter id, and panel id
-    parameters. Return the JSON response.
+def launch_panel_trio_report(panel_id, filter_id, reporting_cutoff, accession_id):
+    """Launch a family report. Return the JSON response.
     """
     # Construct url and request
     url = "{}/reports/".format(OMICIA_API_URL)
-    url_payload = {'report_type': "panel",
-                   'genome_id': int(genome_id),
-                   'filter_id': int(filter_id),
-                   'panel_id': int(panel_id),
+    url_payload = {'report_type': "panel_trio",
+                   'panel_id': panel_id,
+                   'filter_id': filter_id,
+                   'mother_genome_id': None,
+                   'father_genome_id': None,
+                   'proband_genome_id': None,
+                   'proband_sex': None,
+                   'reporting_cutoff': reporting_cutoff,
                    'accession_id': accession_id}
 
-    sys.stdout.write("Launching report...")
-    sys.stdout.write("\n\n")
-    sys.stdout.flush()
+    sys.stdout.write("Launching panel trio report...\n")
     result = requests.post(url, auth=auth, data=json.dumps(url_payload))
 
     return result.json()
 
 
-def upload_genome_to_project(project_id, label, sex, file_format, file_name):
-    """Use the Omicia API to add a genome, in vcf format, to a project.
-    Returns the newly uploaded genome's id.
+def main():
+    """Main function, creates a panel report.
     """
+    parser = argparse.ArgumentParser(description='Launch a panel trio report with no genome.')
+    parser.add_argument('panel_id', metavar='panel_id', type=int)
+    parser.add_argument('accession_id', metavar='accession_id', type=str)
+    parser.add_argument('--reporting_cutoff', metavar='reporting_cutoff', type=int)
+    parser.add_argument('--filter_id', metavar='filter_id', type=int)
+    parser.add_argument('--patient_info_file', metavar='patient_info_file', type=str)
+    args = parser.parse_args()
 
-    #Construct request
-    url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id=&assembly_version=hg19&format={}"
-    url = url.format(OMICIA_API_URL, project_id, label, sex, file_format)
+    panel_id = args.panel_id
+    filter_id = args.filter_id
+    reporting_cutoff = args.reporting_cutoff
+    accession_id = args.accession_id
+    patient_info_file_name = args.patient_info_file
 
-    sys.stdout.write("Uploading genome...\n")
-    with open(file_name, 'rb') as file_handle:
-        #Post request and return id of newly uploaded genome
-        result = requests.put(url, auth=auth, data=file_handle)
-        return result.json()["genome_id"]
+    family_report_json = launch_panel_trio_report(
+        panel_id, filter_id,
+        reporting_cutoff,
+        accession_id)
 
+    # Confirm launched report data
+    sys.stdout.write("\n")
 
-def main(argv):
-    """Main function, uploads a geneome and creates a panel report using it.
-    """
-    if len(argv) < 8:
-        sys.exit("Usage: python launch_panel_report_new_genome.py <project_id>\
-        <label> <sex (male|female|unspecified)> <format> <genome.vcf>\
-        <filter_id> <panel_id> <accession_id>\
-        optional: <patient_info_file>")
-    project_id = argv[0]
-    label = argv[1]
-    sex = argv[2]
-    file_format = argv[3]
-    genome_filename = argv[4]
-    filter_id = argv[5]
-    panel_id = argv[6]
-    accession_id = argv[7]
-
-    # If a patient information file name is provided, use it. Otherwise
-    # leave it empty as a None object.
-    if len(argv) == 9:
-        patient_info_file_name = argv[8]
-    else:
-        patient_info_file_name = None
-
-    # Upload genome
-    genome_id = upload_genome_to_project(project_id, label, sex,
-                                         file_format, genome_filename)
-    sys.stdout.write("genome_id: {}\n".format(genome_id))
-
-    # Launch panel report with uploaded genome
-    json_response = launch_panel_report(genome_id,
-                                        filter_id,
-                                        panel_id,
-                                        accession_id)
-
-    if "clinical_report" not in json_response.keys():
+    if "clinical_report" not in family_report_json.keys():
+        print family_report_json
         sys.exit("Failed to launch. Check report parameters for correctness.")
-    clinical_report = json_response['clinical_report']
+    clinical_report = family_report_json['clinical_report']
 
     # If a patient information csv file is provided, use it to generate a
-    # representative JSON object
+    # representative JSON object and add the patient fields to the report
     if patient_info_file_name:
         clinical_report_id = clinical_report.get('id')
         patient_info = generate_patient_info_json(patient_info_file_name)
         add_fields_to_cr(clinical_report_id, patient_info)
 
-    # Print out the object's fields. This represents a confirmation of the
-    # information for the launched report.
-    sys.stdout.write('Launched Clinical Report:\n'
+    sys.stdout.write('Launched Panel Trio Report:\n'
+                     'id: {}\n'
                      'test_type: {}\n'
                      'accession_id: {}\n'
                      'created_on: {}\n'
@@ -180,7 +168,14 @@ def main(argv):
                      'sample_collected_date: {}\n'
                      'sample_received_date: {}\n'
                      'include_cosmic: {}\n'
-                     .format(clinical_report.get('test_type','Missing'),
+                     'vaast_report_id: {}\n'
+                     'mother_genome_id: {}\n'
+                     'father_genome_id: {}\n'
+                     'genome_id: {}\n'
+                     'status: {}\n'
+                     'version: {}\n'
+                     .format(clinical_report.get('id', 'Missing'),
+                             clinical_report.get('test_type','Missing'),
                              clinical_report.get('accession_id','Missing'),
                              clinical_report.get('created_on','Missing'),
                              clinical_report.get('created_by','Missing'),
@@ -190,8 +185,13 @@ def main(argv):
                              clinical_report.get('workspace_id','Missing'),
                              clinical_report.get('sample_collected_date','Missing'),
                              clinical_report.get('sample_received_date','Missing'),
-                             clinical_report.get('include_cosmic','Missing')))
-
+                             clinical_report.get('include_cosmic','Missing'),
+                             clinical_report.get('vaast_report_id', 'Missing'),
+                             clinical_report.get('mother_genome_id', 'Missing'),
+                             clinical_report.get('father_genome_id', 'Missing'),
+                             clinical_report.get('genome_id', 'Missing'),
+                             clinical_report.get('status', 'Missing'),
+                             clinical_report.get('version', 'Missing')))
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()
