@@ -1,8 +1,4 @@
 """Add a genome to an existing (genomeless) panel report.
-Example usages:
-
-* Adding male proband genome (id = 1) to a solo or panel report (clinical_report_id = 100)
-    python add_genome_to_cr.py --p 1 --sex m 100
 """
 
 import os
