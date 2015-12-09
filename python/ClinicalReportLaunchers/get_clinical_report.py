@@ -8,6 +8,7 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
+import simplejson as json
 import argparse
 
 # Load environment variables for request authentication parameters
@@ -50,7 +51,7 @@ def main():
     extended = args.e
 
     json_response = get_clinical_report(cr_id, extended=extended)
-    print json_response
+    print json.dumps(json_response, indent=4)
 
 if __name__ == "__main__":
     main()

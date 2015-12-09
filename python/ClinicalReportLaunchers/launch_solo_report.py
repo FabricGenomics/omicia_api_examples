@@ -121,6 +121,7 @@ def upload_genome(project_id, genome_filename, genome_label, genome_sex, genome_
     with open(genome_filename, 'rb') as file_handle:
         # Post request and store newly uploaded genome's information
         result = requests.put(url, data=file_handle, params=payload, auth=auth)
+        print result
         genome_id = result.json()["genome_id"]
         return genome_id
 
@@ -132,7 +133,7 @@ def main():
     parser.add_argument('project_id', metavar='project_id', type=int)
     parser.add_argument('genome_file', metavar='genome_filename', type=str)
     parser.add_argument('genome_label', metavar='genome_label', type=str)
-    parser.add_argument('genome_sex', metavar='genome_sex', type=str, choices=['m', 'f'])
+    parser.add_argument('genome_sex', metavar='genome_sex', type=str, choices=['m', 'f', 'u'])
     parser.add_argument('genome_external_id', metavar='genome_external_id', type=str)
     parser.add_argument('genome_format', metavar='genome_format', type=str)
     parser.add_argument('report_accession_id', metavar='report_accession_id', type=str)
@@ -173,6 +174,7 @@ def main():
                          reporting_cutoff,
                          accession_id)
 
+    print family_report_json
     # Confirm launched report data
     sys.stdout.write("\n")
 
