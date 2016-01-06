@@ -1,4 +1,4 @@
-"""Create a new project.
+"""List all projects
 """
 
 import os
