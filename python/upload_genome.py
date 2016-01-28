@@ -57,8 +57,8 @@ def main(argv):
         genome_id = json_response["genome_id"]
         sys.stdout.write("genome_id: {}\n".format(genome_id))
     except KeyError:
-        if json_response['description']:
-            sys.stdout.write('Error: {}\n'.format(json_response['description']))
+        if json_response.get('description'):
+            sys.stdout.write('Error: {}\n'.format(json_response.get('description')))
         else:
             sys.stdout.write('Something went wrong...')
 
