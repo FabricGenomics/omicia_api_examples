@@ -22,7 +22,7 @@ OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 
-def launch_family_report(report_type, score_indels, reporting_cutoff, accession_id, hpo_terms):
+def launch_family_report(report_type, score_indels, reporting_cutoff, accession_id, project_id, hpo_terms):
     """Launch a family report. Return the JSON response.
     """
     # Construct url and request
@@ -39,6 +39,7 @@ def launch_family_report(report_type, score_indels, reporting_cutoff, accession_
                    'score_indels': score_indels,
                    'reporting_cutoff': reporting_cutoff,
                    'accession_id': accession_id,
+                   'project_id': project_id,
                    'hpo_terms': json.dumps(hpo_terms)}
 
     sys.stdout.write("Launching family report...\n")
@@ -59,6 +60,7 @@ def main():
     parser.add_argument('--indels', metavar='score_indels', type=bool, default=False)
     parser.add_argument('--cutoff', metavar='reporting_cutoff', type=int)
     parser.add_argument('acc', metavar='accession_id')
+    parser.add_argument('project', metavar='project_id', type=int)
     parser.add_argument('--hpo', metavar='hpo_terms')
     args = parser.parse_args()
 
@@ -66,6 +68,7 @@ def main():
     score_indels = args.indels
     reporting_cutoff = args.cutoff
     accession_id = args.acc
+    project_id = args.project
     hpo_terms = args.hpo or None
     if hpo_terms is not None:
         hpo_terms = hpo_terms.split(',')
@@ -75,6 +78,7 @@ def main():
         score_indels,
         reporting_cutoff,
         accession_id,
+        project_id,
         hpo_terms)
 
     # Confirm launched report data
