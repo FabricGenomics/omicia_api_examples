@@ -21,7 +21,7 @@ OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 
-def launch_panel_report(filter_id, panel_id, accession_id):
+def launch_panel_report(filter_id, panel_id, accession_id, project_id):
     """Launch a genomeless panel report given filter id, and panel id
     parameters. Return the JSON response.
     """
@@ -31,6 +31,7 @@ def launch_panel_report(filter_id, panel_id, accession_id):
                    'genome_id': None,
                    'filter_id': filter_id,
                    'panel_id': panel_id,
+                   'project_id': project_id,
                    'accession_id': accession_id}
 
     sys.stdout.write("Launching report...")
@@ -46,16 +47,19 @@ def main():
     parser = argparse.ArgumentParser(description='Launch a panel report with no genome.')
     parser.add_argument('p', metavar='panel_id', type=int)
     parser.add_argument('a', metavar='accession_id', type=str)
+    parser.add_argument('project', metavar='project_id', type=int)
     parser.add_argument('--f', metavar='filter_id', type=int)
     args = parser.parse_args()
 
     filter_id = args.f
     panel_id = args.p
     accession_id = args.a
+    project_id = args.project
 
     json_response = launch_panel_report(filter_id,
                                         panel_id,
-                                        accession_id)
+                                        accession_id,
+                                        project_id)
     if "clinical_report" not in json_response.keys():
         print json_response
         sys.exit("Failed to launch. Check report parameters for correctness.")

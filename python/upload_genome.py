@@ -53,13 +53,12 @@ def main(argv):
         external_id = ""
     json_response = upload_genome_to_project(project_id, label, sex,
                                          file_format, file_name, external_id)
-    print json_response
     try:
         genome_id = json_response["genome_id"]
         sys.stdout.write("genome_id: {}\n".format(genome_id))
     except KeyError:
-        if json_response['description']:
-            sys.stdout.write('Error: {}\n'.format(json_response['description']))
+        if json_response.get('description'):
+            sys.stdout.write('Error: {}\n'.format(json_response.get('description')))
         else:
             sys.stdout.write('Something went wrong...')
 

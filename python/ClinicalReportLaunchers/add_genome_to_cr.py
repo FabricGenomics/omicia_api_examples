@@ -146,7 +146,6 @@ def main():
                                                   duo_relation_affected=duo_relation_affected,
                                                   vaast_report_id=vaast_report_id,
                                                   filter_id=filter_id)
-    print json_response
     if "clinical_report" not in json_response.keys():
         sys.stderr(json_response)
         sys.exit("Failed to launch. Check report parameters for correctness.")
