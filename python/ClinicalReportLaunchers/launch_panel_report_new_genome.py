@@ -118,7 +118,6 @@ def upload_genome_to_project(project_id, label, sex, file_format, file_name):
     with open(file_name, 'rb') as file_handle:
         #Post request and return id of newly uploaded genome
         result = requests.put(url, auth=auth, data=file_handle)
-        print result.json()
         return result.json()["genome_id"]
 
 
@@ -126,7 +125,7 @@ def main(argv):
     """Main function, uploads a geneome and creates a panel report using it.
     """
     parser = argparse.ArgumentParser(description='Launch a panel report with no genome.')
-    parser.add_argument('project_id', metavar='project_id', type=int)
+    parser.add_argument('--project_id', metavar='project_id', type=int)
     parser.add_argument('label', metavar='label', type=str)
     parser.add_argument('sex', metavar='sex', type=str)
     parser.add_argument('file_format', metavar='file_format', type=str)

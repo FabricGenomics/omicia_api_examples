@@ -1,12 +1,12 @@
 """Upload multiple genomes to an existing project from a folder.
 """
-
+import argparse
 import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
 
-#Load environment variables for request authentication parameters
+# Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
     sys.exit("OMICIA_API_PASSWORD environment variable missing")
 
@@ -45,7 +45,6 @@ def upload_genomes_to_project(project_id, folder):
     """upload all of the genomes in the given folder to the project with
     the given project id
     """
-
     # List where returned genome JSON information will be stored
     genome_json_objects = []
 
@@ -68,13 +67,16 @@ def upload_genomes_to_project(project_id, folder):
     return genome_json_objects
 
 
-def main(argv):
-    """main function. Upload VCF files from a folder to a specified project.
+def main():
+    """Main function. Upload VCF files from a folder to a specified project.
     """
-    if len(argv) < 2:
-        sys.exit("Usage: python upload_genomes_folder.py <project_id> <folder>")
-    project_id = argv[0]
-    folder = argv[1]
+    parser = argparse.ArgumentParser(description='Upload a folder of genomes.')
+    parser.add_argument('project_id', metavar='project_id')
+    parser.add_argument('folder', metavar='folder')
+    args = parser.parse_args()
+
+    project_id = args.project_Id
+    folder = args.folder
 
     genome_objects = upload_genomes_to_project(project_id, folder)
 
@@ -87,4 +89,4 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

@@ -1,12 +1,12 @@
 """Upload a genome to an existing project.
 """
-
+import argparse
 import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
 
-#Load environment variables for request authentication parameters
+# Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
     sys.exit("OMICIA_API_PASSWORD environment variable missing")
 
@@ -23,36 +23,39 @@ def upload_genome_to_project(project_id, label, sex, file_format, file_name, ext
     """Use the Omicia API to add a genome, in vcf format, to a project.
     Returns the newly uploaded genome's id.
     """
-
-    #Construct request
+    # Construct request
     url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id={}\
            &assembly_version=hg19&format={}"
     url = url.format(OMICIA_API_URL, project_id, label, sex, external_id, file_format)
 
     sys.stdout.write("Uploading genome...\n")
     with open(file_name, 'rb') as file_handle:
-        #Post request and return id of newly uploaded genome
+        # Post request and return id of newly uploaded genome
         result = requests.put(url, auth=auth, data=file_handle, verify=False)
         return result.json()
 
 
-def main(argv):
-    """main function. Upload a specified VCF file to a specified project.
+def main():
+    """Main function. Upload a specified VCF file to a specified project.
     """
-    if len(argv) < 5:
-        sys.exit("Usage: python upload_genome.py <project_id> <label>"
-                 "<sex (male|female|unspecified)> <format> <file.vcf>")
-    project_id = argv[0]
-    label = argv[1]
-    sex = argv[2]
-    file_format = argv[3]
-    file_name = argv[4]
-    if len(argv) > 5:
-        external_id = argv[5]
-    else:
-        external_id = ""
+    parser = argparse.ArgumentParser(description='Upload a genome.')
+    parser.add_argument('project_id', metavar='project_id')
+    parser.add_argument('label', metavar='label')
+    parser.add_argument('sex', metavar='sex')
+    parser.add_argument('file_format', metavar='file_format')
+    parser.add_argument('file_name', metavar='file_name')
+    parser.add_argument('--external_id', metavar='external_id')
+    args = parser.parse_args()
+
+    project_id = args.project_id
+    label = args.label
+    sex = args.sex
+    file_format = args.file_format
+    file_name = args.file_name
+    external_id = args.external_id
+
     json_response = upload_genome_to_project(project_id, label, sex,
-                                         file_format, file_name, external_id)
+                                             file_format, file_name, external_id)
     try:
         genome_id = json_response["genome_id"]
         sys.stdout.write("genome_id: {}\n".format(genome_id))
@@ -63,4 +66,4 @@ def main(argv):
             sys.stdout.write('Something went wrong...')
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

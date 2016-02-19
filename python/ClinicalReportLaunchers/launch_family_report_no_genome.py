@@ -60,7 +60,7 @@ def main():
     parser.add_argument('--indels', metavar='score_indels', type=bool, default=False)
     parser.add_argument('--cutoff', metavar='reporting_cutoff', type=int)
     parser.add_argument('acc', metavar='accession_id')
-    parser.add_argument('project', metavar='project_id', type=int)
+    parser.add_argument('--project_id', metavar='project_id', type=int)
     parser.add_argument('--hpo', metavar='hpo_terms')
     args = parser.parse_args()
 
@@ -68,7 +68,7 @@ def main():
     score_indels = args.indels
     reporting_cutoff = args.cutoff
     accession_id = args.acc
-    project_id = args.project
+    project_id = args.project_id
     hpo_terms = args.hpo or None
     if hpo_terms is not None:
         hpo_terms = hpo_terms.split(',')
