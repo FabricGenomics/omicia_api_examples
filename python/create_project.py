@@ -19,6 +19,7 @@ OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
 OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
+
 def create_project(name, description, share_role):
     """Use the Omicia API to create a new project.
     Returns the newly created project's id.
@@ -39,11 +40,11 @@ def create_project(name, description, share_role):
     result = requests.post(url, data=payload, auth=auth, verify=False)
     return result.json()
 
-def main(argv):
+
+def main():
     """main function, creates a project with a command-line specified name
     """
-    parser = argparse.ArgumentParser(
-        description='Create a new project')
+    parser = argparse.ArgumentParser(description='Create a new project')
     parser.add_argument('n', metavar='name', type=str)
     parser.add_argument('d', metavar='description', type=str)
     parser.add_argument('s', metavar='share_role', type=str, choices=['CONTRIBUTOR', 'VIEWER', 'NONE'])
@@ -65,4 +66,4 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

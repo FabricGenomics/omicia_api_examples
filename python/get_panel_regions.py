@@ -1,4 +1,4 @@
-"""Get a clinical report's qc entries.
+"""Get the genes in a panel.
 """
 
 import os
@@ -8,7 +8,7 @@ import sys
 import json
 import argparse
 
-#Load environment variables for request authentication parameters
+# Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
     sys.exit("OMICIA_API_PASSWORD environment variable missing")
 
@@ -24,7 +24,7 @@ auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 def get_panel_regions(panel_id):
     """Use the Omicia API to get the regions for a panel.
     """
-    #Construct request
+    # Construct request
     url = "{}/panels/{}/regions"
     url = url.format(OMICIA_API_URL, panel_id)
 
