@@ -75,7 +75,7 @@ def main():
     parser.add_argument('folder', metavar='folder')
     args = parser.parse_args()
 
-    project_id = args.project_Id
+    project_id = args.project_id
     folder = args.folder
 
     genome_objects = upload_genomes_to_project(project_id, folder)
