@@ -2,6 +2,7 @@
 Usages: python get_report_variants.py 1542
         python get_report_variants.py 1542 --status "FAILED_CONFIRMATION,REVIEWED"
         python get_report_variants.py 1542 --status "CONFIRMED" --format "VCF"
+        python get_report_variants.py 1542 --chr "Y" --start_on_chrom 1339 --status "REVIEWED"
 """
 
 import os
@@ -11,7 +12,7 @@ import sys
 import json
 import argparse
 
-#Load environment variables for request authentication parameters
+# Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
     sys.exit("OMICIA_API_PASSWORD environment variable missing")
 
@@ -24,25 +25,51 @@ OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 
-def get_cr_variants(cr_id, statuses, _format):
-    """Use the Omicia API to get report variants.
+def get_cr_variants(cr_id, statuses, _format, chr, start_on_chrom, end_on_chrom, alt, extended=False):
+    """Use the Omicia API to get report variants that meet the filtering criteria.
     """
-    #Construct request
+    # Construct request
     url = "{}/reports/{}/variants"
     url = url.format(OMICIA_API_URL, cr_id)
 
     # Generate the url to be able to query for multiple statuses
     if statuses:
-        url += "?"
+        if url.endswith(u"variants"):
+            url += u"?"
         for i, status in enumerate(statuses):
             if i > 0:
-                url += "&"
-            url = url + "status={}&extended=True".format(status)
+                url += u"&"
+            url = u"{}status={}".format(url, status)
 
-    # Add a paremeter for format. If not set, default is json
+    if extended:
+        if url.endswith(u"variants"):
+            url += u"?"
+        url = u"{}&extended=True".format(url)
+
+    if chr:
+        if url.endswith(u"variants"):
+            url += u"?"
+        url = u"{}&chr={}".format(url, chr)
+
+    if start_on_chrom:
+        if url.endswith(u"variants"):
+            url += u"?"
+        url = u"{}&start_on_chrom={}".format(url, start_on_chrom)
+
+    if end_on_chrom:
+        if url.endswith(u"variants"):
+            url += u"?"
+        url = u"{}&end_on_chrom={}".format(url, end_on_chrom)
+
+    if alt:
+        if url.endswith(u"variants"):
+            url += u"?"
+        url = u"{}&alt={}".format(url, alt)
+
+    # Add a parameter for format. If not set, default is json
     if _format == "VCF":
-        if not statuses:
-            url += "?"
+        if url.endswith(u"variants"):
+            url += u"?"
         url += '&format=VCF'
 
     sys.stdout.flush()
@@ -57,16 +84,28 @@ def main():
     parser.add_argument('cr_id', metavar='clinical_report_id', type=int)
     parser.add_argument('--status', metavar='status', type=str)
     parser.add_argument('--format', metavar='_format', type=str, choices=['json', 'VCF'], default='json')
+    parser.add_argument('--chr', metavar='chr', type=str, choices=['1', '2', '3', '4', '5', '6',
+                                                                   '7', '8', '9', '10', '11', '12',
+                                                                   '13', '14', '15', '16', '17',
+                                                                   '18', '19', '20', '21', '22',
+                                                                   'X', 'Y', 'M'])
+    parser.add_argument('--start_on_chrom', metavar='start_on_chrom', type=int)
+    parser.add_argument('--end_on_chrom', metavar='end_on_chrom', type=int)
+    parser.add_argument('--alt', metavar='alt', type=str, choices=['A', 'T', 'C', 'G'])
 
     args = parser.parse_args()
 
     cr_id = args.cr_id
     status = args.status
     _format = args.format
+    chr = args.chr
+    start_on_chrom = args.start_on_chrom
+    end_on_chrom = args.end_on_chrom
+    alt = args.alt
 
     statuses = status.split(",") if status else None
 
-    response = get_cr_variants(cr_id, statuses, _format)
+    response = get_cr_variants(cr_id, statuses, _format, chr, start_on_chrom, end_on_chrom, alt)
     if _format == 'VCF':
         for block in response.iter_content(1024):
             sys.stdout.write(block)
