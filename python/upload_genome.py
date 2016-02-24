@@ -26,8 +26,11 @@ def upload_genome_to_project(project_id, label, sex, file_format, file_name, bam
     """
     # Construct request
     url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id={}\
-           &assembly_version=hg19&format={}&bam_file={}"
-    url = url.format(OMICIA_API_URL, project_id, label, sex, external_id, file_format, bam_file)
+           &assembly_version=hg19&format={}"
+    url = url.format(OMICIA_API_URL, project_id, label, sex, external_id, file_format)
+
+    if bam_file is not None:
+        url = "{}&bam_file={}".format(url, bam_file)
 
     sys.stdout.write("Uploading genome...\n")
     with open(file_name, 'rb') as file_handle:
