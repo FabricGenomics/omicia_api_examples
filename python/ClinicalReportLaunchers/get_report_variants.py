@@ -25,7 +25,7 @@ OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 
-def get_cr_variants(cr_id, statuses, _format, chr, start_on_chrom, end_on_chrom, alt, extended=False):
+def get_cr_variants(cr_id, statuses, _format, chrom, start_on_chrom, end_on_chrom, alt, extended=False):
     """Use the Omicia API to get report variants that meet the filtering criteria.
     """
     # Construct request
@@ -46,10 +46,10 @@ def get_cr_variants(cr_id, statuses, _format, chr, start_on_chrom, end_on_chrom,
             url += u"?"
         url = u"{}&extended=True".format(url)
 
-    if chr:
+    if chrom:
         if url.endswith(u"variants"):
             url += u"?"
-        url = u"{}&chr={}".format(url, chr)
+        url = u"{}&chrom={}".format(url, chr)
 
     if start_on_chrom:
         if url.endswith(u"variants"):
@@ -84,7 +84,7 @@ def main():
     parser.add_argument('cr_id', metavar='clinical_report_id', type=int)
     parser.add_argument('--status', metavar='status', type=str)
     parser.add_argument('--format', metavar='_format', type=str, choices=['json', 'VCF'], default='json')
-    parser.add_argument('--chr', metavar='chr', type=str, choices=['1', '2', '3', '4', '5', '6',
+    parser.add_argument('--chrom', metavar='chr', type=str, choices=['1', '2', '3', '4', '5', '6',
                                                                    '7', '8', '9', '10', '11', '12',
                                                                    '13', '14', '15', '16', '17',
                                                                    '18', '19', '20', '21', '22',
@@ -98,14 +98,14 @@ def main():
     cr_id = args.cr_id
     status = args.status
     _format = args.format
-    chr = args.chr
+    chrom = args.chrom
     start_on_chrom = args.start_on_chrom
     end_on_chrom = args.end_on_chrom
     alt = args.alt
 
     statuses = status.split(",") if status else None
 
-    response = get_cr_variants(cr_id, statuses, _format, chr, start_on_chrom, end_on_chrom, alt)
+    response = get_cr_variants(cr_id, statuses, _format, chrom, start_on_chrom, end_on_chrom, alt)
     if _format == 'VCF':
         for block in response.iter_content(1024):
             sys.stdout.write(block)
