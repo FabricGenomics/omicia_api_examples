@@ -1,4 +1,4 @@
-"""Add variant report variants to a Clinical Report by ID.
+"""Update a clinical report's status.
 """
 
 import os
@@ -21,18 +21,18 @@ OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 
-def add_variants_to_cr(cr_id, vmv_ids):
-    """Add variants from vmv_base to a clinical report by ID.
+def update_cr_status(cr_id, status):
+    """Update a clinical report's status.
     """
     # Construct request
-    url = "{}/reports/{}/add_variants/"
-    url = url.format(OMICIA_API_URL, cr_id)
-
+    url = "{}/reports/{}/update_status/"
+    url = url.format(OMICIA_API_URL, cr_id, status)
     # Build the patch payload
-    url_payload = json.dumps([{"op": "add",
-                              "path": "/variants",
-                              "value": [{"id": vmv_id, "props": {"customer_score1": 1, "customer_score2": 2}} for vmv_id in vmv_ids]}])
+    url_payload = json.dumps([{"op": "replace",
+                              "path": "/status",
+                              "value": status}])
     headers = {"content-type": "application/json-patch+json"}
+
     sys.stdout.flush()
     result = requests.patch(url, auth=auth, json=url_payload, headers=headers)
     return result
@@ -41,19 +41,16 @@ def add_variants_to_cr(cr_id, vmv_ids):
 def main():
     """Main function. Patch a report variant.
     """
-    parser = argparse.ArgumentParser(description='Add report variants to an existing clinical report.')
+    parser = argparse.ArgumentParser(description='Set clinical report status')
     parser.add_argument('cr_id', metavar='clinical_report_id', type=int)
-    parser.add_argument('variant_ids', metavar='variant_ids', type=str)
+    parser.add_argument('status', metavar='status', type=str, choices=['CUSTOM_1', 'CUSTOM_2', 'CUSTOM_3', 'CUSTOM_4', 'READY TO REVIEW', 'READY FOR INTERPRETATION', 'WAITING FOR APPROVAL'])
 
     args = parser.parse_args()
 
     cr_id = args.cr_id
-    vmv_base_variant_ids = args.variant_ids
+    status = args.status
 
-    # Take a string of comma-separated vmv ids and make a list out of them
-    vmv_base_variant_ids = vmv_base_variant_ids.split(",")
-
-    response = add_variants_to_cr(cr_id, vmv_base_variant_ids)
+    response = update_cr_status(cr_id, status)
     try:
         sys.stdout.write(response.text)
     except KeyError:
