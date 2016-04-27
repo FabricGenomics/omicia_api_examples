@@ -1,6 +1,7 @@
 """Get all genomes in a project.
 """
 
+import argparse
 import os
 import requests
 from requests.auth import HTTPBasicAuth
@@ -18,6 +19,7 @@ OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
 OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
+
 def get_genomes(project_id):
     """Fetch all the genomes associated with a particular project.
     """
@@ -30,13 +32,14 @@ def get_genomes(project_id):
     return result.json()
 
 
-def main(argv):
+def main():
     """main function, get all genomes in a project.
     """
+    parser = argparse.ArgumentParser(description='Upload a genome.')
+    parser.add_argument('project_id', metavar='project_id')
+    args = parser.parse_args()
 
-    if len(argv) != 1:
-        sys.exit("Usage: python get_genomes.py <project_id>")
-    project_id = argv[0]
+    project_id = args.project_id
 
     json_response = get_genomes(project_id)
 
@@ -68,4 +71,4 @@ def main(argv):
             sys.stdout.write('Something went wrong ...')
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

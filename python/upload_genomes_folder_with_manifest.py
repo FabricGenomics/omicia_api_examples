@@ -15,14 +15,14 @@ TR4092_exome.vcf,abc3,57,unspecified,vcf
 TR4093_exome.vcf,abc4,58,female,vcf
 TR4094_exome.vcf,abc5,59,male,vcf
 """
-
+import argparse
 import csv
 import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
 
-#Load environment variables for request authentication parameters
+# Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
     sys.exit("OMICIA_API_PASSWORD environment variable missing")
 
@@ -62,7 +62,6 @@ def upload_genomes_to_project(project_id, folder):
     """upload all of the genomes in the given folder to the project with
     the given project id
     """
-
     # Assuming there is a manifest file, generate an object containing its info
     manifest_info = get_manifest_info(folder)
 
@@ -91,14 +90,17 @@ def upload_genomes_to_project(project_id, folder):
     return genome_json_objects
 
 
-def main(argv):
+def main():
     """Main function. Upload VCF files from a folder to a specified project,
     using a manifest to specify each genome's attributes.
     """
-    if len(argv) != 2:
-        sys.exit("Usage: python upload_genomes_folder_with_manifest.py <project_id> <folder>")
-    project_id = argv[0]
-    folder = argv[1]
+    parser = argparse.ArgumentParser(description='Upload a folder of genomes.')
+    parser.add_argument('project_id', metavar='project_id')
+    parser.add_argument('folder', metavar='folder')
+    args = parser.parse_args()
+
+    project_id = args.project_id
+    folder = args.folder
 
     genome_objects = upload_genomes_to_project(project_id, folder)
 
@@ -111,4 +113,4 @@ def main(argv):
                                  genome_object.get('size', 'Missing')))
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

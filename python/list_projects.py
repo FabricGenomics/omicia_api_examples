@@ -19,11 +19,11 @@ OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
 OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
+
 def list_projects():
     """
       list all projects
     """
-
     # Construct request
     url = "{}/projects/"
     url = url.format(OMICIA_API_URL)
@@ -31,10 +31,10 @@ def list_projects():
     result = requests.get(url, auth=auth)
     return result.json()
 
-def main(argv):
+
+def main():
     """main function, lists all projects 
     """
-
     json_response = list_projects()
     try:
         sys.stdout.write("Projects\n")
@@ -48,4 +48,4 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

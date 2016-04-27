@@ -47,14 +47,14 @@ def main():
     parser = argparse.ArgumentParser(description='Launch a panel report with no genome.')
     parser.add_argument('p', metavar='panel_id', type=int)
     parser.add_argument('a', metavar='accession_id', type=str)
-    parser.add_argument('project', metavar='project_id', type=int)
+    parser.add_argument('--project_id', metavar='project_id', type=int)
     parser.add_argument('--f', metavar='filter_id', type=int)
     args = parser.parse_args()
 
     filter_id = args.f
     panel_id = args.p
     accession_id = args.a
-    project_id = args.project
+    project_id = args.project_id
 
     json_response = launch_panel_report(filter_id,
                                         panel_id,

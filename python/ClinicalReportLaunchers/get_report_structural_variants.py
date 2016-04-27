@@ -25,11 +25,11 @@ OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 
-def get_cr_variants(cr_id, statuses, _format, chrom, start_on_chrom, end_on_chrom, alt, extended=False):
+def get_cr_variants(cr_id, statuses, _format, chrom, start_on_chrom, end_on_chrom, extended=False):
     """Use the Omicia API to get report variants that meet the filtering criteria.
     """
     # Construct request
-    url = "{}/reports/{}/variants"
+    url = "{}/reports/{}/structural_variants"
     url = url.format(OMICIA_API_URL, cr_id)
 
     # Generate the url to be able to query for multiple statuses
@@ -61,11 +61,6 @@ def get_cr_variants(cr_id, statuses, _format, chrom, start_on_chrom, end_on_chro
             url += u"?"
         url = u"{}&end_on_chrom={}".format(url, end_on_chrom)
 
-    if alt:
-        if url.endswith(u"variants"):
-            url += u"?"
-        url = u"{}&alt={}".format(url, alt)
-
     # Add a parameter for format. If not set, default is json
     if _format == "VCF":
         if url.endswith(u"variants"):
@@ -80,7 +75,7 @@ def get_cr_variants(cr_id, statuses, _format, chrom, start_on_chrom, end_on_chro
 def main():
     """Main function. Get report variants, all or filtering by status.
     """
-    parser = argparse.ArgumentParser(description='Get variants for existing clinical reports.')
+    parser = argparse.ArgumentParser(description='Get structural variants for existing clinical reports.')
     parser.add_argument('cr_id', metavar='clinical_report_id', type=int)
     parser.add_argument('--status', metavar='status', type=str)
     parser.add_argument('--format', metavar='_format', type=str, choices=['json', 'VCF'], default='json')
@@ -91,7 +86,6 @@ def main():
                                                                    'X', 'Y', 'M'])
     parser.add_argument('--start_on_chrom', metavar='start_on_chrom', type=int)
     parser.add_argument('--end_on_chrom', metavar='end_on_chrom', type=int)
-    parser.add_argument('--alt', metavar='alt', type=str, choices=['A', 'T', 'C', 'G'])
 
     args = parser.parse_args()
 
@@ -101,11 +95,10 @@ def main():
     chrom = args.chrom
     start_on_chrom = args.start_on_chrom
     end_on_chrom = args.end_on_chrom
-    alt = args.alt
 
     statuses = status.split(",") if status else None
 
-    response = get_cr_variants(cr_id, statuses, _format, chrom, start_on_chrom, end_on_chrom, alt)
+    response = get_cr_variants(cr_id, statuses, _format, chrom, start_on_chrom, end_on_chrom)
     if _format == 'VCF':
         for block in response.iter_content(1024):
             sys.stdout.write(block)

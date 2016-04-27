@@ -9,7 +9,7 @@ import sys
 import json
 import argparse
 
-#Load environment variables for request authentication parameters
+# Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
     sys.exit("OMICIA_API_PASSWORD environment variable missing")
 
@@ -49,7 +49,9 @@ def main():
     parser.add_argument('cr_id', metavar='clinical_report_id', type=int)
     parser.add_argument('report_variant_id', metavar='report_variant_id', type=int)
     parser.add_argument('--status', metavar='status', type=str)
-    parser.add_argument('--to_report', metavar='to_report', type=int)
+    parser.add_argument('--to_report', metavar='to_report', type=str, choices=['PRIMARY_FINDING',
+                                                                               'SECONDARY_FINDING',
+                                                                               'DO_NOT_REPORT'])
     args = parser.parse_args()
 
     cr_id = args.cr_id

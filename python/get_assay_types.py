@@ -1,6 +1,7 @@
 """Get all assay_types in a workspace.
 """
 
+import argparse
 import os
 import requests
 from requests.auth import HTTPBasicAuth
@@ -43,15 +44,16 @@ def get_assay_types():
     return result.json()
 
 
-def main(argv):
+def main():
     """main function, get all assay_types in a project.
     """
+    parser = argparse.ArgumentParser(description='Upload a genome.')
+    parser.add_argument('assay_type_id', metavar='project_id')
+    args = parser.parse_args()
 
-    if len(argv) > 1:
-        sys.exit("Usage: python get_assay_types.py {optional assay_type id}")
+    assay_type_id = args.assay_type_id
 
-    if len(argv) == 1:
-        assay_type_id = sys.argv[1]
+    if assay_type_id:
         assay_type = get_assay_type(assay_type_id)
         sys.stdout.write('id: {}\n'
                          'workspace_id: {}\n'
@@ -81,4 +83,4 @@ def main(argv):
                 sys.stdout.write('Something went wrong ...')
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()
