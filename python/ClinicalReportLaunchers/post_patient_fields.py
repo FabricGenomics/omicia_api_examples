@@ -33,7 +33,7 @@ def add_fields_to_cr(cr_id, patient_fields):
     sys.stdout.write("Adding custom patient fields to report...")
     sys.stdout.write("\n\n")
     sys.stdout.flush()
-    result = requests.post(url, auth=auth, data=url_payload)
+    result = requests.post(url, auth=auth, data=url_payload, verify=False)
     return result.json()
 
 

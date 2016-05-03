@@ -81,7 +81,7 @@ def add_fields_to_cr(cr_id, patient_fields):
     sys.stdout.write("Adding custom patient fields to report...")
     sys.stdout.write("\n\n")
     sys.stdout.flush()
-    result = requests.post(url, auth=auth, data=url_payload)
+    result = requests.post(url, auth=auth, data=url_payload, verify=False)
     return result.json()
 
 
@@ -102,7 +102,7 @@ def launch_panel_report(genome_id, filter_id, panel_id, accession_id):
     sys.stdout.flush()
     # If patient information was not provided, make a post request to reports
     # without a patient information parameter in the url
-    result = requests.post(url, auth=auth, data=json.dumps(url_payload))
+    result = requests.post(url, auth=auth, data=json.dumps(url_payload), verify=False)
     return result.json()
 
 

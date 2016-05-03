@@ -29,7 +29,7 @@ def add_fields_to_cr(cr_id):
     url = url.format(OMICIA_API_URL, cr_id)
 
     sys.stdout.flush()
-    result = requests.get(url, auth=auth)
+    result = requests.get(url, auth=auth, verify=False)
     return result.json()
 
 
