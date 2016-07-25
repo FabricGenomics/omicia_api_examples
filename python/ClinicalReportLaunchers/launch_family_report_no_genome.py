@@ -43,7 +43,7 @@ def launch_family_report(report_type, score_indels, reporting_cutoff, accession_
                    'hpo_terms': json.dumps(hpo_terms)}
 
     sys.stdout.write("Launching family report...\n")
-    result = requests.post(url, auth=auth, data=json.dumps(url_payload))
+    result = requests.post(url, auth=auth, data=json.dumps(url_payload), verify=False)
 
     return result.json()
 

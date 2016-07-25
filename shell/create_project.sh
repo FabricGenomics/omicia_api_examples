@@ -3,10 +3,10 @@
 CURL=/usr/bin/curl
 CURLOPTS=
 
-URL=https://${OMICIA_API_LOGIN}:${OMICIA_API_PASSWORD}@api.omicia.com
+URL=https:api.omicia.com
 
 # create new project
-$CURL $CURLOPTS $URL/projects/ --data "project_name=$1&description=$2&share_role=CONTRIBUTOR" -o /tmp/$$.out
+$CURL $CURLOPTS -u ${OMICIA_API_LOGIN}:${OMICIA_API_PASSWORD} $URL/projects/ --data "project_name=$1&description=$2&share_role=CONTRIBUTOR" -o /tmp/$$.out
 
 echo
 cat /tmp/$$.out

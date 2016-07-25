@@ -33,7 +33,7 @@ def add_fields_to_cr(cr_id, patient_fields):
     sys.stdout.write("Adding custom patient fields to report...")
     sys.stdout.write("\n\n")
     sys.stdout.flush()
-    result = requests.post(url, auth=auth, data=url_payload)
+    result = requests.post(url, auth=auth, data=url_payload, verify=False)
     return result.json()
 
 
@@ -49,8 +49,7 @@ def main():
     patient_fields = args.f
 
     json_response = add_fields_to_cr(cr_id, patient_fields)
-    for field in json_response:
-        sys.stdout.write("{}: {}\n".format(field.keys()[0], field.values()[0]))
+    sys.stdout.write(json.dumps(json_response, indent=4))
 
 if __name__ == "__main__":
     main()

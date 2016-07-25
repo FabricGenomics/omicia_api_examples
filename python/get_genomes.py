@@ -28,7 +28,7 @@ def get_genomes(project_id):
     url = "{}/projects/{}/genomes".format(OMICIA_API_URL, project_id)
 
     # Get request and return json object of genomes
-    result = requests.get(url, auth=auth)
+    result = requests.get(url, auth=auth, verify=False)
     return result.json()
 
 

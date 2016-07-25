@@ -34,7 +34,7 @@ def update_cr_status(cr_id, status):
     headers = {"content-type": "application/json-patch+json"}
 
     sys.stdout.flush()
-    result = requests.patch(url, auth=auth, json=url_payload, headers=headers)
+    result = requests.patch(url, auth=auth, json=url_payload, headers=headers, verify=False)
     return result
 
 
@@ -43,7 +43,7 @@ def main():
     """
     parser = argparse.ArgumentParser(description='Set clinical report status')
     parser.add_argument('cr_id', metavar='clinical_report_id', type=int)
-    parser.add_argument('status', metavar='status', type=str, choices=['CUSTOM_1', 'CUSTOM_2', 'CUSTOM_3', 'CUSTOM_4', 'READY TO REVIEW', 'READY FOR INTERPRETATION', 'WAITING FOR APPROVAL'])
+    parser.add_argument('status', metavar='status', type=str, choices=['CUSTOM_1', 'CUSTOM_2', 'CUSTOM_3', 'CUSTOM_4', 'READY TO REVIEW', 'READY FOR INTERPRETATION'])
 
     args = parser.parse_args()
 
