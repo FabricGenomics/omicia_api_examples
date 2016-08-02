@@ -15,7 +15,7 @@ import java.util.Base64;
 import java.util.Scanner;
 
 public class OmiciaApiExample {
-	static final String OMICIA_API_BASE = "";
+	static final String OMICIA_API_ENDPOINT = "api.omicia.com";
 
 	// your API key as provided by Omicia
 	static final String OMICIA_API_LOGIN = "";
@@ -50,7 +50,7 @@ public class OmiciaApiExample {
 
 		// build the URI fo the request
 		URI uri = new URIBuilder()
-			.setScheme("http").setHost(OMICIA_API_BASE)
+			.setScheme("http").setHost(OMICIA_API_ENDPOINT)
 			.setPath("/projects/"+PROJECT_ID+"/genomes")
 			.setParameter("genome_label", LABEL)
 			.setParameter("genome_sex", SEX)
