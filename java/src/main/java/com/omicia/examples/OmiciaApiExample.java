@@ -22,7 +22,7 @@ public class OmiciaApiExample {
 	static final String OMICIA_API_PASSWORD = "";
 
 	// Opal project ID
-	static final String PROJECT_ID = "11961";
+	static final String PROJECT_ID = "";
 
 	// label
 	static final String LABEL = "";
