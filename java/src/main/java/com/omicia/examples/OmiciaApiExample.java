@@ -27,9 +27,6 @@ public class OmiciaApiExample {
 	// an Opal clinical report ID
 	static final String REPORT_ID = "";
 
-	// sex must be one of 'male', 'female', or 'unspecified'
-	static final String SEX = "unspecified";
-
 
 	public static void main(String[] args) throws Exception {
 
@@ -66,7 +63,7 @@ public class OmiciaApiExample {
 			.setScheme("http").setHost(OMICIA_API_ENDPOINT)
 			.setPath("/projects/"+projectID+"/genomes")
 			.setParameter("genome_label", "Test R. Person")
-			.setParameter("genome_sex", SEX)
+			.setParameter("genome_sex", "unspecified")
 			.setParameter("assembly_version", "hg19")
 			.setParameter("format", getFormatFromFile(inputFile.getName()))
 		.build();
