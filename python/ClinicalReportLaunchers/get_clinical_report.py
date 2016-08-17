@@ -51,7 +51,7 @@ def main():
     extended = args.e
 
     json_response = get_clinical_report(cr_id, extended=extended)
-    print json.dumps(json_response, indent=4)
+    sys.stdout.write(json.dumps(json_response, indent=4))
 
 if __name__ == "__main__":
     main()
