@@ -38,7 +38,6 @@ def launch_vaast_report(report_type,
                     'mother_genome_id': mother_genome_id,
                     'father_genome_id': father_genome_id}
 
-    print data_payload
     result = requests.post(url, auth=auth, data=json.dumps(data_payload), verify=False)
     return result.json()
 
