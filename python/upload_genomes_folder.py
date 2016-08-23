@@ -62,6 +62,7 @@ def upload_genomes_to_project(project_id, folder):
             result = requests.put(url, auth=auth, data=file_handle, verify=False)
             sys.stdout.write(".")
             sys.stdout.flush()
+            print result
             genome_json_objects.append(result.json())
     sys.stdout.write("\n")
     return genome_json_objects

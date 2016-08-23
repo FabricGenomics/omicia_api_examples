@@ -174,7 +174,6 @@ def main():
                          reporting_cutoff,
                          accession_id)
 
-    print family_report_json
     # Confirm launched report data
     sys.stdout.write("\n")
 

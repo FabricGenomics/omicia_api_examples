@@ -120,6 +120,7 @@ def get_family_manifest_info(family_folder):
             if i < 3:
                 # family_member is mother, father, or proband
                 family_member = family_info_row_map[i]
+                print family_member
                 family_manifest_info[family_member] = {"genome_filename": row[0],
                                                        "genome_label": row[1],
                                                        "external_id": row[2],
