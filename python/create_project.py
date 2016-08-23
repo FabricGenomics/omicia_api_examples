@@ -6,6 +6,7 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
+import simplejson as json
 
 # Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -56,8 +57,7 @@ def main():
 
     json_response = create_project(name, description, share_role)
     try:
-        project_id = json_response["id"]
-        sys.stdout.write("Project id: {}\n".format(project_id))
+        sys.stdout.write(json.dumps(json_response, indent=4))
     except KeyError:
         if json_response['description']:
             sys.stdout.write('Error: {}\n'.format(json_response['description']))

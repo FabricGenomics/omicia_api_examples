@@ -92,7 +92,7 @@ def launch_panel_report(genome_id, filter_id, panel_id, accession_id):
     # Construct url and request
     url = "{}/reports/".format(OMICIA_API_URL)
     url_payload = {'report_type': "panel",
-                   'genome_id': genome_id,
+                   'proband_genome_id': genome_id,
                    'filter_id': filter_id,
                    'panel_id': panel_id,
                    'accession_id': accession_id}

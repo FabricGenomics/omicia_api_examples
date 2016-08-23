@@ -5,6 +5,7 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
+import simplejson as json
 
 # Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -64,8 +65,7 @@ def main():
                                              file_format, file_name, bam_file,
                                              external_id=external_id)
     try:
-        genome_id = json_response["genome_id"]
-        sys.stdout.write("genome_id: {}\n".format(genome_id))
+        sys.stdout.write(json.dumps(json_response, indent=4))
     except KeyError:
         if json_response.get('description'):
             sys.stdout.write('Error: {}\n'.format(json_response.get('description')))

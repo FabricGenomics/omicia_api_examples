@@ -161,43 +161,7 @@ def main():
         print family_report_json
         sys.exit("Failed to launch. Check report parameters for correctness.")
     clinical_report = family_report_json['clinical_report']
-    sys.stdout.write('Launched Family Report:\n'
-                     'id: {}\n'
-                     'test_type: {}\n'
-                     'accession_id: {}\n'
-                     'created_on: {}\n'
-                     'created_by: {}\n'
-                     'status: {}\n'
-                     'filter_id: {}\n'
-                     'panel_id: {}\n'
-                     'hpo_terms: {}\n'
-                     'filter_name: {}\n'
-                     'workspace_id: {}\n'
-                     'sample_collected_date: {}\n'
-                     'sample_received_date: {}\n'
-                     'include_cosmic: {}\n'
-                     'vaast_report_id: {}\n'
-                     'members: {}\n'
-                     'genome_id: {}\n'
-                     'version: {}\n'
-                     .format(clinical_report.get('id', 'Missing'),
-                             clinical_report.get('test_type','Missing'),
-                             clinical_report.get('accession_id','Missing'),
-                             clinical_report.get('created_on','Missing'),
-                             clinical_report.get('created_by','Missing'),
-                             clinical_report.get('status', 'Missing'),
-                             clinical_report.get('filter_id','Missing'),
-                             clinical_report.get('panel_id','Missing'),
-                             clinical_report.get('hpo_terms', 'Missing'),
-                             clinical_report.get('filter_name', 'Missing'),
-                             clinical_report.get('workspace_id','Missing'),
-                             clinical_report.get('sample_collected_date','Missing'),
-                             clinical_report.get('sample_received_date','Missing'),
-                             clinical_report.get('include_cosmic','Missing'),
-                             clinical_report.get('vaast_report_id', 'Missing'),
-                             json.dumps(clinical_report.get('members', '{}'), indent=1),
-                             clinical_report.get('genome_id', 'Missing'),
-                             clinical_report.get('version', 'Missing')))
+    sys.stdout.write(json.dumps(clinical_report, indent=4))
 
 if __name__ == "__main__":
     main()
