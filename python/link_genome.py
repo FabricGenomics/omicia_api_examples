@@ -6,6 +6,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 import sys
 import argparse
+import simplejson as json
 
 #Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -29,7 +30,6 @@ def upload_genome_to_project(project_id, sex, file_format, file_path, label="", 
            &assembly_version=hg19&format={}&file_path={}"
     url = url.format(OMICIA_API_URL, project_id, label, sex, external_id, file_format, file_path)
 
-    sys.stdout.write("Linking...\n")
     # Post request and return id of newly uploaded genome
     result = requests.put(url, auth=auth)
     return result.json()
@@ -65,14 +65,10 @@ def main():
                                              external_id=external_id)
 
     try:
-        genome_object = json_response
-        sys.stdout.write("genome_label: {}, genome_id: {}, size: {}\n"
-                         .format(genome_object.get('genome_label', 'Missing'),
-                                 genome_object.get('genome_id', 'Missing'),
-                                 genome_object.get('size', 'Missing')))
+        sys.stdout.write(json.dumps(json_response, indent=4))
     except KeyError:
-        if json_response['description']:
-            sys.stdout.write('Error: {}\n'.format(json_response['description']))
+        if json_response.get('description'):
+            sys.stdout.write('Error: {}\n'.format(json_response.get('description')))
         else:
             sys.stdout.write('Something went wrong...')
 

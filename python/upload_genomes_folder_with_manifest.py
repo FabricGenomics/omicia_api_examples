@@ -21,6 +21,7 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
+import simplejson as json
 
 # Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -69,7 +70,6 @@ def upload_genomes_to_project(project_id, folder):
     genome_json_objects = []
 
     # Upload each genome to the desired project
-    sys.stdout.write("Uploading")
     for genome_file_name in manifest_info.keys():
         genome_attrs = manifest_info[genome_file_name]
         url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id={}&assembly_version=hg19&format={}"
@@ -83,8 +83,6 @@ def upload_genomes_to_project(project_id, folder):
         with open(folder + "/" + genome_file_name, 'rb') as file_handle:
             # Post request and store newly uploaded genome's information
             result = requests.put(url, auth=auth, data=file_handle, verify=False)
-            sys.stdout.write(".")
-            sys.stdout.flush()
             genome_json_objects.append(result.json())
     sys.stdout.write("\n")
     return genome_json_objects
@@ -105,12 +103,7 @@ def main():
     genome_objects = upload_genomes_to_project(project_id, folder)
 
     # Output genome labels, ids, external ids, and sizes
-    for genome_object in genome_objects:
-        sys.stdout.write("genome_label: {}, genome_id: {}, external_id: {}, size: {} \n"
-                         .format(genome_object.get('genome_label', 'Missing'),
-                                 genome_object.get('genome_id', 'Missing'),
-                                 genome_object.get('external_id', 'Missing'),
-                                 genome_object.get('size', 'Missing')))
+    sys.stdout.write(json.dumps(genome_objects, indent=4))
 
 if __name__ == "__main__":
     main()

@@ -6,6 +6,7 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
+import simplejson as json
 
 # Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -44,26 +45,7 @@ def main():
     json_response = get_genomes(project_id)
 
     try:
-        for genome in json_response['objects']:
-            sys.stdout.write('name: {}\n'
-                             'upload_date: {}\n'
-                             'genome_status: {}\n'
-                             'report_count: {}\n'
-                             'uploaded_by: {}\n'
-                             'is_upgraded: {}\n'
-                             'project_id: {}\n'
-                             'external_id: {}\n'
-                             'id: {}\n'
-                             .format(genome.get('name', 'Missing'),
-                                     genome.get('upload_date', 'Missing'),
-                                     genome.get('genome_status', 'Missing'),
-                                     genome.get('report_count', 'Missing'),
-                                     genome.get('uploaded_by', 'Missing'),
-                                     genome.get('is_upgraded', 'Missing'),
-                                     genome.get('project_id', 'Missing'),
-                                     genome.get('external_id', 'Missing'),
-                                     genome.get('id', 'Missing')))
-            sys.stdout.write('\n')
+        sys.stdout.write(json.dumps(json_response, indent=4))
     except KeyError:
         if json_response['description']:
             sys.stdout.write("Error: {}\n".format(json_response))
