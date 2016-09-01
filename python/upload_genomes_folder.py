@@ -25,16 +25,7 @@ def get_genome_files(folder):
     """
     genome_files = []
     for file_name in os.listdir(folder):
-        if file_name.endswith(".vcf"):
-            genome_file_extension = "vcf"
-        elif file_name.endswith(".vcf.gz"):
-            genome_file_extension = "vcf.gz"
-        elif file_name.endswith(".vcf.bz2"):
-            genome_file_extension = "vcf.bz2"
-        else:
-            continue
         genome_info = {"name": file_name,
-                       "format": genome_file_extension,
                        "assembly_version": "hg19",
                        "genome_sex": "unspecified",
                        "genome_label": file_name[0:100]}
@@ -50,12 +41,11 @@ def upload_genomes_to_project(project_id, folder):
     genome_json_objects = []
 
     for genome_file in get_genome_files(folder):
-        url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id=&assembly_version=hg19&format={}"
+        url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id=&assembly_version=hg19"
         url = url.format(OMICIA_API_URL,
                          project_id,
                          genome_file["genome_label"],
-                         genome_file["genome_sex"],
-                         genome_file["format"])
+                         genome_file["genome_sex"])
 
         with open(folder + "/" + genome_file["name"], 'rb') as file_handle:
             # Post request and store id of newly uploaded genome
