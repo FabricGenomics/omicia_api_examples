@@ -21,7 +21,7 @@ OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 
-def add_fields_to_cr(cr_id):
+def get_fields_for_cr(cr_id):
     """Use the Omicia API to fill in custom patient fields for a clinical report
     """
     # Construct request
@@ -42,7 +42,7 @@ def main():
 
     cr_id = args.c
 
-    json_response = add_fields_to_cr(cr_id)
+    json_response = get_fields_for_cr(cr_id)
     sys.stdout.write(json.dumps(json_response, indent=4))
 
 if __name__ == "__main__":
