@@ -5,7 +5,7 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
-import json
+import simplejson as json
 import argparse
 
 # Load environment variables for request authentication parameters
@@ -45,8 +45,7 @@ def main():
     json_response = get_panel_regions(panel_id)
     panel_regions = json_response
 
-    for panel_region in panel_regions:
-        sys.stdout.write('symbol: {}\n'.format(panel_region.get('symbol')))
+    sys.stdout.write(json.dumps(panel_regions, indent=4))
 
 if __name__ == "__main__":
     main()
