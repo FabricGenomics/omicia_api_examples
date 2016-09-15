@@ -64,8 +64,7 @@ public class OmiciaApiExample {
 			.setPath("/projects/"+projectID+"/genomes")
 			.setParameter("genome_label", "Test R. Person")
 			.setParameter("genome_sex", "unspecified")
-			.setParameter("assembly_version", "hg19")
-			.setParameter("format", getFormatFromFile(inputFile.getName()))
+			.setParameter("assembly_version", "hg19"))
 		.build();
 
 		// build the authorization header
@@ -119,18 +118,6 @@ public class OmiciaApiExample {
 		System.out.println("response received:");
 		String output = readStream(entity.getContent());
 		System.out.println(output);
-	}
-
-	private static String getFormatFromFile(String name) {
-		if (name.endsWith(".vcf")) {
-			return "vcf";
-		} else if (name.endsWith(".vcf.gz")) {
-			return "vcf.gz";
-		} else if (name.endsWith(".vcf.bz2")) {
-			return "vcf.bz2";
-		} else {
-			throw new RuntimeException("unknown file format");
-		}
 	}
 
 	private static String readStream(InputStream stream) {
