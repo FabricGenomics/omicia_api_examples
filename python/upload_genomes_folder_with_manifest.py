@@ -9,11 +9,11 @@ all of the genomes it describes, and must be named 'manifest.csv.'
 
 Example manifest.csv contents:
 filename,label,external_id,sex,format
-TR4091_exome_copy.vcf.gz,abc1,55,male,vcf.gz
-TR4091_exome.vcf,abc2,56,female,vcf
-TR4092_exome.vcf,abc3,57,unspecified,vcf
-TR4093_exome.vcf,abc4,58,female,vcf
-TR4094_exome.vcf,abc5,59,male,vcf
+TR4091_exome_copy.vcf.gz,abc1,55,male
+TR4091_exome.vcf,abc2,56,female
+TR4092_exome.vcf,abc3,57,unspecified
+TR4093_exome.vcf,abc4,58,female
+TR4094_exome.vcf,abc5,59,male
 """
 import argparse
 import csv
@@ -54,8 +54,7 @@ def get_manifest_info(folder):
             genome_filename = row[0]
             manifest_info[genome_filename] = {"genome_label": row[1],
                                               "external_id": row[2],
-                                              "genome_sex": row[3],
-                                              "format": row[4]}
+                                              "genome_sex": row[3]}
     return manifest_info
 
 
@@ -72,13 +71,12 @@ def upload_genomes_to_project(project_id, folder):
     # Upload each genome to the desired project
     for genome_file_name in manifest_info.keys():
         genome_attrs = manifest_info[genome_file_name]
-        url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id={}&assembly_version=hg19&format={}"
+        url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id={}&assembly_version=hg19"
         url = url.format(OMICIA_API_URL,
                          project_id,
                          genome_attrs["genome_label"],
                          genome_attrs["genome_sex"],
-                         genome_attrs["external_id"],
-                         genome_attrs["format"])
+                         genome_attrs["external_id"])
 
         with open(folder + "/" + genome_file_name, 'rb') as file_handle:
             # Post request and store newly uploaded genome's information
