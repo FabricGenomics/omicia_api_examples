@@ -51,7 +51,7 @@ def main():
     qc_fields = args.f
 
     json_response = add_fields_to_cr(cr_id, qc_fields)
-    print json_response
+    print json.dumps(json_response, indent=4)
 
 if __name__ == "__main__":
     main()
