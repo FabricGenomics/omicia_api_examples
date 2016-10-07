@@ -36,7 +36,7 @@ def get_genomes(project_id):
 def main():
     """main function, get all genomes in a project.
     """
-    parser = argparse.ArgumentParser(description='Upload a genome.')
+    parser = argparse.ArgumentParser(description='Get all genomes in a project.')
     parser.add_argument('project_id', metavar='project_id')
     args = parser.parse_args()
 
