@@ -40,6 +40,12 @@ def launch_analysis(report_type,
                     'proband_sex': proband_sex,
                     'mother_genome_id': mother_genome_id,
                     'father_genome_id': father_genome_id,
+<<<<<<< Updated upstream
+=======
+                    'sibling_genome_id': sibling_genome_id,
+                    'sibling_sex': sibling_sex,
+                    'sibling_affected': sibling_affected,
+>>>>>>> Stashed changes
                     'hpo_terms': hpo_terms,
                     'proband_vaast_report_id': proband_vaast_report_id}
 
@@ -71,6 +77,14 @@ def main():
     proband_vaast_report_id = args.proband_vaast_report_id
     mother_genome_id = args.mother_genome_id
     father_genome_id = args.father_genome_id
+<<<<<<< Updated upstream
+=======
+    sibling_genome_id = args.sibling_genome_id
+    sibling_sex = args.sibling_sex
+    sibling_affected = args.sibling_affected == 'true'
+    if not args.sibling_affected:
+        sibling_affected = None
+>>>>>>> Stashed changes
     report_type = args.report_type
     hpo_terms = args.hpo_terms
 
