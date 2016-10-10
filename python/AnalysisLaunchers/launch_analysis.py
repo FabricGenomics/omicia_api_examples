@@ -28,6 +28,9 @@ def launch_analysis(report_type,
                     proband_sex,
                     father_genome_id,
                     mother_genome_id,
+                    sibling_genome_id,
+                    sibling_sex,
+                    sibling_affected,
                     hpo_terms=None,
                     proband_vaast_report_id=None):
     """Launch a flexible family report. Return the JSON response.
@@ -58,13 +61,16 @@ def main():
     parser.add_argument('report_type',
                         metavar='report_type',
                         type=str,
-                        choices=['VAAST Solo Report', 'VAAST Trio Report', 'Phevor Report'])
+                        choices=['VAAST Solo Report', 'VAAST Trio Report', 'VAAST Quad Report', 'Phevor Report'])
     parser.add_argument('--proband_genome_id', metavar='proband_genome_id', type=int)
     parser.add_argument('--proband_sex', metavar='proband_sex', type=str, choices=['m', 'f'])
     # Proband VAAST Report ID is only necessary when running Phevor on an existing vaast run
     parser.add_argument('--proband_vaast_report_id', metavar='proband_vaast_report_id', type=int)
     parser.add_argument('--mother_genome_id', metavar='mother_genome_id', type=int)
     parser.add_argument('--father_genome_id', metavar='father_genome_id', type=int)
+    parser.add_argument('--sibling_genome_id', metavar='sibling_genome_id', type=int)
+    parser.add_argument('--sibling_sex', metavar='sibling_sex', type=str, choices=['m', 'f'])
+    parser.add_argument('--sibling_affected', metavar='sibling_affected', type=str, choices=['true', 'false'])
     # HPO Terms should be a comma-separated list (e.g. 'HP:XXXXXX,HP:XXXXX')
     parser.add_argument('--hpo_terms', metavar='hpo_terms', type=str)
 
@@ -79,6 +85,7 @@ def main():
     sibling_affected = args.sibling_affected == 'true'
     if not args.sibling_affected:
         sibling_affected = None
+
     report_type = args.report_type
     hpo_terms = args.hpo_terms
 
@@ -87,6 +94,9 @@ def main():
                                         proband_sex,
                                         father_genome_id,
                                         mother_genome_id,
+                                        sibling_genome_id,
+                                        sibling_sex,
+                                        sibling_affected,
                                         hpo_terms=hpo_terms,
                                         proband_vaast_report_id=proband_vaast_report_id)
     sys.stdout.write(json.dumps(vaast_report_json, indent=4))
