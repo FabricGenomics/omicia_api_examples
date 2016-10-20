@@ -6,6 +6,7 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
+import simplejson as json
 
 # Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -48,39 +49,18 @@ def main():
     """main function, get all assay_types in a project.
     """
     parser = argparse.ArgumentParser(description='Upload a genome.')
-    parser.add_argument('assay_type_id', metavar='project_id')
+    parser.add_argument('--assay_type_id', metavar='assay_type_id')
     args = parser.parse_args()
 
     assay_type_id = args.assay_type_id
 
     if assay_type_id:
         assay_type = get_assay_type(assay_type_id)
-        sys.stdout.write('id: {}\n'
-                         'workspace_id: {}\n'
-                         'description: {}\n'
-                         'quality_control_fields: {}\n'
-                         .format(assay_type.get('wso_id', 'Missing'),
-                                 assay_type.get('workspace_id', 'Missing'),
-                                 assay_type.get('description', 'Missing'),
-                                 assay_type.get('quality_control_fields', 'Missing')))
+        sys.stdout.write(json.dumps(assay_type, indent=4))
+
     else:
         json_response = get_assay_types()
-        try:
-            for assay_type in json_response['objects']:
-                sys.stdout.write('id: {}\n'
-                                 'workspace_id: {}\n'
-                                 'description: {}\n'
-                                 'quality_control_fields: {}\n'
-                                 .format(assay_type.get('wso_id', 'Missing'),
-                                         assay_type.get('workspace_id', 'Missing'),
-                                         assay_type.get('description', 'Missing'),
-                                         assay_type.get('quality_control_fields', 'Missing')))
-                sys.stdout.write('\n')
-        except KeyError:
-            if json_response['description']:
-                sys.stdout.write("Error: {}\n".format(json_response['description']))
-            else:
-                sys.stdout.write('Something went wrong ...')
+        sys.stdout.write(json.dumps(json_response, indent=4))
 
 if __name__ == "__main__":
     main()

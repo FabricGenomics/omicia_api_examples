@@ -120,7 +120,7 @@ def main():
                                    limitations=limitations,
                                    fda_disclosure=fda_disclosure,
                                    test_code=test_code)
-        sys.stdout.write(json.dumps(json_response))
+        sys.stdout.write(json.dumps(json_response, indent=4))
         sys.stdout.write('\n')
         panel_id = json_response.get('id')
 
@@ -133,7 +133,7 @@ def main():
                                   fda_disclosure=fda_disclosure,
                                   test_code=test_code)
         try:
-            sys.stdout.write(json.dumps(json_response))
+            sys.stdout.write(json.dumps(json_response, indent=4))
             sys.stdout.write('\n')
         except TypeError:
             sys.stdout.write("Unexpected error. Perhaps the panel you specified no longer exists?\n\n")

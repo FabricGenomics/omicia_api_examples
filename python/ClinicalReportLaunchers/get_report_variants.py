@@ -91,6 +91,7 @@ def main():
     """
     parser = argparse.ArgumentParser(description='Get variants for existing clinical reports.')
     parser.add_argument('cr_id', metavar='clinical_report_id', type=int)
+    parser.add_argument('--extended', metavar='extended', type=str, choices=['true'])
     parser.add_argument('--status', metavar='status', type=str)
     parser.add_argument('--to_report', metavar='to_report', type=str)
     parser.add_argument('--format', metavar='_format', type=str, choices=['JSON', 'VCF', 'CSV'], default='JSON')
@@ -106,6 +107,7 @@ def main():
     args = parser.parse_args()
 
     cr_id = args.cr_id
+    extended = args.extended
     status = args.status
     to_report = args.to_report
     _format = args.format
@@ -116,9 +118,8 @@ def main():
 
     statuses = status.split(",") if status else None
     to_reports = to_report.split(",") if to_report else None
-    print to_reports
 
-    response = get_cr_variants(cr_id, statuses, to_reports, _format, chrom, start_on_chrom, end_on_chrom, alt)
+    response = get_cr_variants(cr_id, statuses, to_reports, _format, chrom, start_on_chrom, end_on_chrom, alt, extended=extended=='true')
     if _format == 'CSV':
         for block in response.iter_content(1024):
             sys.stdout.write(block)
@@ -128,10 +129,7 @@ def main():
     else:
         try:
             response_json = response.json()
-            variants = response_json['objects']
-            for variant in variants:
-                sys.stdout.write(json.dumps(variant, indent=4))
-                sys.stdout.write('\n')
+            sys.stdout.write(json.dumps(response_json, indent=4))
         except KeyError:
             sys.stderr.write(response.json())
 
