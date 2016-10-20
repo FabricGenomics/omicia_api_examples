@@ -109,18 +109,20 @@ def launch_panel_report(genome_id, filter_id, panel_id, accession_id):
 def main(argv):
     """Main function, creates a panel report.
     """
-    parser = argparse.ArgumentParser(description='Launch a panel report with no genome.')
-    parser.add_argument('g', metavar='genome_id', type=int)
-    parser.add_argument('p', metavar='panel_id', type=int)
-    parser.add_argument('a', metavar='accession_id', type=str)
-    parser.add_argument('--f', metavar='filter_id', type=int)
+    parser = argparse.ArgumentParser(description='Launch a Panel Report with no genome.')
+    parser.add_argument('genome_id', metavar='genome_id', type=int)
+    parser.add_argument('--filter_id', metavar='filter_id', type=int)
+    parser.add_argument('panel_id', metavar='panel_id', type=int)
+    parser.add_argument('accession_id', metavar='accession_id', type=str)
     parser.add_argument('--patient_info_file', metavar='patient_info_file', type=str)
+
     args = parser.parse_args()
 
-    genome_id = args.g
-    filter_id = args.f
-    panel_id = args.p
-    accession_id = args.a
+    genome_id = args.genome_id
+    filter_id = args.filter_id
+    panel_id = args.panel_id
+    accession_id = args.accession_id
+
     patient_info_file_name = args.patient_info_file
 
     json_response = launch_panel_report(genome_id,

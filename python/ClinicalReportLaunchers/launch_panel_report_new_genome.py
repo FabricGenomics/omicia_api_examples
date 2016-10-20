@@ -92,9 +92,9 @@ def launch_panel_report(genome_id, filter_id, panel_id, accession_id):
     # Construct url and request
     url = "{}/reports/".format(OMICIA_API_URL)
     url_payload = {'report_type': "panel",
-                   'genome_id': genome_id,
-                   'filter_id': filter_id,
-                   'panel_id': panel_id,
+                   'genome_id': int(genome_id),
+                   'filter_id': int(filter_id) if filter_id else None,
+                   'panel_id': int(panel_id),
                    'accession_id': accession_id}
 
     sys.stdout.write("Launching report...")
@@ -122,8 +122,9 @@ def upload_genome_to_project(project_id, label, sex, file_name):
 
 
 def main(argv):
-    """Main function, uploads a geneome and creates a panel report using it.
+    """Main function, uploads a genome and creates a panel report using it.
     """
+<<<<<<< HEAD
     parser = argparse.ArgumentParser(description='Launch a panel report with no genome.')
     parser.add_argument('--project_id', metavar='project_id', type=int)
     parser.add_argument('label', metavar='label', type=str)
@@ -133,11 +134,28 @@ def main(argv):
     parser.add_argument('accession_id', metavar='accession_id', type=str)
     parser.add_argument('--filter_id', metavar='filter_id', type=int)
     parser.add_argument('--patient_info_file', metavar='patient_info_file', type=str)
+=======
+    parser = argparse.ArgumentParser(description='Launch a Panel Report with no genome.')
+    parser.add_argument('project_id', metavar='project_id', type=int)
+    parser.add_argument('label', metavar='label', type=str)
+    parser.add_argument('sex', metavar='sex', type=str)
+    parser.add_argument('file_format', metavar='file_format', type=str)
+    parser.add_argument('genome_filename', metavar='genome_filename', type=str)
+    parser.add_argument('--filter_id', metavar='filter_id', type=int)
+    parser.add_argument('panel_id', metavar='panel_id', type=int)
+    parser.add_argument('accession_id', metavar='accession_id', type=str)
+    parser.add_argument('--patient_info_file', metavar='patient_info_file', type=str)
+
+>>>>>>> develop
     args = parser.parse_args()
 
     project_id = args.project_id
     label = args.label
     sex = args.sex
+<<<<<<< HEAD
+=======
+    file_format = args.file_format
+>>>>>>> develop
     genome_filename = args.genome_filename
     filter_id = args.filter_id
     panel_id = args.panel_id
