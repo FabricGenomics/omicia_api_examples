@@ -9,7 +9,7 @@ from requests.auth import HTTPBasicAuth
 import sys
 import argparse
 
-#Load environment variables for request authentication parameters
+# Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
     sys.exit("OMICIA_API_PASSWORD environment variable missing")
 
@@ -21,54 +21,64 @@ OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
 OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
-def launch_family_report(score_indels, reporting_cutoff, accession_id, sex, hpo_terms):
+
+def launch_family_report(report_type, score_indels, reporting_cutoff, accession_id, project_id, hpo_terms):
     """Launch a family report. Return the JSON response.
     """
     # Construct url and request
     url = "{}/reports/".format(OMICIA_API_URL)
 
-    url_payload = {'report_type': "Trio",
+    url_payload = {'report_type': report_type,
                    'mother_genome_id': None,
                    'father_genome_id': None,
                    'proband_genome_id': None,
-                   'proband_sex': sex,
+                   'sibling_genome_id': None,
+                   'duo_relation_genome_id': None,
+                   'proband_sex': None,
                    'background': 'FULL',
-                   'score_indels': bool(score_indels),
-                   'reporting_cutoff': int(reporting_cutoff),
+                   'score_indels': score_indels,
+                   'reporting_cutoff': reporting_cutoff,
                    'accession_id': accession_id,
+                   'project_id': project_id,
                    'hpo_terms': json.dumps(hpo_terms)}
 
     sys.stdout.write("Launching family report...\n")
-    result = requests.post(url, auth=auth, data=json.dumps(url_payload))
+    result = requests.post(url, auth=auth, data=json.dumps(url_payload), verify=False)
 
     return result.json()
 
 
-def main(argv):
-    """Launch a family report with no genomes.
+def main():
+    """Launch a solo, trio, or quad family clinical report with no genomes.
     """
     parser = argparse.ArgumentParser(
         description='Launch a family report with no genomes')
-    parser.add_argument('indels', metavar='score_indels')
-    parser.add_argument('cutoff', metavar='reporting_cutoff')
+    parser.add_argument('report_type',
+                        metavar='report_type',
+                        type=str,
+                        choices=['exome', 'Duo', 'Trio', 'Quad'])
+    parser.add_argument('--indels', metavar='score_indels', type=bool, default=False)
+    parser.add_argument('--cutoff', metavar='reporting_cutoff', type=int)
     parser.add_argument('acc', metavar='accession_id')
-    parser.add_argument('sex', metavar='sex (m|f)')
+    parser.add_argument('--project_id', metavar='project_id', type=int)
     parser.add_argument('--hpo', metavar='hpo_terms')
     args = parser.parse_args()
 
+    report_type = args.report_type
     score_indels = args.indels
     reporting_cutoff = args.cutoff
     accession_id = args.acc
-    sex = args.sex
+    project_id = args.project_id
     hpo_terms = args.hpo or None
     if hpo_terms is not None:
         hpo_terms = hpo_terms.split(',')
 
     family_report_json = launch_family_report(
+        report_type,
         score_indels,
         reporting_cutoff,
         accession_id,
-        sex,
+        project_id,
         hpo_terms)
 
     # Confirm launched report data
@@ -86,6 +96,8 @@ def main(argv):
                      'status: {}\n'
                      'filter_id: {}\n'
                      'panel_id: {}\n'
+                     'hpo_terms: {}\n'
+                     'filter_name: {}\n'
                      'workspace_id: {}\n'
                      'sample_collected_date: {}\n'
                      'sample_received_date: {}\n'
@@ -103,6 +115,8 @@ def main(argv):
                              clinical_report.get('status', 'Missing'),
                              clinical_report.get('filter_id','Missing'),
                              clinical_report.get('panel_id','Missing'),
+                             clinical_report.get('hpo_terms', 'Missing'),
+                             clinical_report.get('filter_name', 'Missing'),
                              clinical_report.get('workspace_id','Missing'),
                              clinical_report.get('sample_collected_date','Missing'),
                              clinical_report.get('sample_received_date','Missing'),
@@ -114,4 +128,4 @@ def main(argv):
                              clinical_report.get('version', 'Missing')))
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

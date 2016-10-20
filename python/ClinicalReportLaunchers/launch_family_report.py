@@ -35,8 +35,6 @@ import requests
 from requests.auth import HTTPBasicAuth
 import sys
 
-_MANIFEST_FILENAME = 'family_manifest.csv'
-
 #Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
     sys.exit("OMICIA_API_PASSWORD environment variable missing")
@@ -92,7 +90,7 @@ def add_fields_to_cr(cr_id, patient_fields):
     sys.stdout.write("Adding custom patient fields to report...")
     sys.stdout.write("\n\n")
     sys.stdout.flush()
-    result = requests.post(url, auth=auth, data=url_payload)
+    result = requests.post(url, auth=auth, data=url_payload, verify=False)
     return result.json()
 
 
@@ -112,10 +110,10 @@ def get_family_manifest_info(family_folder):
     family_manifest_info = {}
 
     # First check to make sure there is in fact a family_manifest.csv file
-    if _MANIFEST_FILENAME not in os.listdir(family_folder):
+    if 'family_manifest.csv' not in os.listdir(family_folder):
         sys.exit("No family_manifest.csv file in folder provided.")
 
-    with open(os.path.join(family_folder, _MANIFEST_FILENAME)) as f:
+    with open(family_folder + '/family_manifest.csv') as f:
         reader = csv.reader(f)
         next(reader, None)  # Skip the header
         for i, row in enumerate(reader):
@@ -148,7 +146,7 @@ def launch_family_report(mother_genome_id, father_genome_id,
                    'accession_id': accession_id}
 
     sys.stdout.write("Launching family report...\n")
-    result = requests.post(url, auth=auth, data=json.dumps(url_payload))
+    result = requests.post(url, auth=auth, data=json.dumps(url_payload), verify=False)
 
     return result.json()
 
@@ -167,7 +165,7 @@ def upload_genome(project_id, genome_info, family_folder):
     # Upload genome
     with open(family_folder + "/" + genome_info['genome_filename'], 'rb') as file_handle:
         # Post request and store newly uploaded genome's information
-        result = requests.put(url, data=file_handle, params=payload, auth=auth)
+        result = requests.put(url, data=file_handle, params=payload, auth=auth, verify=False)
         sys.stdout.write(".")
         sys.stdout.flush()
         return result.json()["genome_id"]
@@ -270,6 +268,7 @@ def main(argv):
                      'status: {}\n'
                      'filter_id: {}\n'
                      'panel_id: {}\n'
+                     'filter_name: {}\n'
                      'workspace_id: {}\n'
                      'sample_collected_date: {}\n'
                      'sample_received_date: {}\n'
@@ -288,6 +287,7 @@ def main(argv):
                              clinical_report.get('status','Missing'),
                              clinical_report.get('filter_id','Missing'),
                              clinical_report.get('panel_id','Missing'),
+                             clinical_report.get('filter_name', 'Missing'),
                              clinical_report.get('workspace_id','Missing'),
                              clinical_report.get('sample_collected_date','Missing'),
                              clinical_report.get('sample_received_date','Missing'),

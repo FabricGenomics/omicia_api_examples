@@ -217,7 +217,6 @@ def main(argv):
     parser.add_argument('accession_id', metavar='accession_id', type=str)
     parser.add_argument('--patient_info_file', metavar='patient_info_file', type=str)
 
-
     args = parser.parse_args()
 
     project_id = args.project_id

@@ -1,14 +1,7 @@
-"""Create a new family report from an new vaast solo. This requires putting a
-genome in a folder along with a descriptor file titled 'manifest.csv,'
-which should have the following format:
-
-filename,label,external_id,sex,format,affected_status
-NA19238.vcf.gz,CG Yoruban Mother,1,female,vcf.gz,unaffected
-
+"""Create a new solo clinical report from a new vaast solo.
 Optionally, include a file containing patient (proband) information to populate
 patient information fields in the clinical report. This file should be a csv
 formatted in this way:
-
 Opal Patient Information,value
 Patient Last Name,John
 Patient First Name,Doe
@@ -21,7 +14,6 @@ Specimen Type,Blood
 Date Specimen Collected,9/9/14
 Date Specimen Received,9/13/14
 Ordering Physician,Paul Billings
-
 If you are having trouble with using either csv file, make sure its
 line endings are newlines (\n) and not the deprecated carriage returns (\r)
 """
@@ -82,7 +74,7 @@ def add_fields_to_cr(cr_id, patient_fields):
     """Use the Omicia API to fill in custom patient fields for a clinical report
     e.g. patient_fields: '{"Patient Name": "Eric", "Gender": "Male", "Accession Number": "1234"}'
     """
-    #Construct request
+    # Construct request
     url = "{}/reports/{}/patient_fields"
     url = url.format(OMICIA_API_URL, cr_id)
     url_payload = json.dumps(patient_fields)
@@ -94,12 +86,6 @@ def add_fields_to_cr(cr_id, patient_fields):
     return result.json()
 
 
-# A map between the row numbers and family member from the family manifest csv
-family_info_row_map = {
-    0: 'proband'
-}
-
-
 def launch_solo_report(proband_genome_id, proband_sex,
                        score_indels, reporting_cutoff, accession_id):
     """Launch a family report. Return the JSON response.
@@ -108,10 +94,10 @@ def launch_solo_report(proband_genome_id, proband_sex,
     url = "{}/reports/".format(OMICIA_API_URL)
     url_payload = {'report_type': "exome",
                    'proband_genome_id': int(proband_genome_id),
-                   'proband_sex': ('f' if proband_sex == 'female' else 'm'),
+                   'proband_sex': proband_sex,
                    'background': 'FULL',
-                   'score_indels': bool(score_indels),
-                   'reporting_cutoff': int(reporting_cutoff),
+                   'score_indels': score_indels,
+                   'reporting_cutoff': reporting_cutoff,
                    'accession_id': accession_id}
 
     sys.stdout.write("Launching solo report...\n")
@@ -135,23 +121,24 @@ def upload_genome(project_id, genome_filename, genome_label, genome_sex, genome_
     with open(genome_filename, 'rb') as file_handle:
         # Post request and store newly uploaded genome's information
         result = requests.put(url, data=file_handle, params=payload, auth=auth)
+        print result
         genome_id = result.json()["genome_id"]
         return genome_id
 
 
-def main(argv):
+def main():
     """Main function, creates a panel report.
     """
     parser = argparse.ArgumentParser(description='Launch a VAAST solo clinical report.')
     parser.add_argument('project_id', metavar='project_id', type=int)
     parser.add_argument('genome_file', metavar='genome_filename', type=str)
     parser.add_argument('genome_label', metavar='genome_label', type=str)
-    parser.add_argument('genome_sex', metavar='genome_sex', type=str)
+    parser.add_argument('genome_sex', metavar='genome_sex', type=str, choices=['m', 'f', 'u'])
     parser.add_argument('genome_external_id', metavar='genome_external_id', type=str)
     parser.add_argument('genome_format', metavar='genome_format', type=str)
-    parser.add_argument('score_indels', metavar='score_indels', type=bool)
-    parser.add_argument('reporting_cutoff', metavar='reporting_cutoff', type=int)
     parser.add_argument('report_accession_id', metavar='report_accession_id', type=str)
+    parser.add_argument('--score_indels', metavar='score_indels', type=bool, default=False)
+    parser.add_argument('--reporting_cutoff', metavar='reporting_cutoff', type=int)
     parser.add_argument('--patient_info', metavar='patient_info', type=str)
 
     args = parser.parse_args()
@@ -195,7 +182,7 @@ def main(argv):
         sys.exit("Failed to launch. Check report parameters for correctness.")
     clinical_report = family_report_json['clinical_report']
 
-     # If a patient information csv file is provided, use it to generate a
+    # If a patient information csv file is provided, use it to generate a
     # representative JSON object and add the patient fields to the report
     if patient_info_file_name:
         clinical_report_id = clinical_report.get('id')
@@ -237,4 +224,4 @@ def main(argv):
                              clinical_report.get('version', 'Missing')))
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

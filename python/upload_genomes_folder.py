@@ -1,12 +1,13 @@
 """Upload multiple genomes to an existing project from a folder.
 """
-
+import argparse
 import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
+import simplejson as json
 
-#Load environment variables for request authentication parameters
+# Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
     sys.exit("OMICIA_API_PASSWORD environment variable missing")
 
@@ -24,16 +25,7 @@ def get_genome_files(folder):
     """
     genome_files = []
     for file_name in os.listdir(folder):
-        if file_name.endswith(".vcf"):
-            genome_file_extension = "vcf"
-        elif file_name.endswith(".vcf.gz"):
-            genome_file_extension = "vcf.gz"
-        elif file_name.endswith(".vcf.bz2"):
-            genome_file_extension = "vcf.bz2"
-        else:
-            continue
         genome_info = {"name": file_name,
-                       "format": genome_file_extension,
                        "assembly_version": "hg19",
                        "genome_sex": "unspecified",
                        "genome_label": file_name[0:100]}
@@ -45,46 +37,38 @@ def upload_genomes_to_project(project_id, folder):
     """upload all of the genomes in the given folder to the project with
     the given project id
     """
-
     # List where returned genome JSON information will be stored
     genome_json_objects = []
 
-    sys.stdout.write("Uploading")
     for genome_file in get_genome_files(folder):
-        url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id=&assembly_version=hg19&format={}"
+        url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id=&assembly_version=hg19"
         url = url.format(OMICIA_API_URL,
                          project_id,
                          genome_file["genome_label"],
-                         genome_file["genome_sex"],
-                         genome_file["format"])
+                         genome_file["genome_sex"])
 
         with open(folder + "/" + genome_file["name"], 'rb') as file_handle:
             # Post request and store id of newly uploaded genome
-            result = requests.put(url, auth=auth, data=file_handle)
-            sys.stdout.write(".")
-            sys.stdout.flush()
+            result = requests.put(url, auth=auth, data=file_handle, verify=False)
             genome_json_objects.append(result.json())
-    sys.stdout.write("\n")
     return genome_json_objects
 
 
-def main(argv):
-    """main function. Upload VCF files from a folder to a specified project.
+def main():
+    """Main function. Upload VCF files from a folder to a specified project.
     """
-    if len(argv) < 2:
-        sys.exit("Usage: python upload_genomes_folder.py <project_id> <folder>")
-    project_id = argv[0]
-    folder = argv[1]
+    parser = argparse.ArgumentParser(description='Upload a folder of genomes.')
+    parser.add_argument('project_id', metavar='project_id')
+    parser.add_argument('folder', metavar='folder')
+    args = parser.parse_args()
+
+    project_id = args.project_id
+    folder = args.folder
 
     genome_objects = upload_genomes_to_project(project_id, folder)
 
-    # Output genome labels, ids, and sizes
-    for genome_object in genome_objects:
-        sys.stdout.write("genome_label: {}, genome_id: {}, size: {}\n"
-                         .format(genome_object.get('genome_label', 'Missing'),
-                                 genome_object.get('genome_id', 'Missing'),
-                                 genome_object.get('size', 'Missing')))
+    sys.stdout.write(json.dumps(genome_objects, indent=4))
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

@@ -1,10 +1,12 @@
 """Create a new project.
 """
 
+import argparse
 import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
+import simplejson as json
 
 # Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -17,6 +19,7 @@ OMICIA_API_LOGIN = os.environ['OMICIA_API_LOGIN']
 OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
 OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
+
 
 def create_project(name, description, share_role):
     """Use the Omicia API to create a new project.
@@ -35,23 +38,26 @@ def create_project(name, description, share_role):
                'share_role': share_role}
 
     # Post request and return newly created project's id
-    result = requests.post(url, headers=payload, data=payload, auth=auth)
+    result = requests.post(url, data=payload, auth=auth, verify=False)
     return result.json()
 
-def main(argv):
+
+def main():
     """main function, creates a project with a command-line specified name
     """
+    parser = argparse.ArgumentParser(description='Create a new project')
+    parser.add_argument('n', metavar='name', type=str)
+    parser.add_argument('d', metavar='description', type=str)
+    parser.add_argument('s', metavar='share_role', type=str, choices=['CONTRIBUTOR', 'VIEWER', 'NONE'])
 
-    if len(argv) != 3:
-        sys.exit("Usage: python create_project.py <name> <desc> <sharerole (CONTRIBUTOR|VIEWER|NONE)>")
-    name = argv[0]
-    description = argv[1]
-    share_role = argv[2]
+    args = parser.parse_args()
+    name = args.n
+    description = args.d
+    share_role = args.s
 
     json_response = create_project(name, description, share_role)
     try:
-        project_id = json_response["id"]
-        sys.stdout.write("Project id: {}\n".format(project_id))
+        sys.stdout.write(json.dumps(json_response, indent=4))
     except KeyError:
         if json_response['description']:
             sys.stdout.write('Error: {}\n'.format(json_response['description']))
@@ -60,4 +66,4 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

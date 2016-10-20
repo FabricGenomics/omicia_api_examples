@@ -100,30 +100,41 @@ def launch_panel_report(genome_id, filter_id, panel_id, accession_id):
     sys.stdout.write("Launching report...")
     sys.stdout.write("\n\n")
     sys.stdout.flush()
-    result = requests.post(url, auth=auth, data=json.dumps(url_payload))
+    result = requests.post(url, auth=auth, data=json.dumps(url_payload), verify=False)
 
     return result.json()
 
 
-def upload_genome_to_project(project_id, label, sex, file_format, file_name):
+def upload_genome_to_project(project_id, label, sex, file_name):
     """Use the Omicia API to add a genome, in vcf format, to a project.
     Returns the newly uploaded genome's id.
     """
 
     #Construct request
-    url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id=&assembly_version=hg19&format={}"
-    url = url.format(OMICIA_API_URL, project_id, label, sex, file_format)
+    url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id=aaa&assembly_version=hg19"
+    url = url.format(OMICIA_API_URL, project_id, label, sex)
 
     sys.stdout.write("Uploading genome...\n")
     with open(file_name, 'rb') as file_handle:
         #Post request and return id of newly uploaded genome
-        result = requests.put(url, auth=auth, data=file_handle)
+        result = requests.put(url, auth=auth, data=file_handle, verify=False)
         return result.json()["genome_id"]
 
 
 def main(argv):
     """Main function, uploads a genome and creates a panel report using it.
     """
+<<<<<<< HEAD
+    parser = argparse.ArgumentParser(description='Launch a panel report with no genome.')
+    parser.add_argument('--project_id', metavar='project_id', type=int)
+    parser.add_argument('label', metavar='label', type=str)
+    parser.add_argument('sex', metavar='sex', type=str)
+    parser.add_argument('genome_filename', metavar='genome_filename', type=str)
+    parser.add_argument('panel_id', metavar='panel_id', type=int)
+    parser.add_argument('accession_id', metavar='accession_id', type=str)
+    parser.add_argument('--filter_id', metavar='filter_id', type=int)
+    parser.add_argument('--patient_info_file', metavar='patient_info_file', type=str)
+=======
     parser = argparse.ArgumentParser(description='Launch a Panel Report with no genome.')
     parser.add_argument('project_id', metavar='project_id', type=int)
     parser.add_argument('label', metavar='label', type=str)
@@ -135,12 +146,16 @@ def main(argv):
     parser.add_argument('accession_id', metavar='accession_id', type=str)
     parser.add_argument('--patient_info_file', metavar='patient_info_file', type=str)
 
+>>>>>>> develop
     args = parser.parse_args()
 
     project_id = args.project_id
     label = args.label
     sex = args.sex
+<<<<<<< HEAD
+=======
     file_format = args.file_format
+>>>>>>> develop
     genome_filename = args.genome_filename
     filter_id = args.filter_id
     panel_id = args.panel_id
@@ -149,7 +164,7 @@ def main(argv):
 
     # Upload genome
     genome_id = upload_genome_to_project(project_id, label, sex,
-                                         file_format, genome_filename)
+                                         genome_filename)
     sys.stdout.write("genome_id: {}\n".format(genome_id))
 
     # Launch panel report with uploaded genome
