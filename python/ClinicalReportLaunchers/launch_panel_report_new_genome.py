@@ -124,38 +124,22 @@ def upload_genome_to_project(project_id, label, sex, file_name):
 def main(argv):
     """Main function, uploads a genome and creates a panel report using it.
     """
-<<<<<<< HEAD
-    parser = argparse.ArgumentParser(description='Launch a panel report with no genome.')
+    parser = argparse.ArgumentParser(description='Launch a Panel Report with no genome.')
     parser.add_argument('--project_id', metavar='project_id', type=int)
     parser.add_argument('label', metavar='label', type=str)
     parser.add_argument('sex', metavar='sex', type=str)
-    parser.add_argument('genome_filename', metavar='genome_filename', type=str)
-    parser.add_argument('panel_id', metavar='panel_id', type=int)
-    parser.add_argument('accession_id', metavar='accession_id', type=str)
-    parser.add_argument('--filter_id', metavar='filter_id', type=int)
-    parser.add_argument('--patient_info_file', metavar='patient_info_file', type=str)
-=======
-    parser = argparse.ArgumentParser(description='Launch a Panel Report with no genome.')
-    parser.add_argument('project_id', metavar='project_id', type=int)
-    parser.add_argument('label', metavar='label', type=str)
-    parser.add_argument('sex', metavar='sex', type=str)
-    parser.add_argument('file_format', metavar='file_format', type=str)
     parser.add_argument('genome_filename', metavar='genome_filename', type=str)
     parser.add_argument('--filter_id', metavar='filter_id', type=int)
     parser.add_argument('panel_id', metavar='panel_id', type=int)
     parser.add_argument('accession_id', metavar='accession_id', type=str)
     parser.add_argument('--patient_info_file', metavar='patient_info_file', type=str)
 
->>>>>>> develop
     args = parser.parse_args()
 
     project_id = args.project_id
     label = args.label
     sex = args.sex
-<<<<<<< HEAD
-=======
-    file_format = args.file_format
->>>>>>> develop
+
     genome_filename = args.genome_filename
     filter_id = args.filter_id
     panel_id = args.panel_id
@@ -200,17 +184,17 @@ def main(argv):
                      'sample_received_date: {}\n'
                      'include_cosmic: {}\n'
                      .format(clinical_report.get('id', 'Missing'),
-                             clinical_report.get('test_type','Missing'),
-                             clinical_report.get('accession_id','Missing'),
-                             clinical_report.get('created_on','Missing'),
-                             clinical_report.get('created_by','Missing'),
-                             clinical_report.get('status','Missing'),
-                             clinical_report.get('filter_id','Missing'),
-                             clinical_report.get('panel_id','Missing'),
-                             clinical_report.get('workspace_id','Missing'),
-                             clinical_report.get('sample_collected_date','Missing'),
-                             clinical_report.get('sample_received_date','Missing'),
-                             clinical_report.get('include_cosmic','Missing')))
+                             clinical_report.get('test_type', 'Missing'),
+                             clinical_report.get('accession_id', 'Missing'),
+                             clinical_report.get('created_on', 'Missing'),
+                             clinical_report.get('created_by', 'Missing'),
+                             clinical_report.get('status', 'Missing'),
+                             clinical_report.get('filter_id', 'Missing'),
+                             clinical_report.get('panel_id', 'Missing'),
+                             clinical_report.get('workspace_id', 'Missing'),
+                             clinical_report.get('sample_collected_date', 'Missing'),
+                             clinical_report.get('sample_received_date', 'Missing'),
+                             clinical_report.get('include_cosmic', 'Missing')))
 
 
 if __name__ == "__main__":
