@@ -97,22 +97,56 @@ def add_fields_to_cr(cr_id, patient_fields):
     return result.json()
 
 
-def launch_panel_trio_report(panel_id, filter_id, reporting_cutoff, accession_id, project_id):
+# A map between the row numbers and family member from the family manifest csv
+family_info_row_map = {
+    0: 'mother',
+    1: 'father',
+    2: 'proband'
+}
+
+
+def get_family_manifest_info(family_folder):
+    """Generate an object containing the data from the manifest.csv
+    file in the genomes folder, including each filename along with
+    its genome label, external id, sex, and format.
+    """
+    family_manifest_info = {}
+
+    # First check to make sure there is in fact a family_manifest.csv file
+    if _MANIFEST_FILENAME not in os.listdir(family_folder):
+        sys.exit("No family_manifest.csv file in folder provided.")
+
+    with open(os.path.join(family_folder, _MANIFEST_FILENAME)) as f:
+        reader = csv.reader(f)
+        next(reader, None)  # Skip the header
+        for i, row in enumerate(reader):
+            if i < 3:
+                # family_member is mother, father, or proband
+                family_member = family_info_row_map[i]
+                family_manifest_info[family_member] = {"genome_filename": row[0],
+                                                       "genome_label": row[1],
+                                                       "external_id": row[2],
+                                                       "genome_sex": row[3],
+                                                       "format": row[4]}
+    return family_manifest_info
+
+
+def launch_panel_trio_report(panel_id, filter_id, mother_genome_id, father_genome_id,
+                             proband_genome_id, proband_sex,
+                             reporting_cutoff, accession_id):
     """Launch a family report. Return the JSON response.
     """
     # Construct url and request
     url = "{}/reports/".format(OMICIA_API_URL)
     url_payload = {'report_type': "panel_trio",
                    'panel_id': panel_id,
-                   'filter_id': filter_id,
-                   'mother_genome_id': None,
-                   'father_genome_id': None,
-                   'proband_genome_id': None,
-                   'proband_sex': None,
-                   'reporting_cutoff': reporting_cutoff,
-                   'accession_id': accession_id,
-                   'project_id': project_id
-                   }
+                   'filter_id': filter_id if filter_id else None,
+                   'mother_genome_id': int(mother_genome_id),
+                   'father_genome_id': int(father_genome_id),
+                   'proband_genome_id': int(proband_genome_id),
+                   'proband_sex': ('f' if proband_sex == 'female' else 'm'),
+                   'reporting_cutoff': int(reporting_cutoff),
+                   'accession_id': accession_id}
 
     sys.stdout.write("Launching panel trio report...\n")
     result = requests.post(url, auth=auth, data=json.dumps(url_payload))
@@ -120,31 +154,100 @@ def launch_panel_trio_report(panel_id, filter_id, reporting_cutoff, accession_id
     return result.json()
 
 
-def main():
+def upload_genome(project_id, genome_info, family_folder):
+    """Upload a genome from a given folder to a specified project
+    """
+    # Construct url and request
+    url = "{}/projects/{}/genomes?".format(OMICIA_API_URL, project_id)
+    payload = {'genome_label': genome_info['genome_label'],
+               'genome_sex': genome_info['genome_sex'],
+               'external_id': genome_info['external_id'],
+               'assembly_version': 'hg19',
+               'format': genome_info['format']}
+
+    # Upload genome
+    with open(family_folder + "/" + genome_info['genome_filename'], 'rb') as file_handle:
+        # Post request and store newly uploaded genome's information
+        result = requests.put(url, data=file_handle, params=payload, auth=auth)
+        sys.stdout.write(".")
+        sys.stdout.flush()
+        return result.json()["genome_id"]
+
+
+def upload_genomes_to_project(project_id, family_folder):
+    """Upload each of the three genomes in the folder containing the
+    family trio to the specified project
+    """
+     # Get information about each of the family members from the family manifest
+    family_manifest_info = get_family_manifest_info(family_folder)
+
+    # Use the family genome information to upload each genome to the project
+    sys.stdout.write("Uploading")
+    sys.stdout.flush()
+    mother_genome_id = \
+        upload_genome(project_id, family_manifest_info['mother'], family_folder)
+
+    father_genome_id = \
+        upload_genome(project_id, family_manifest_info['father'], family_folder)
+
+    proband_genome_id = \
+        upload_genome(project_id, family_manifest_info['proband'], family_folder)
+
+    sys.stdout.write("\n")
+
+    return {'mother_genome_id': mother_genome_id,
+            'father_genome_id': father_genome_id,
+            'proband_genome':
+                {
+                    'id': proband_genome_id,
+                    'sex': family_manifest_info['proband']['genome_sex']
+                }
+            }
+
+
+def main(argv):
     """Main function, creates a panel report.
     """
-    parser = argparse.ArgumentParser(description='Launch a panel trio report with no genome.')
+    parser = argparse.ArgumentParser(description='Launch a Panel Report with no genome.')
+    parser.add_argument('project_id', metavar='project_id', type=int)
     parser.add_argument('panel_id', metavar='panel_id', type=int)
-    parser.add_argument('accession_id', metavar='accession_id', type=str)
-    parser.add_argument('project_id', metavar='project_id', type=str)
-    parser.add_argument('--reporting_cutoff', metavar='reporting_cutoff', type=int)
     parser.add_argument('--filter_id', metavar='filter_id', type=int)
+    parser.add_argument('family_folder', metavar='family_folder', type=str)
+    parser.add_argument('reporting_cutoff', metavar='reporting_cutoff', type=int)
+    parser.add_argument('accession_id', metavar='accession_id', type=str)
     parser.add_argument('--patient_info_file', metavar='patient_info_file', type=str)
+
     args = parser.parse_args()
 
+    project_id = args.project_id
     panel_id = args.panel_id
     filter_id = args.filter_id
+    family_folder = args.family_folder
     reporting_cutoff = args.reporting_cutoff
     accession_id = args.accession_id
-    project_id = args.project_id
-
     patient_info_file_name = args.patient_info_file
+
+    family_genome_ids = upload_genomes_to_project(project_id, family_folder)
+
+    # Confirm uploaded genomes' data
+    sys.stdout.write("Uploaded 3 genomes:\n")
+    sys.stdout.write("mother_genome_id: {}\n"
+                     "father_genome_id: {}\n"
+                     "proband_genome_id: {}\n"
+                     "proband_sex: {}\n"
+                     .format(family_genome_ids['mother_genome_id'],
+                             family_genome_ids['father_genome_id'],
+                             family_genome_ids['proband_genome']['id'],
+                             family_genome_ids['proband_genome']['sex']))
 
     family_report_json = launch_panel_trio_report(
         panel_id, filter_id,
+        family_genome_ids['mother_genome_id'],
+        family_genome_ids['father_genome_id'],
+        family_genome_ids['proband_genome']['id'],
+        family_genome_ids['proband_genome']['sex'],
         reporting_cutoff,
-        accession_id,
-        project_id)
+        accession_id)
 
     # Confirm launched report data
     sys.stdout.write("\n")
@@ -200,4 +303,4 @@ def main():
                              clinical_report.get('version', 'Missing')))
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

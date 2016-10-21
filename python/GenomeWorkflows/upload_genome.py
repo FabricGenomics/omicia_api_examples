@@ -21,13 +21,16 @@ auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 
 def upload_genome_to_project(project_id, label, sex, file_name, bam_file,
-                             external_id=""):
+                             external_id="", stat=None):
     """Use the Omicia API to add a genome, in vcf format, to a project.
     Returns the newly uploaded genome's id.
     """
     # Construct request
     url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id={}\
            &assembly_version=hg19"
+    if stat:
+        url = url + "&stat=true"
+
     url = url.format(OMICIA_API_URL, project_id, label, sex, external_id)
 
     if bam_file is not None:
@@ -49,6 +52,7 @@ def main():
     parser.add_argument('file_name', metavar='file_name')
     parser.add_argument('--external_id', metavar='external_id')
     parser.add_argument('--bam_file', metavar='bam_file')
+    parser.add_argument('--stat', metavar='stat')
     args = parser.parse_args()
 
     project_id = args.project_id
@@ -57,9 +61,10 @@ def main():
     file_name = args.file_name
     external_id = args.external_id
     bam_file = args.bam_file
+    stat = args.stat
 
     json_response = upload_genome_to_project(project_id, label, sex, file_name, bam_file,
-                                             external_id=external_id)
+                                             external_id=external_id, stat=stat)
     try:
         sys.stdout.write(json.dumps(json_response, indent=4))
     except KeyError:

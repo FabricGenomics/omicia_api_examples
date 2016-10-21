@@ -29,9 +29,8 @@ def launch_panel_report(filter_id, panel_id, accession_id, project_id):
     url = "{}/reports/".format(OMICIA_API_URL)
     url_payload = {'report_type': "panel",
                    'genome_id': None,
-                   'filter_id': filter_id,
-                   'panel_id': panel_id,
-                   'project_id': project_id,
+                   'filter_id': int(filter_id) if filter_id else None,
+                   'panel_id': int(panel_id),
                    'accession_id': accession_id}
 
     sys.stdout.write("Launching report...")
@@ -44,17 +43,16 @@ def launch_panel_report(filter_id, panel_id, accession_id, project_id):
 def main():
     """Main function, creates a panel report.
     """
-    parser = argparse.ArgumentParser(description='Launch a panel report with no genome.')
-    parser.add_argument('p', metavar='panel_id', type=int)
-    parser.add_argument('a', metavar='accession_id', type=str)
-    parser.add_argument('--project_id', metavar='project_id', type=int)
-    parser.add_argument('--f', metavar='filter_id', type=int)
+    parser = argparse.ArgumentParser(description='Launch a Panel Report with no genome.')
+    parser.add_argument('--filter_id', metavar='filter_id', type=int)
+    parser.add_argument('panel_id', metavar='panel_id', type=int)
+    parser.add_argument('accession_id', metavar='accession_id', type=str)
+
     args = parser.parse_args()
 
-    filter_id = args.f
-    panel_id = args.p
-    accession_id = args.a
-    project_id = args.project_id
+    filter_id = args.filter_id
+    panel_id = args.panel_id
+    accession_id = args.accession_id
 
     json_response = launch_panel_report(filter_id,
                                         panel_id,

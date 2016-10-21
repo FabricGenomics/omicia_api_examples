@@ -92,9 +92,9 @@ def launch_panel_report(genome_id, filter_id, panel_id, accession_id):
     # Construct url and request
     url = "{}/reports/".format(OMICIA_API_URL)
     url_payload = {'report_type': "panel",
-                   'genome_id': genome_id,
-                   'filter_id': filter_id,
-                   'panel_id': panel_id,
+                   'genome_id': int(genome_id),
+                   'filter_id': int(filter_id) if filter_id else None,
+                   'panel_id': int(panel_id),
                    'accession_id': accession_id}
 
     sys.stdout.write("Launching report...")
@@ -105,14 +105,14 @@ def launch_panel_report(genome_id, filter_id, panel_id, accession_id):
     return result.json()
 
 
-def upload_genome_to_project(project_id, label, sex, file_format, file_name):
+def upload_genome_to_project(project_id, label, sex, file_name):
     """Use the Omicia API to add a genome, in vcf format, to a project.
     Returns the newly uploaded genome's id.
     """
 
     #Construct request
-    url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id=&assembly_version=hg19&format={}"
-    url = url.format(OMICIA_API_URL, project_id, label, sex, file_format)
+    url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id=aaa&assembly_version=hg19"
+    url = url.format(OMICIA_API_URL, project_id, label, sex)
 
     sys.stdout.write("Uploading genome...\n")
     with open(file_name, 'rb') as file_handle:
@@ -122,24 +122,24 @@ def upload_genome_to_project(project_id, label, sex, file_format, file_name):
 
 
 def main(argv):
-    """Main function, uploads a geneome and creates a panel report using it.
+    """Main function, uploads a genome and creates a panel report using it.
     """
-    parser = argparse.ArgumentParser(description='Launch a panel report with no genome.')
+    parser = argparse.ArgumentParser(description='Launch a Panel Report with no genome.')
     parser.add_argument('--project_id', metavar='project_id', type=int)
     parser.add_argument('label', metavar='label', type=str)
     parser.add_argument('sex', metavar='sex', type=str)
-    parser.add_argument('file_format', metavar='file_format', type=str)
     parser.add_argument('genome_filename', metavar='genome_filename', type=str)
+    parser.add_argument('--filter_id', metavar='filter_id', type=int)
     parser.add_argument('panel_id', metavar='panel_id', type=int)
     parser.add_argument('accession_id', metavar='accession_id', type=str)
-    parser.add_argument('--filter_id', metavar='filter_id', type=int)
     parser.add_argument('--patient_info_file', metavar='patient_info_file', type=str)
+
     args = parser.parse_args()
 
     project_id = args.project_id
     label = args.label
     sex = args.sex
-    file_format = args.file_format
+
     genome_filename = args.genome_filename
     filter_id = args.filter_id
     panel_id = args.panel_id
@@ -148,7 +148,7 @@ def main(argv):
 
     # Upload genome
     genome_id = upload_genome_to_project(project_id, label, sex,
-                                         file_format, genome_filename)
+                                         genome_filename)
     sys.stdout.write("genome_id: {}\n".format(genome_id))
 
     # Launch panel report with uploaded genome
@@ -184,17 +184,17 @@ def main(argv):
                      'sample_received_date: {}\n'
                      'include_cosmic: {}\n'
                      .format(clinical_report.get('id', 'Missing'),
-                             clinical_report.get('test_type','Missing'),
-                             clinical_report.get('accession_id','Missing'),
-                             clinical_report.get('created_on','Missing'),
-                             clinical_report.get('created_by','Missing'),
-                             clinical_report.get('status','Missing'),
-                             clinical_report.get('filter_id','Missing'),
-                             clinical_report.get('panel_id','Missing'),
-                             clinical_report.get('workspace_id','Missing'),
-                             clinical_report.get('sample_collected_date','Missing'),
-                             clinical_report.get('sample_received_date','Missing'),
-                             clinical_report.get('include_cosmic','Missing')))
+                             clinical_report.get('test_type', 'Missing'),
+                             clinical_report.get('accession_id', 'Missing'),
+                             clinical_report.get('created_on', 'Missing'),
+                             clinical_report.get('created_by', 'Missing'),
+                             clinical_report.get('status', 'Missing'),
+                             clinical_report.get('filter_id', 'Missing'),
+                             clinical_report.get('panel_id', 'Missing'),
+                             clinical_report.get('workspace_id', 'Missing'),
+                             clinical_report.get('sample_collected_date', 'Missing'),
+                             clinical_report.get('sample_received_date', 'Missing'),
+                             clinical_report.get('include_cosmic', 'Missing')))
 
 
 if __name__ == "__main__":

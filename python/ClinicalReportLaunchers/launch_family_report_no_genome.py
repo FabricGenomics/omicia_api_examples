@@ -85,7 +85,6 @@ def main():
     sys.stdout.write("\n")
 
     if "clinical_report" not in family_report_json.keys():
-        print family_report_json
         sys.exit("Failed to launch. Check report parameters for correctness.")
     clinical_report = family_report_json['clinical_report']
     sys.stdout.write('Launched Family Report:\n'
