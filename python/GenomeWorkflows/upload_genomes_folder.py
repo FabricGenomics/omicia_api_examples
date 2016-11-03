@@ -29,7 +29,8 @@ def get_genome_files(folder):
                        "assembly_version": "hg19",
                        "genome_sex": "unspecified",
                        "genome_label": file_name[0:100]}
-        genome_files.append(genome_info)
+        if 'vcf' in file_name:
+            genome_files.append(genome_info)
     return genome_files
 
 
