@@ -1,4 +1,5 @@
-"""Get a list of panels, either all or filtered by some attribute.
+"""
+Find a job by uuid
 """
 
 import os
@@ -22,7 +23,7 @@ auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 
 def find_job(uuid):
-    """creates a new job and returns a UUID"""
+    """Find job by UUID"""
     # Construct request
     path = "{}/jobs"
 

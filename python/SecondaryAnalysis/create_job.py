@@ -1,4 +1,6 @@
-"""Get a list of panels, either all or filtered by some attribute.
+"""
+Request creation of a new job. Requires an accession id. Returns a unique ID that can
+be used to launch secondary analysis processes.
 """
 
 import os
