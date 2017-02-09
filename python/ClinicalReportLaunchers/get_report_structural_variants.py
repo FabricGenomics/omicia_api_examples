@@ -11,6 +11,7 @@ from requests.auth import HTTPBasicAuth
 import sys
 import json
 import argparse
+import urllib
 
 # Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -28,44 +29,35 @@ auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 def get_cr_variants(cr_id, statuses, _format, chrom, start_on_chrom, end_on_chrom, extended=False):
     """Use the Omicia API to get report variants that meet the filtering criteria.
     """
-    # Construct request
-    url = "{}/reports/{}/structural_variants"
-    url = url.format(OMICIA_API_URL, cr_id)
-
+    params = []
     # Generate the url to be able to query for multiple statuses
     if statuses:
-        if url.endswith(u"variants"):
-            url += u"?"
         for i, status in enumerate(statuses):
-            if i > 0:
-                url += u"&"
-            url = u"{}status={}".format(url, status)
+            params.append(('status', status))
 
     if extended:
-        if url.endswith(u"variants"):
-            url += u"?"
-        url = u"{}&extended=True".format(url)
+        params.append(('extended', 'True'))
 
     if chrom:
-        if url.endswith(u"variants"):
-            url += u"?"
-        url = u"{}&chrom={}".format(url, chr)
+        params.append(('chrom', chrom))
 
     if start_on_chrom:
-        if url.endswith(u"variants"):
-            url += u"?"
-        url = u"{}&start_on_chrom={}".format(url, start_on_chrom)
+        params.append(('start_on_chrom', start_on_chrom))
 
     if end_on_chrom:
-        if url.endswith(u"variants"):
-            url += u"?"
-        url = u"{}&end_on_chrom={}".format(url, end_on_chrom)
+        params.append(('end_on_chrom', end_on_chrom))
 
     # Add a parameter for format. If not set, default is json
-    if _format == "VCF":
-        if url.endswith(u"variants"):
-            url += u"?"
-        url += '&format=VCF'
+    if _format in ["VCF", "CSV"]:
+        params.append(('format', _format))
+
+    # Do seq allows for the multiple values for one parameter name, as could be the case for the
+    # status or to_report parameters.
+    data = urllib.urlencode(params, doseq=True)
+
+    # Construct request
+    url = "{}/reports/{}/structural_variants?{}"
+    url = url.format(OMICIA_API_URL, cr_id, data)
 
     sys.stdout.flush()
     result = requests.get(url, auth=auth)
