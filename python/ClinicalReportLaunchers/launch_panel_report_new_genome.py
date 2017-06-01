@@ -105,14 +105,14 @@ def launch_panel_report(genome_id, filter_id, panel_id, accession_id):
     return result.json()
 
 
-def upload_genome_to_project(project_id, label, sex, file_format, file_name):
+def upload_genome_to_project(project_id, label, sex, file_name):
     """Use the Omicia API to add a genome, in vcf format, to a project.
     Returns the newly uploaded genome's id.
     """
 
     #Construct request
-    url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id=&assembly_version=hg19&format={}"
-    url = url.format(OMICIA_API_URL, project_id, label, sex, file_format)
+    url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id=&assembly_version=hg19"
+    url = url.format(OMICIA_API_URL, project_id, label, sex)
 
     sys.stdout.write("Uploading genome...\n")
     with open(file_name, 'rb') as file_handle:
@@ -128,7 +128,6 @@ def main(argv):
     parser.add_argument('--project_id', metavar='project_id', type=int)
     parser.add_argument('label', metavar='label', type=str)
     parser.add_argument('sex', metavar='sex', type=str)
-    parser.add_argument('file_format', metavar='file_format', type=str)
     parser.add_argument('genome_filename', metavar='genome_filename', type=str)
     parser.add_argument('panel_id', metavar='panel_id', type=int)
     parser.add_argument('accession_id', metavar='accession_id', type=str)
@@ -139,7 +138,6 @@ def main(argv):
     project_id = args.project_id
     label = args.label
     sex = args.sex
-    file_format = args.file_format
     genome_filename = args.genome_filename
     filter_id = args.filter_id
     panel_id = args.panel_id
@@ -147,8 +145,7 @@ def main(argv):
     patient_info_file_name = args.patient_info_file
 
     # Upload genome
-    genome_id = upload_genome_to_project(project_id, label, sex,
-                                         file_format, genome_filename)
+    genome_id = upload_genome_to_project(project_id, label, sex, genome_filename)
     sys.stdout.write("genome_id: {}\n".format(genome_id))
 
     # Launch panel report with uploaded genome
