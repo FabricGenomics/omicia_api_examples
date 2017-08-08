@@ -25,8 +25,8 @@ but we can issue a new API key upon request.
 
 The API uses SSL-encrypted HTTP for its protocol, via the normal port for
 secure HTTP, 443. Attempts to query the server with non-encrypted HTTP
-request on port 80 (ie. http://api.omicia.com instead of
-https://api.omicia.com) will return a 302 Redirect HTTP response,
+request on port 80 (ie. http://api.fabricgenomics.com instead of
+https://api.fabricgenomics.com) will return a 302 Redirect HTTP response,
 with no response body provided.
 
 Most invalid requests (e.g. for invalid parameter values) return an HTTP status of
@@ -62,7 +62,7 @@ listing and otherwise accessing genomes and reports.
 To upload a VCF file use the :ref:`upload` endpoint. For example, to upload a
 VCF file to project 10, one would create a PUT request against
 
-   https://api.omicia.com/projects/10/genomes
+   https://api.fabricgenomics.com/projects/10/genomes
 
 specifying an external ID, genome label, sex, assembly version and format as query parameters
 (as opposed to form parameters), and including the entirety of the file as the
@@ -170,7 +170,7 @@ associated with the clinical report contains those predefined quality control fi
 
 To check which quality control entries are associated with a clincal report, the following endpoint can be used (:ref:`get_qc_data`):
 
-    https://api.omicia.com/reports/203/qc_data
+    https://api.fabricgenomics.com/reports/203/qc_data
 
 :ref:`Relevant example Python scripts:`
 
@@ -194,14 +194,14 @@ reports can be found by accession, by external ID or genome ID, also using the a
 In the case that the user wishes to export all variants, for example to interpret them outside
 of the Opal system, the following endpoint can be used:
 
-   https://api.omicia.com/reports/203/variants
+   https://api.fabricgenomics.com/reports/203/variants
 
 A second use case comes up once a report's variants have been interpreted and prioritized, when a technique such as Sanger
 Sequencing might be employed in order to validate them. To export the variants with a given status,
 for example the variants waiting in a "Pending" state, as VCF or JSON the :ref:`get_variants`
 endpoint can be used. For example:
 
-   https://api.omicia.com/reports/203/variants?status=REVIEWED&format=VCF
+   https://api.fabricgenomics.com/reports/203/variants?status=REVIEWED&format=VCF
 
 After external validation has been performed, the confirmed variants' validation status can be set at
 the :ref:`set_variant_status` endpoint. This way, a webapp user
@@ -222,6 +222,6 @@ some end-to-end examples:
 
 - :doc:`reference`
 
-- `Python Examples <https://github.com/Omicia/omicia_api_examples/tree/master/python>`_
+- `Python Examples <https://github.com/FabricGenomics/omicia_api_examples/tree/master/python>`_
 
-- `Bash Examples <https://github.com/Omicia/omicia_api_examples/tree/master/shell>`_
+- `Bash Examples <https://github.com/FabricGenomics/omicia_api_examples/tree/master/shell>`_

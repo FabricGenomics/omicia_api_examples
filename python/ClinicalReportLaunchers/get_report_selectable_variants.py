@@ -20,7 +20,7 @@ if "OMICIA_API_LOGIN" not in os.environ:
 
 OMICIA_API_LOGIN = os.environ['OMICIA_API_LOGIN']
 OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
-OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.omicia.com')
+OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.fabricgenomics.com')
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 def get_report_selectable_variants(clinical_report_id, target_variants=None):

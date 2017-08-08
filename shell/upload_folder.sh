@@ -48,7 +48,7 @@ fi
 CURL=/usr/bin/curl
 CURLOPTS="-s -q"
 
-URL=https://api.omicia.com
+URL=https://api.fabricgenomics.com
 PROJECT_ID=$2
 
 for f in "$1"/*.vcf.gz; do
