@@ -26,8 +26,7 @@ but we can issue a new API key upon request.
 The API uses SSL-encrypted HTTP for its protocol, via the normal port for
 secure HTTP, 443. Attempts to query the server with non-encrypted HTTP
 request on port 80 (ie. http://api.fabricgenomics.com instead of
-https://api.fabricgenomics.com) will return a 302 Redirect HTTP response,
-with no response body provided.
+https://api.fabricgenomics.com) will return a 404 error response.
 
 Most invalid requests (e.g. for invalid parameter values) return an HTTP status of
 400, 404 or 422; authentication errors return an HTTP status of 401 or 403.
