@@ -8,7 +8,7 @@
 CURL=/usr/bin/curl
 CURLOPTS=
 
-URL=http://api.omicia.com
+URL=https://api.fabricgenomics.com
 
 PROJECT_ID=$1
 LABEL=$2

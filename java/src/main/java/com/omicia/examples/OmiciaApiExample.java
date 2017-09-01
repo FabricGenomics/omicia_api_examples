@@ -15,7 +15,7 @@ import java.util.Base64;
 import java.util.Scanner;
 
 public class OmiciaApiExample {
-	static final String OMICIA_API_ENDPOINT = "api.omicia.com";
+	static final String OMICIA_API_ENDPOINT = "api.fabricgenomics.com";
 
 	// your API key as provided by Omicia
 	static final String OMICIA_API_LOGIN = "";
