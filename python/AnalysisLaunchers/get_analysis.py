@@ -43,7 +43,7 @@ def get_analysis(analysis_id=None):
 def main():
     """Main function. Get analyses or one analysis by ID.
     """
-    parser = argparse.ArgumentParser(description='Fetch a clinical report')
+    parser = argparse.ArgumentParser(description='Fetch a Variant, VAAST or Phevor Report')
     parser.add_argument('--id', metavar='analysis_id', type=int)
     args = parser.parse_args()
 
