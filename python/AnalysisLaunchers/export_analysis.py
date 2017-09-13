@@ -49,6 +49,9 @@ def main():
     parser.add_argument('--panel_id', metavar='Panel/Test ID', type=int)
     parser.add_argument('--gene_set_id', metavar='Gene Set ID', type=int)
     parser.add_argument('--format', metavar='[JSON, VCF, CSV]', type=str, default='JSON')
+    parser.add_argument('--limit', metavar='Max number of variants to return',
+                        type=int, default=None)
+    parser.add_argument('--offset', metavar='Number of variants to skip', type=int, default=0)
     parser.add_argument('--structural', dest='structural', action='store_true', default=False)
     args = parser.parse_args()
 

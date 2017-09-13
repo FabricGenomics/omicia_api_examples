@@ -24,7 +24,7 @@ OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.fabricgenomics.co
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 
-def get_analysis(analysis_id=None):
+def get_analysis(analysis_id=None, genome_id=None):
     """Use the Omicia API to get an analysis
     """
     # Construct request
@@ -34,6 +34,8 @@ def get_analysis(analysis_id=None):
     else:
         url = "{}/analysis"
         url = url.format(OMICIA_API_URL, analysis_id)
+        if genome_id:
+            url = '{}?genome_id={}'.format(url, genome_id)
 
     sys.stdout.flush()
     result = requests.get(url, auth=auth, verify=False)
@@ -45,11 +47,13 @@ def main():
     """
     parser = argparse.ArgumentParser(description='Fetch a Variant, VAAST or Phevor Report')
     parser.add_argument('--id', metavar='analysis_id', type=int)
+    parser.add_argument('--genome_id', metavar='genome_id', type=int)
     args = parser.parse_args()
 
     analysis_id = args.id
+    genome_id = args.genome_id
 
-    json_response = get_analysis(analysis_id=analysis_id)
+    json_response = get_analysis(analysis_id=analysis_id, genome_id=genome_id)
     sys.stdout.write(json.dumps(json_response, indent=4))
 
 if __name__ == "__main__":
