@@ -21,7 +21,7 @@ auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 
 def upload_genome_to_project(project_id, label, sex, file_name, bam_file,
-                             external_id=None, checksum=None):
+                             external_id=None, checksum=None, verbose=False):
     """Use the Omicia API to add a genome, in vcf format, to a project.
     Returns the newly uploaded genome's id.
     """
@@ -42,25 +42,27 @@ def upload_genome_to_project(project_id, label, sex, file_name, bam_file,
         original_response = result.json()
         genome_id = original_response.get('genome_id')
 
-    url = "{}/genomes".format(OMICIA_API_URL)
-    result = requests.get(url, auth=auth, verify=False)
-    sys.stderr.write(str(result.json()))
-    sys.stderr.write('\n')
+    if verbose:
+        url = "{}/genomes".format(OMICIA_API_URL)
+        result = requests.get(url, auth=auth, verify=False)
 
-    url = "{}/genomes/{}".format(OMICIA_API_URL, genome_id)
-    result = requests.get(url, auth=auth, verify=False)
-    sys.stderr.write(str(result.json()))
-    sys.stderr.write('\n')
+        sys.stderr.write(str(result.json()))
+        sys.stderr.write('\n')
 
-    url = "{}/projects/{}/genomes".format(OMICIA_API_URL, project_id)
-    result = requests.get(url, auth=auth, verify=False)
-    sys.stderr.write(str(result.json()))
-    sys.stderr.write('\n')
+        url = "{}/genomes/{}".format(OMICIA_API_URL, genome_id)
+        result = requests.get(url, auth=auth, verify=False)
+        sys.stderr.write(str(result.json()))
+        sys.stderr.write('\n')
 
-    url = "{}/projects/{}/genomes/{}".format(OMICIA_API_URL, project_id, genome_id)
-    result = requests.get(url, auth=auth, verify=False)
-    sys.stderr.write(str(result.json()))
-    sys.stderr.write('\n')
+        url = "{}/projects/{}/genomes".format(OMICIA_API_URL, project_id)
+        result = requests.get(url, auth=auth, verify=False)
+        sys.stderr.write(str(result.json()))
+        sys.stderr.write('\n')
+
+        url = "{}/projects/{}/genomes/{}".format(OMICIA_API_URL, project_id, genome_id)
+        result = requests.get(url, auth=auth, verify=False)
+        sys.stderr.write(str(result.json()))
+        sys.stderr.write('\n')
 
     return original_response
 
@@ -76,6 +78,7 @@ def main():
     parser.add_argument('--external_id', metavar='external_id')
     parser.add_argument('--checksum', metavar='checksum')
     parser.add_argument('--bam_file', metavar='bam_file')
+    parser.add_argument('--verbose', dest='verbose', action='store_true', default=False)
     args = parser.parse_args()
 
     project_id = args.project_id
@@ -87,7 +90,8 @@ def main():
     checksum = args.checksum or ''
 
     json_response = upload_genome_to_project(project_id, label, sex, file_name, bam_file,
-                                             external_id=external_id, checksum=checksum)
+                                             external_id=external_id, checksum=checksum,
+                                             verbose=args.verbose)
     try:
         sys.stdout.write(json.dumps(json_response, indent=4))
     except KeyError:
