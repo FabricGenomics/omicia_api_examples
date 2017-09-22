@@ -121,7 +121,6 @@ def upload_genome(project_id, genome_filename, genome_label, genome_sex, genome_
     with open(genome_filename, 'rb') as file_handle:
         # Post request and store newly uploaded genome's information
         result = requests.put(url, data=file_handle, params=payload, auth=auth)
-        print result
         genome_id = result.json()["genome_id"]
         return genome_id
 
