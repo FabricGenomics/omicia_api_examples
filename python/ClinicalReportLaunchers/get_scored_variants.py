@@ -1,6 +1,5 @@
-"""Get a clinical report's variants.
-Usages: python get_report_variants.py 1542
-        
+"""
+Get a clinical report's scored variants.
 """
 
 import os
@@ -24,25 +23,26 @@ OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.fabricgenomics.co
 auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
 
 
-def get_cr_scored_variants(cr_id, scoring_status=None, audit_log=False):
+def get_cr_scored_variants(cr_id, scoring_status=None, audit_log=None):
     params = []
     if scoring_status:
         params.append(('scoring_status', scoring_status))
     if audit_log:
         params.append(('audit_log', audit_log))
-    data = urllib.urlencode(params, doseq=True)
+
+    data = urllib.urlencode(params)
 
     url = "{}/reports/{}/variants/scored?{}"
     url = url.format(OMICIA_API_URL, cr_id, data)
 
-    result = requests.get(url, auth=auth, verify=False)
+    result = requests.get(url, auth=auth)
     return result
 
 def main():
     """Main function. Get scored report variants, all or filtering by scoring status. Audit Logs
        may also be included.
     """
-    parser = argparse.ArgumentParser(description='Get variants for existing clinical reports.')
+    parser = argparse.ArgumentParser(description='Get scored variants for existing clinical report.')
     parser.add_argument('cr_id', metavar='clinical_report_id', type=int)
     parser.add_argument('--scoring_status',
                         metavar='extended',
@@ -54,8 +54,10 @@ def main():
     args = parser.parse_args()
 
     cr_id = args.cr_id
+    scoring_status = args.scoring_status
+    audit_log = args.audit_log
 
-    response = get_cr_scored_variants(cr_id)
+    response = get_cr_scored_variants(cr_id, scoring_status, audit_log)
     try:
         response_json = response.json()
         sys.stdout.write(json.dumps(response_json, indent=4))
