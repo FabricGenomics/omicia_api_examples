@@ -72,6 +72,20 @@ def get_cr_variants(cr_id, statuses, to_reports, _format, chrom, start_on_chrom,
     return result
 
 
+def get_cr_scored_variants(cr_id, scoring_status=None, audit_log=False):
+    params = []
+    if scoring_status:
+        params.append(('scoring_status', scoring_status))
+    if audit_log:
+        params.append(('audit_log', audit_log))
+    data = urllib.urlencode(params, doseq=True)
+
+    url = "{}/reports/{}/variants/scored?{}"
+    url = url.format(OMICIA_API_URL, cr_id, data)
+
+    result = requests.get(url, auth=auth, verify=False)
+    return result
+
 def main():
     """Main function. Get report variants, all or filtering by status.
     """
