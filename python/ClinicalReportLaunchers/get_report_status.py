@@ -5,6 +5,7 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
+import certifi
 
 #Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -27,7 +28,7 @@ def get_report(report_id):
     url = url.format(OMICIA_API_URL,
                      report_id)
 
-    result = requests.get(url, auth=auth, verify=False)
+    result = requests.get(url, auth=auth, verify=certifi.where())
     return result.json()
 
 

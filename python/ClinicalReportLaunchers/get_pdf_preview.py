@@ -6,7 +6,7 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
-import json
+import certifi
 import argparse
 
 # Load environment variables for request authentication parameters
@@ -32,7 +32,7 @@ def pdf_preview(cr_id):
     sys.stdout.write("Getting a PDF Preview...")
     sys.stdout.write("\n\n")
     sys.stdout.flush()
-    response = requests.get(url, auth=auth, verify=False)
+    response = requests.get(url, auth=auth, verify=certifi.where())
     with open('report_{}.pdf'.format(cr_id), 'wb') as pdf_file:
         for block in response.iter_content(1024):
             pdf_file.write(block)

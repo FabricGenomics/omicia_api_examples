@@ -26,6 +26,7 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
+import certifi
 
 #Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -100,7 +101,7 @@ def launch_panel_report(genome_id, filter_id, panel_id, accession_id):
     sys.stdout.write("Launching report...")
     sys.stdout.write("\n\n")
     sys.stdout.flush()
-    result = requests.post(url, auth=auth, data=json.dumps(url_payload), verify=False)
+    result = requests.post(url, auth=auth, data=json.dumps(url_payload), verify=certifi.where())
 
     return result.json()
 
@@ -117,7 +118,7 @@ def upload_genome_to_project(project_id, label, sex, file_name):
     sys.stdout.write("Uploading genome...\n")
     with open(file_name, 'rb') as file_handle:
         #Post request and return id of newly uploaded genome
-        result = requests.put(url, auth=auth, data=file_handle, verify=False)
+        result = requests.put(url, auth=auth, data=file_handle, verify=certifi.where())
         return result.json()["genome_id"]
 
 

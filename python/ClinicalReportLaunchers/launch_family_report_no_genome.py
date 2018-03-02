@@ -1,7 +1,7 @@
 """Create a new family report with no genome
 """
 
-import csv
+import certifi
 import simplejson as json
 import os
 import requests
@@ -43,7 +43,7 @@ def launch_family_report(report_type, score_indels, reporting_cutoff, accession_
                    'hpo_terms': json.dumps(hpo_terms)}
 
     sys.stdout.write("Launching family report...\n")
-    result = requests.post(url, auth=auth, data=json.dumps(url_payload), verify=False)
+    result = requests.post(url, auth=auth, data=json.dumps(url_payload), verify=certifi.where())
 
     return result.json()
 

@@ -7,6 +7,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 import sys
 import simplejson as json
+import certifi
 
 # Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -29,7 +30,7 @@ def get_genomes(project_id):
     url = "{}/projects/{}/genomes".format(OMICIA_API_URL, project_id)
 
     # Get request and return json object of genomes
-    result = requests.get(url, auth=auth, verify=False)
+    result = requests.get(url, auth=auth, verify=certifi.where())
     return result.json()
 
 

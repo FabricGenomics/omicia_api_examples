@@ -7,6 +7,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 import sys
 import simplejson as json
+import certifi
 
 # Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -38,7 +39,7 @@ def create_project(name, description, share_role):
                'share_role': share_role}
 
     # Post request and return newly created project's id
-    result = requests.post(url, data=payload, auth=auth, verify=False)
+    result = requests.post(url, data=payload, auth=auth, verify=certifi.where())
     return result.json()
 
 

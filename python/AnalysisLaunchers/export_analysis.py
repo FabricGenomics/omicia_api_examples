@@ -10,6 +10,7 @@ from requests.auth import HTTPBasicAuth
 import sys
 import simplejson as json
 import argparse
+import certifi
 
 # Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -33,7 +34,7 @@ def export_analysis(args):
     else:
         url = '{}/analysis/{}/variants'.format(FABRIC_API_URL, args.id)
 
-    result = requests.post(url, auth=auth, data=json.dumps(vars(args)), verify=False)
+    result = requests.post(url, auth=auth, data=json.dumps(vars(args)), verify=certifi.where())
 
     return result.text
 
