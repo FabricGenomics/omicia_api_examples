@@ -22,6 +22,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 import sys
 import simplejson as json
+import certifi
 
 # Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -80,7 +81,7 @@ def upload_genomes_to_project(project_id, folder):
 
         with open(folder + "/" + genome_file_name, 'rb') as file_handle:
             # Post request and store newly uploaded genome's information
-            result = requests.put(url, auth=auth, data=file_handle, verify=False)
+            result = requests.put(url, auth=auth, data=file_handle, verify=certifi.where())
             genome_json_objects.append(result.json())
     sys.stdout.write("\n")
     return genome_json_objects

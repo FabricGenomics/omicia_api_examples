@@ -8,7 +8,7 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
-import simplejson as json
+import certifi
 import argparse
 
 # Load environment variables for request authentication parameters
@@ -30,7 +30,7 @@ def delete_analysis(args):
 
     url = '{}/analysis/{}'.format(FABRIC_API_URL, args.id)
 
-    result = requests.delete(url, auth=auth, verify=False)
+    result = requests.delete(url, auth=auth, verify=certifi.where())
 
     return result.text
 

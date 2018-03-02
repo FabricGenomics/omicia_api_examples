@@ -7,6 +7,7 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
+import certifi
 
 #Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -37,7 +38,7 @@ def launch_panel_report(filter_id, panel_id, accession_id, project_id):
     sys.stdout.write("Launching report...")
     sys.stdout.write("\n\n")
     sys.stdout.flush()
-    result = requests.post(url, auth=auth, data=json.dumps(url_payload), verify=False)
+    result = requests.post(url, auth=auth, data=json.dumps(url_payload), verify=certifi.where())
     return result.json()
 
 

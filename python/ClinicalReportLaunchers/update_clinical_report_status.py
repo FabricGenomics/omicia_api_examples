@@ -7,6 +7,7 @@ from requests.auth import HTTPBasicAuth
 import sys
 import json
 import argparse
+import certifi
 
 # Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -34,7 +35,7 @@ def update_cr_status(cr_id, status):
     headers = {"content-type": "application/json-patch+json"}
 
     sys.stdout.flush()
-    result = requests.patch(url, auth=auth, json=url_payload, headers=headers, verify=False)
+    result = requests.patch(url, auth=auth, json=url_payload, headers=headers, verify=certifi.where())
     return result
 
 

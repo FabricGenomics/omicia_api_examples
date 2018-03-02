@@ -8,6 +8,7 @@ from requests.auth import HTTPBasicAuth
 import sys
 import json
 import argparse
+import certifi
 
 # Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -33,7 +34,7 @@ def add_fields_to_cr(cr_id, patient_fields):
     sys.stdout.write("Adding custom patient fields to report...")
     sys.stdout.write("\n\n")
     sys.stdout.flush()
-    result = requests.post(url, auth=auth, data=url_payload, verify=False)
+    result = requests.post(url, auth=auth, data=url_payload, verify=certifi.where())
     return result.json()
 
 

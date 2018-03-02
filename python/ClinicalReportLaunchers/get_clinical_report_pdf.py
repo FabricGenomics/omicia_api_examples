@@ -10,7 +10,7 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 import sys
-import simplejson as json
+import certifi
 import argparse
 
 # Load environment variables for request authentication parameters
@@ -37,7 +37,7 @@ def get_clinical_report_pdf(cr_id, preview=False):
     url = url.format(OMICIA_API_URL, cr_id)
 
     sys.stdout.flush()
-    result = requests.get(url, auth=auth, verify=False)
+    result = requests.get(url, auth=auth, verify=certifi.where())
     return result
 
 

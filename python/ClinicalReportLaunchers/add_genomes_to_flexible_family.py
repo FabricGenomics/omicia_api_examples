@@ -8,6 +8,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 import sys
 import argparse
+import certifi
 
 # Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -60,7 +61,7 @@ def add_genomes_to_clinical_report(clinical_report_id,
                     'hpo_terms': json.dumps(hpo_terms) if hpo_terms else None}
 
     sys.stdout.write("Attaching genomes to clinical report...\n")
-    result = requests.put(url, auth=auth, data=json.dumps(data_payload), verify=False)
+    result = requests.put(url, auth=auth, data=json.dumps(data_payload), verify=certifi.where())
     return result.json()
 
 

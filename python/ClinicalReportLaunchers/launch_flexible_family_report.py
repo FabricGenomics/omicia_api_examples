@@ -1,7 +1,7 @@
 """Create a new flexible family report.
 """
 
-import csv
+import certifi
 import simplejson as json
 import os
 import requests
@@ -48,7 +48,7 @@ def launch_family_report(report_type,
                     'hpo_terms': json.dumps(hpo_terms) if hpo_terms else None}
 
     sys.stdout.write("Launching flexible family report...\n")
-    result = requests.post(url, auth=auth, data=json.dumps(data_payload), verify=False)
+    result = requests.post(url, auth=auth, data=json.dumps(data_payload), verify=certifi.where())
     return result.json()
 
 

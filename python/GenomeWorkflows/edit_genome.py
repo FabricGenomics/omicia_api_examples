@@ -7,6 +7,7 @@ from requests.auth import HTTPBasicAuth
 import sys
 import json
 import argparse
+import certifi
 
 #Load environment variables for request authentication parameters
 if "OMICIA_API_PASSWORD" not in os.environ:
@@ -32,7 +33,7 @@ def put_genome(genome_id, name=None, external_id=None, project_id=None):
                               "project_id": project_id
                               })
 
-    result = requests.put(url, auth=auth, data=url_payload, verify=False)
+    result = requests.put(url, auth=auth, data=url_payload, verify=certifi.where())
     return result.json()
 
 
