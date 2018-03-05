@@ -60,7 +60,7 @@ def add_genomes_to_clinical_report(clinical_report_id,
                     'hpo_terms': json.dumps(hpo_terms) if hpo_terms else None}
 
     sys.stdout.write("Attaching genomes to clinical report...\n")
-    result = requests.put(url, auth=auth, data=json.dumps(data_payload), verify=False)
+    result = requests.put(url, auth=auth, data=json.dumps(data_payload))
     return result.json()
 
 

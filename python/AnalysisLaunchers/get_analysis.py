@@ -38,7 +38,7 @@ def get_analysis(analysis_id=None, genome_id=None):
             url = '{}?genome_id={}'.format(url, genome_id)
 
     sys.stdout.flush()
-    result = requests.get(url, auth=auth, verify=False)
+    result = requests.get(url, auth=auth)
     return result.json()
 
 

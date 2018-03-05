@@ -40,7 +40,7 @@ def post_panel(name, description, methodology=None,
     sys.stdout.flush()
     # If patient information was not provided, make a post request to reports
     # without a patient information parameter in the url
-    result = requests.post(url, auth=auth, data=url_payload, verify=False)
+    result = requests.post(url, auth=auth, data=url_payload)
     return result.json()
 
 
@@ -63,7 +63,7 @@ def put_panel(panel_id, name, description, methodology=None,
     sys.stdout.flush()
     # If patient information was not provided, make a post request to reports
     # without a patient information parameter in the url
-    result = requests.put(url, auth=auth, data=url_payload, verify=False)
+    result = requests.put(url, auth=auth, data=url_payload)
     return result.json()
 
 
@@ -78,7 +78,7 @@ def add_gene_symbols_to_panel(panel_id, gene_symbols):
     sys.stdout.write("Adding regions to panel...")
     sys.stdout.write("\n\n")
     sys.stdout.flush()
-    result = requests.post(url, auth=auth, data=url_payload, verify=False)
+    result = requests.post(url, auth=auth, data=url_payload)
     return result.json()
 
 

@@ -38,7 +38,7 @@ def create_project(name, description, share_role):
                'share_role': share_role}
 
     # Post request and return newly created project's id
-    result = requests.post(url, data=payload, auth=auth, verify=False)
+    result = requests.post(url, data=payload, auth=auth)
     return result.json()
 
 

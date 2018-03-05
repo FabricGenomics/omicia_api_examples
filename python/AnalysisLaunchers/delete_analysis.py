@@ -30,7 +30,7 @@ def delete_analysis(args):
 
     url = '{}/analysis/{}'.format(FABRIC_API_URL, args.id)
 
-    result = requests.delete(url, auth=auth, verify=False)
+    result = requests.delete(url, auth=auth)
 
     return result.text
 

@@ -68,7 +68,7 @@ def get_cr_variants(cr_id, statuses, to_reports, _format, chrom, start_on_chrom,
     url = "{}/reports/{}/variants?{}"
     url = url.format(OMICIA_API_URL, cr_id, data)
 
-    result = requests.get(url, auth=auth, verify=False)
+    result = requests.get(url, auth=auth)
     return result
 
 

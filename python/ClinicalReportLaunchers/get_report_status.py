@@ -27,7 +27,7 @@ def get_report(report_id):
     url = url.format(OMICIA_API_URL,
                      report_id)
 
-    result = requests.get(url, auth=auth, verify=False)
+    result = requests.get(url, auth=auth)
     return result.json()
 
 

@@ -1,12 +1,12 @@
-Omicia API
+Fabric Genomics API
 ==========
 
 Introduction
 ------------
 
-October 25th, 2015
+March 5th 2018
 
-Omicia provides an API based on the HTTPS protocol, using HTTP requests (GET,
+Fabric Genomics provides an API based on the HTTPS protocol, using HTTP requests (GET,
 POST, PUT and DELETE) to securely transmit variation
 data, launch analyses and retrieve finished report data.
 
@@ -19,7 +19,7 @@ An API Key is tied to a specific Opal user, referred to as
 the API User hereon. Any email messages generated when using the Opal API are sent
 to the API User.
 
-Omicia stores passwords in a one-way encrypted hash according to industry
+Fabric Genomics stores passwords in a one-way encrypted hash according to industry
 standard security procedures.  Passwords cannot be recovered,
 but we can issue a new API key upon request.
 
@@ -31,7 +31,7 @@ https://api.fabricgenomics.com) will return a 404 error response.
 Most invalid requests (e.g. for invalid parameter values) return an HTTP status of
 400, 404 or 422; authentication errors return an HTTP status of 401 or 403.
 
-All dates and times are returned in PST.
+All dates and times are returned in PST for the US server, GMT for the UK server.
 
 Jump to:
 `Uploading Genomes`_,
@@ -68,18 +68,18 @@ specifying an external ID, genome label, sex, assembly version and format as que
 body of the request.  The assembly version must be hg19 (internally we handle
 GRCh37 and hg19 interchangeably).
 
-The Omicia Api accepts VCF 4.0+ (see http://samtools.github.io/hts-specs/VCFv4.2.pdf)
+The Fabric Genomics Api accepts VCF 4.0+ (see http://samtools.github.io/hts-specs/VCFv4.2.pdf)
 preferably containing a single sample column.  Multi-sample VCF's can be uploaded, however
 the ID returned by the upload call cannot be used to launch reports. The Opal VCF parser accepts
 quality and read depth data in a variety of formats. Please refer to the Opal user guide for more
 information, or contact support_ for specific questions.
 
 Upon successful parsing, the uploaded genome is queued for annotation by the
-Omicia Pipeline.  Panel and exome VCF's usually annotate within minutes, while
+Fabric Genomics Pipeline.  Panel and exome VCF's usually annotate within minutes, while
 full genomes can take longer.
 
 If any genome fails to annotate, the system will send an email notification to
-the API User as well as the Omicia Support Team.
+the API User as well as the Fabric Genomics Support Team.
 
 Opal assigns a unique ID to all uploaded genomes. These IDs are used to
 identify the genome within Opal. External IDs are an alternate method
@@ -88,13 +88,13 @@ the external ID.
 
 :ref:`Relevant example Python scripts:`
 
-- `Create a project <https://github.com/Omicia/omicia_api_examples/blob/master/python/create_project.py>`_
+- `Create a project <https://github.com/FabricGenomics/omicia_api_examples/blob/master/python/create_project.py>`_
 
-- `Upload a genome <https://github.com/Omicia/omicia_api_examples/blob/master/python/upload_genome.py>`_
+- `Upload a genome <https://github.com/FabricGenomics/omicia_api_examples/blob/master/python/upload_genome.py>`_
 
-- `Upload a folder of genomes <https://github.com/Omicia/omicia_api_examples/blob/master/python/upload_genomes_folder.py>`_
+- `Upload a folder of genomes <https://github.com/FabricGenomics/omicia_api_examples/blob/master/python/upload_genomes_folder.py>`_
 
-- `Upload a folder of genomes, using a manifest <https://github.com/Omicia/omicia_api_examples/blob/master/python/upload_genomes_folder_with_manifest.py>`_
+- `Upload a folder of genomes, using a manifest <https://github.com/FabricGenomics/omicia_api_examples/blob/master/python/upload_genomes_folder_with_manifest.py>`_
 
 .. _workflow_submission:
 
@@ -127,7 +127,7 @@ completed vaast report.
   This will take several hours.
 
   If any of the genomes fail to annotate, or if there are issues with the VAAST run,
-  the system will send an email notification to the API User as well as the Omicia
+  the system will send an email notification to the API User as well as the Fabric Genomics
   Support Team.
 
 - To submit a panel report you must specify a genome ID (or null), assay type, panel ID and optionally a filter ID. Use the :ref:`create_report` endpoint to create a report
@@ -141,19 +141,19 @@ custom Patient information.
 
 :ref:`Relevant example Python scripts:`
 
-- `Launch a panel report with a new genome <https://github.com/Omicia/omicia_api_examples/blob/master/python/launch_panel_report_new_genome.py>`_
+- `Launch a panel report with a new genome <https://github.com/FabricGenomics/omicia_api_examples/blob/master/python/launch_panel_report_new_genome.py>`_
 
-- `Launch a panel report with an existing genome <https://github.com/Omicia/omicia_api_examples/blob/master/python/launch_panel_report_existing_genome.py>`_
+- `Launch a panel report with an existing genome <https://github.com/FabricGenomics/omicia_api_examples/blob/master/python/launch_panel_report_existing_genome.py>`_
 
-- `Launch a panel report with no genome attached <https://github.com/Omicia/omicia_api_examples/blob/master/python/launch_panel_report_no_genome.py>`_
+- `Launch a panel report with no genome attached <https://github.com/FabricGenomics/omicia_api_examples/blob/master/python/launch_panel_report_no_genome.py>`_
 
-- `Launch a family report <https://github.com/Omicia/omicia_api_examples/blob/master/python/launch_family_report.py>`_
+- `Launch a family report <https://github.com/FabricGenomics/omicia_api_examples/blob/master/python/launch_family_report.py>`_
 
-- `Launch a family report with no genomes attached <https://github.com/Omicia/omicia_api_examples/blob/master/python/launch_family_report_no_genome.py>`_
+- `Launch a family report with no genomes attached <https://github.com/FabricGenomics/omicia_api_examples/blob/master/python/launch_family_report_no_genome.py>`_
 
-- `Add genome(s) to a clinical report <https://github.com/Omicia/omicia_api_examples/blob/master/python/add_genome_to_cr.py>`_
+- `Add genome(s) to a clinical report <https://github.com/FabricGenomics/omicia_api_examples/blob/master/python/add_genome_to_cr.py>`_
 
-- `Add patient information to a clinical report <https://github.com/Omicia/omicia_api_examples/blob/master/python/post_patient_fields.py>`_
+- `Add patient information to a clinical report <https://github.com/FabricGenomics/omicia_api_examples/blob/master/python/post_patient_fields.py>`_
 
 |
 
@@ -173,9 +173,9 @@ To check which quality control entries are associated with a clincal report, the
 
 :ref:`Relevant example Python scripts:`
 
-- `View the assay types in a workspace <https://github.com/Omicia/omicia_api_examples/blob/master/python/get_assay_types.py>`_
+- `View the assay types in a workspace <https://github.com/FabricGenomics/omicia_api_examples/blob/master/python/get_assay_types.py>`_
 
-- `Add a quality control data entry to a clinical report <https://github.com/Omicia/omicia_api_examples/blob/master/python/post_qc_data.py>`_
+- `Add a quality control data entry to a clinical report <https://github.com/FabricGenomics/omicia_api_examples/blob/master/python/post_qc_data.py>`_
 
 |
 
@@ -208,9 +208,9 @@ will see which variants have been confirmed when they review the clinical report
 
 :ref:`Relevant example Python scripts:`
 
-- `Get a clinical report's status <https://github.com/Omicia/omicia_api_examples/blob/master/python/get_report_status.py>`_
-- `Get a clinical report's variants <https://github.com/Omicia/omicia_api_examples/blob/master/python/get_report_variants.py>`_
-- `Set a clinical report's variants' statuses <https://github.com/Omicia/omicia_api_examples/blob/master/python/set_report_variants.py>`_
+- `Get a clinical report's status <https://github.com/FabricGenomics/omicia_api_examples/blob/master/python/get_report_status.py>`_
+- `Get a clinical report's variants <https://github.com/FabricGenomics/omicia_api_examples/blob/master/python/get_report_variants.py>`_
+- `Set a clinical report's variants' statuses <https://github.com/FabricGenomics/omicia_api_examples/blob/master/python/set_report_variants.py>`_
 
 |
 

@@ -80,7 +80,7 @@ def upload_genomes_to_project(project_id, folder):
 
         with open(folder + "/" + genome_file_name, 'rb') as file_handle:
             # Post request and store newly uploaded genome's information
-            result = requests.put(url, auth=auth, data=file_handle, verify=False)
+            result = requests.put(url, auth=auth, data=file_handle)
             genome_json_objects.append(result.json())
     sys.stdout.write("\n")
     return genome_json_objects

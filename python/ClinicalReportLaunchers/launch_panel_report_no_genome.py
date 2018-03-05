@@ -37,7 +37,7 @@ def launch_panel_report(filter_id, panel_id, accession_id, project_id):
     sys.stdout.write("Launching report...")
     sys.stdout.write("\n\n")
     sys.stdout.flush()
-    result = requests.post(url, auth=auth, data=json.dumps(url_payload), verify=False)
+    result = requests.post(url, auth=auth, data=json.dumps(url_payload))
     return result.json()
 
 

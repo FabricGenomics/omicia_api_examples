@@ -90,7 +90,7 @@ def add_fields_to_cr(cr_id, patient_fields):
     sys.stdout.write("Adding custom patient fields to report...")
     sys.stdout.write("\n\n")
     sys.stdout.flush()
-    result = requests.post(url, auth=auth, data=url_payload, verify=False)
+    result = requests.post(url, auth=auth, data=url_payload)
     return result.json()
 
 
@@ -146,7 +146,7 @@ def launch_family_report(mother_genome_id, father_genome_id,
                    'accession_id': accession_id}
 
     sys.stdout.write("Launching family report...\n")
-    result = requests.post(url, auth=auth, data=json.dumps(url_payload), verify=False)
+    result = requests.post(url, auth=auth, data=json.dumps(url_payload))
 
     return result.json()
 
@@ -165,7 +165,7 @@ def upload_genome(project_id, genome_info, family_folder):
     # Upload genome
     with open(family_folder + "/" + genome_info['genome_filename'], 'rb') as file_handle:
         # Post request and store newly uploaded genome's information
-        result = requests.put(url, data=file_handle, params=payload, auth=auth, verify=False)
+        result = requests.put(url, data=file_handle, params=payload, auth=auth)
         sys.stdout.write(".")
         sys.stdout.flush()
         return result.json()["genome_id"]
