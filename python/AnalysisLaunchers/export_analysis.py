@@ -33,7 +33,7 @@ def export_analysis(args):
     else:
         url = '{}/analysis/{}/variants'.format(FABRIC_API_URL, args.id)
 
-    result = requests.post(url, auth=auth, data=json.dumps(vars(args)), verify=False)
+    result = requests.post(url, auth=auth, data=json.dumps(vars(args)))
 
     return result.text
 

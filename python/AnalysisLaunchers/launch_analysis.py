@@ -49,7 +49,7 @@ def launch_analysis(report_type,
                     'hpo_terms': hpo_terms,
                     'proband_vaast_report_id': proband_vaast_report_id}
 
-    result = requests.post(url, auth=auth, data=json.dumps(data_payload), verify=False)
+    result = requests.post(url, auth=auth, data=json.dumps(data_payload))
     return result.json()
 
 

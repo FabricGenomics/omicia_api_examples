@@ -38,29 +38,29 @@ def upload_genome_to_project(project_id, label, sex, file_name, bam_file,
 
     with open(file_name, 'rb') as file_handle:
         # Post request and return id of newly uploaded genome
-        result = requests.put(url, auth=auth, data=file_handle, verify=False)
+        result = requests.put(url, auth=auth, data=file_handle)
         original_response = result.json()
         genome_id = original_response.get('genome_id')
 
     if verbose:
         url = "{}/genomes".format(OMICIA_API_URL)
-        result = requests.get(url, auth=auth, verify=False)
+        result = requests.get(url, auth=auth)
 
         sys.stderr.write(str(result.json()))
         sys.stderr.write('\n')
 
         url = "{}/genomes/{}".format(OMICIA_API_URL, genome_id)
-        result = requests.get(url, auth=auth, verify=False)
+        result = requests.get(url, auth=auth)
         sys.stderr.write(str(result.json()))
         sys.stderr.write('\n')
 
         url = "{}/projects/{}/genomes".format(OMICIA_API_URL, project_id)
-        result = requests.get(url, auth=auth, verify=False)
+        result = requests.get(url, auth=auth)
         sys.stderr.write(str(result.json()))
         sys.stderr.write('\n')
 
         url = "{}/projects/{}/genomes/{}".format(OMICIA_API_URL, project_id, genome_id)
-        result = requests.get(url, auth=auth, verify=False)
+        result = requests.get(url, auth=auth)
         sys.stderr.write(str(result.json()))
         sys.stderr.write('\n')
 

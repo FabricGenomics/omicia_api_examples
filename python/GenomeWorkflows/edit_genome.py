@@ -32,7 +32,7 @@ def put_genome(genome_id, name=None, external_id=None, project_id=None):
                               "project_id": project_id
                               })
 
-    result = requests.put(url, auth=auth, data=url_payload, verify=False)
+    result = requests.put(url, auth=auth, data=url_payload)
     return result.json()
 
 

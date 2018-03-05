@@ -34,7 +34,7 @@ def update_cr_status(cr_id, status):
     headers = {"content-type": "application/json-patch+json"}
 
     sys.stdout.flush()
-    result = requests.patch(url, auth=auth, json=url_payload, headers=headers, verify=False)
+    result = requests.patch(url, auth=auth, json=url_payload, headers=headers)
     return result
 
 

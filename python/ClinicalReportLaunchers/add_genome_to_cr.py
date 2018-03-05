@@ -91,7 +91,7 @@ def add_genome_to_clinical_report(clinical_report_id,
     sys.stdout.write("Adding genome(s) to report...")
     sys.stdout.write("\n\n")
     sys.stdout.flush()
-    result = requests.put(url, auth=auth, data=json.dumps(url_payload), verify=False)
+    result = requests.put(url, auth=auth, data=json.dumps(url_payload))
     return result.json()
 
 
