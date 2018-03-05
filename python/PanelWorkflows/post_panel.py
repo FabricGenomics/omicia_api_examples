@@ -9,16 +9,16 @@ import json
 import argparse
 
 #Load environment variables for request authentication parameters
-if "OMICIA_API_PASSWORD" not in os.environ:
-    sys.exit("OMICIA_API_PASSWORD environment variable missing")
+if "FABRIC_API_PASSWORD" not in os.environ:
+    sys.exit("FABRIC_API_PASSWORD environment variable missing")
 
-if "OMICIA_API_LOGIN" not in os.environ:
-    sys.exit("OMICIA_API_LOGIN environment variable missing")
+if "FABRIC_API_LOGIN" not in os.environ:
+    sys.exit("FABRIC_API_LOGIN environment variable missing")
 
-OMICIA_API_LOGIN = os.environ['OMICIA_API_LOGIN']
-OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
-OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.fabricgenomics.com')
-auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
+FABRIC_API_LOGIN = os.environ['FABRIC_API_LOGIN']
+FABRIC_API_PASSWORD = os.environ['FABRIC_API_PASSWORD']
+FABRIC_API_URL = os.environ.get('FABRIC_API_URL', 'https://api.fabricgenomics.com')
+auth = HTTPBasicAuth(FABRIC_API_LOGIN, FABRIC_API_PASSWORD)
 
 
 def post_panel(name, description, methodology=None,
@@ -27,7 +27,7 @@ def post_panel(name, description, methodology=None,
     """
     #Construct request
     url = "{}/panels/"
-    url = url.format(OMICIA_API_URL)
+    url = url.format(FABRIC_API_URL)
     url_payload = json.dumps({"name": name,
                               "description": description,
                               "methodology": methodology,
@@ -50,7 +50,7 @@ def put_panel(panel_id, name, description, methodology=None,
     """
     #Construct request
     url = "{}/panels/{}"
-    url = url.format(OMICIA_API_URL, panel_id)
+    url = url.format(FABRIC_API_URL, panel_id)
     url_payload = json.dumps({"name": name,
                               "description": description,
                               "methodology": methodology,
@@ -71,7 +71,7 @@ def add_gene_symbols_to_panel(panel_id, gene_symbols):
     """Add a list of gene symbols to a panel"""
     #Construct request
     url = "{}/panels/{}/regions"
-    url = url.format(OMICIA_API_URL, panel_id)
+    url = url.format(FABRIC_API_URL, panel_id)
 
     url_payload = json.dumps({"gene_symbols": gene_symbols})
 

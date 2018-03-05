@@ -19,5 +19,5 @@ FORMAT=$4
 FILE=$5
 
 #upload genome
-$CURL $CURLOPTS -u ${OMICIA_API_LOGIN}:${OMICIA_API_PASSWORD} "$URL/projects/$PROJECT_ID/genomes?genome_label=$LABEL&genome_sex=$SEX&assembly_version=hg19&format=$FORMAT" --upload-file $FILE
+$CURL $CURLOPTS -u ${FABRIC_API_LOGIN}:${FABRIC_API_PASSWORD} "$URL/projects/$PROJECT_ID/genomes?genome_label=$LABEL&genome_sex=$SEX&assembly_version=hg19&format=$FORMAT" --upload-file $FILE
 echo

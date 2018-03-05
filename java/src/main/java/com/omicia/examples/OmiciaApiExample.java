@@ -15,11 +15,11 @@ import java.util.Base64;
 import java.util.Scanner;
 
 public class OmiciaApiExample {
-	static final String OMICIA_API_ENDPOINT = "api.fabricgenomics.com";
+	static final String FABRIC_API_URL = "api.fabricgenomics.com";
 
 	// your API key as provided by Omicia
-	static final String OMICIA_API_LOGIN = "";
-	static final String OMICIA_API_PASSWORD = "";
+	static final String FABRIC_API_LOGIN = "";
+	static final String FABRIC_API_PASSWORD = "";
 
 	// an Opal project ID
 	static final String PROJECT_ID = "";
@@ -60,7 +60,7 @@ public class OmiciaApiExample {
 
 		// build the URI fo the request
 		URI uri = new URIBuilder()
-			.setScheme("http").setHost(OMICIA_API_ENDPOINT)
+			.setScheme("https").setHost(FABRIC_API_URL)
 			.setPath("/projects/"+projectID+"/genomes")
 			.setParameter("genome_label", "Test R. Person")
 			.setParameter("genome_sex", "unspecified")
@@ -68,7 +68,7 @@ public class OmiciaApiExample {
 		.build();
 
 		// build the authorization header
-		String authorization = OMICIA_API_LOGIN+":"+OMICIA_API_PASSWORD;
+		String authorization = FABRIC_API_LOGIN+":"+FABRIC_API_PASSWORD;
 		authorization = Base64.getEncoder().encodeToString(authorization.getBytes());
 
 		// build the PUT request
@@ -95,13 +95,13 @@ public class OmiciaApiExample {
 
 		// build the URI fo the request
 		URI uri = new URIBuilder()
-			.setScheme("http").setHost(OMICIA_API_ENDPOINT)
+			.setScheme("https").setHost(FABRIC_API_URL)
 			.setPath("/reports/"+reportID)
 			.setParameter("extended", "False")
 		.build();
 
 		// build the authorization header
-		String authorization = OMICIA_API_LOGIN+":"+OMICIA_API_PASSWORD;
+		String authorization = FABRIC_API_LOGIN+":"+FABRIC_API_PASSWORD;
 		authorization = Base64.getEncoder().encodeToString(authorization.getBytes());
 
 		// build the GET request

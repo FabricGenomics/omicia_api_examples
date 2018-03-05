@@ -7,23 +7,23 @@ import simplejson as json
 from requests.auth import HTTPBasicAuth
 
 # Load environment variables for request authentication parameters
-if "OMICIA_API_PASSWORD" not in os.environ:
-    sys.exit("OMICIA_API_PASSWORD environment variable missing")
+if "FABRIC_API_PASSWORD" not in os.environ:
+    sys.exit("FABRIC_API_PASSWORD environment variable missing")
 
-if "OMICIA_API_LOGIN" not in os.environ:
-    sys.exit("OMICIA_API_LOGIN environment variable missing")
+if "FABRIC_API_LOGIN" not in os.environ:
+    sys.exit("FABRIC_API_LOGIN environment variable missing")
 
-OMICIA_API_LOGIN = os.environ['OMICIA_API_LOGIN']
-OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
-OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://testweb-api.omicia.us')
-auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
+FABRIC_API_LOGIN = os.environ['FABRIC_API_LOGIN']
+FABRIC_API_PASSWORD = os.environ['FABRIC_API_PASSWORD']
+FABRIC_API_URL = os.environ.get('FABRIC_API_URL', 'https://testweb-api.omicia.us')
+auth = HTTPBasicAuth(FABRIC_API_LOGIN, FABRIC_API_PASSWORD)
 
 
 def get_variants(report_id):
     """Fetch all the variants in a clinical report"""
 
     # Construct request
-    url = "{}/reports/{}/variants".format(OMICIA_API_URL, report_id)
+    url = "{}/reports/{}/variants".format(FABRIC_API_URL, report_id)
 
     # Get request and return json object of variants
     result = requests.get(url, auth=auth)
