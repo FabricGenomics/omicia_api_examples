@@ -10,16 +10,16 @@ import json
 import argparse
 
 # Load environment variables for request authentication parameters
-if "OMICIA_API_PASSWORD" not in os.environ:
-    sys.exit("OMICIA_API_PASSWORD environment variable missing")
+if "FABRIC_API_PASSWORD" not in os.environ:
+    sys.exit("FABRIC_API_PASSWORD environment variable missing")
 
-if "OMICIA_API_LOGIN" not in os.environ:
-    sys.exit("OMICIA_API_LOGIN environment variable missing")
+if "FABRIC_API_LOGIN" not in os.environ:
+    sys.exit("FABRIC_API_LOGIN environment variable missing")
 
-OMICIA_API_LOGIN = os.environ['OMICIA_API_LOGIN']
-OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
-OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.fabricgenomics.com')
-auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
+FABRIC_API_LOGIN = os.environ['FABRIC_API_LOGIN']
+FABRIC_API_PASSWORD = os.environ['FABRIC_API_PASSWORD']
+FABRIC_API_URL = os.environ.get('FABRIC_API_URL', 'https://api.fabricgenomics.com')
+auth = HTTPBasicAuth(FABRIC_API_LOGIN, FABRIC_API_PASSWORD)
 
 
 def patch_cr_variant(cr_id, report_variant_id, patch_values):
@@ -28,7 +28,7 @@ def patch_cr_variant(cr_id, report_variant_id, patch_values):
     """
     # Construct request
     url = "{}/reports/{}/variants/{}"
-    url = url.format(OMICIA_API_URL, cr_id, report_variant_id)
+    url = url.format(FABRIC_API_URL, cr_id, report_variant_id)
 
     patch_attributes = [key for key, value in patch_values.items()]
     # Build the patch payload

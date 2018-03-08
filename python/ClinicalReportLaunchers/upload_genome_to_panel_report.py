@@ -9,16 +9,16 @@ import sys
 import argparse
 
 # Load environment variables for request authentication parameters
-if "OMICIA_API_PASSWORD" not in os.environ:
-    sys.exit("OMICIA_API_PASSWORD environment variable missing")
+if "FABRIC_API_PASSWORD" not in os.environ:
+    sys.exit("FABRIC_API_PASSWORD environment variable missing")
 
-if "OMICIA_API_LOGIN" not in os.environ:
-    sys.exit("OMICIA_API_LOGIN environment variable missing")
+if "FABRIC_API_LOGIN" not in os.environ:
+    sys.exit("FABRIC_API_LOGIN environment variable missing")
 
-OMICIA_API_LOGIN = os.environ['OMICIA_API_LOGIN']
-OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
-OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.fabricgenomics.com')
-auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
+FABRIC_API_LOGIN = os.environ['FABRIC_API_LOGIN']
+FABRIC_API_PASSWORD = os.environ['FABRIC_API_PASSWORD']
+FABRIC_API_URL = os.environ.get('FABRIC_API_URL', 'https://api.fabricgenomics.com')
+auth = HTTPBasicAuth(FABRIC_API_LOGIN, FABRIC_API_PASSWORD)
 
 
 def add_genome_to_clinical_report(clinical_report_id,
@@ -27,7 +27,7 @@ def add_genome_to_clinical_report(clinical_report_id,
     """Use the Omicia API to add genome(s) to a clinical report
     """
     # Construct url and request
-    url = "{}/reports/{}".format(OMICIA_API_URL, clinical_report_id)
+    url = "{}/reports/{}".format(FABRIC_API_URL, clinical_report_id)
     url_payload = {
         'proband_genome_id': proband_genome_id,
         'proband_sex': proband_sex
@@ -48,7 +48,7 @@ def upload_genome_to_project(project_id, label, sex, file_format, file_name, ext
     #Construct request
     url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id={}\
            &assembly_version=hg19&format={}"
-    url = url.format(OMICIA_API_URL, project_id, label, sex, external_id, file_format)
+    url = url.format(FABRIC_API_URL, project_id, label, sex, external_id, file_format)
 
     sys.stdout.write("Uploading genome...\n")
     with open(file_name, 'rb') as file_handle:

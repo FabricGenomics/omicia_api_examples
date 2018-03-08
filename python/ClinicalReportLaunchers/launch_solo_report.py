@@ -28,16 +28,16 @@ import sys
 MANIFEST_FILENAME = 'manifest.csv'
 
 #Load environment variables for request authentication parameters
-if "OMICIA_API_PASSWORD" not in os.environ:
-    sys.exit("OMICIA_API_PASSWORD environment variable missing")
+if "FABRIC_API_PASSWORD" not in os.environ:
+    sys.exit("FABRIC_API_PASSWORD environment variable missing")
 
-if "OMICIA_API_LOGIN" not in os.environ:
-    sys.exit("OMICIA_API_LOGIN environment variable missing")
+if "FABRIC_API_LOGIN" not in os.environ:
+    sys.exit("FABRIC_API_LOGIN environment variable missing")
 
-OMICIA_API_LOGIN = os.environ['OMICIA_API_LOGIN']
-OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
-OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.fabricgenomics.com')
-auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
+FABRIC_API_LOGIN = os.environ['FABRIC_API_LOGIN']
+FABRIC_API_PASSWORD = os.environ['FABRIC_API_PASSWORD']
+FABRIC_API_URL = os.environ.get('FABRIC_API_URL', 'https://api.fabricgenomics.com')
+auth = HTTPBasicAuth(FABRIC_API_LOGIN, FABRIC_API_PASSWORD)
 
 
 # A map between the row numbers and fields from the patient information csv
@@ -76,7 +76,7 @@ def add_fields_to_cr(cr_id, patient_fields):
     """
     # Construct request
     url = "{}/reports/{}/patient_fields"
-    url = url.format(OMICIA_API_URL, cr_id)
+    url = url.format(FABRIC_API_URL, cr_id)
     url_payload = json.dumps(patient_fields)
 
     sys.stdout.write("Adding custom patient fields to report...")
@@ -91,7 +91,7 @@ def launch_solo_report(proband_genome_id, proband_sex,
     """Launch a family report. Return the JSON response.
     """
     # Construct url and request
-    url = "{}/reports/".format(OMICIA_API_URL)
+    url = "{}/reports/".format(FABRIC_API_URL)
     url_payload = {'report_type': "exome",
                    'proband_genome_id': int(proband_genome_id),
                    'proband_sex': proband_sex,
@@ -110,7 +110,7 @@ def upload_genome(project_id, genome_filename, genome_label, genome_sex, genome_
     """Upload a genome from a given folder to a specified project
     """
     # Construct url and request
-    url = "{}/projects/{}/genomes?".format(OMICIA_API_URL, project_id)
+    url = "{}/projects/{}/genomes?".format(FABRIC_API_URL, project_id)
     payload = {'genome_label': genome_label,
                'genome_sex': 'male' if genome_sex == 'm' else 'female',
                'external_id': genome_external_id,

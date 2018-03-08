@@ -8,16 +8,16 @@ import sys
 import simplejson as json
 
 # Load environment variables for request authentication parameters
-if "OMICIA_API_PASSWORD" not in os.environ:
-    sys.exit("OMICIA_API_PASSWORD environment variable missing")
+if "FABRIC_API_PASSWORD" not in os.environ:
+    sys.exit("FABRIC_API_PASSWORD environment variable missing")
 
-if "OMICIA_API_LOGIN" not in os.environ:
-    sys.exit("OMICIA_API_LOGIN environment variable missing")
+if "FABRIC_API_LOGIN" not in os.environ:
+    sys.exit("FABRIC_API_LOGIN environment variable missing")
 
-OMICIA_API_LOGIN = os.environ['OMICIA_API_LOGIN']
-OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
-OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.fabricgenomics.com')
-auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
+FABRIC_API_LOGIN = os.environ['FABRIC_API_LOGIN']
+FABRIC_API_PASSWORD = os.environ['FABRIC_API_PASSWORD']
+FABRIC_API_URL = os.environ.get('FABRIC_API_URL', 'https://api.fabricgenomics.com')
+auth = HTTPBasicAuth(FABRIC_API_LOGIN, FABRIC_API_PASSWORD)
 
 
 def upload_genome_to_project(project_id, label, sex, file_name, bam_file,
@@ -32,7 +32,7 @@ def upload_genome_to_project(project_id, label, sex, file_name, bam_file,
     if checksum:
         url = "{}&checksum={}".format(url, checksum)
 
-    url = url.format(OMICIA_API_URL, project_id, label, sex)
+    url = url.format(FABRIC_API_URL, project_id, label, sex)
     if bam_file is not None:
         url = "{}&bam_file={}".format(url, bam_file)
 
@@ -43,23 +43,23 @@ def upload_genome_to_project(project_id, label, sex, file_name, bam_file,
         genome_id = original_response.get('genome_id')
 
     if verbose:
-        url = "{}/genomes".format(OMICIA_API_URL)
+        url = "{}/genomes".format(FABRIC_API_URL)
         result = requests.get(url, auth=auth)
 
         sys.stderr.write(str(result.json()))
         sys.stderr.write('\n')
 
-        url = "{}/genomes/{}".format(OMICIA_API_URL, genome_id)
+        url = "{}/genomes/{}".format(FABRIC_API_URL, genome_id)
         result = requests.get(url, auth=auth)
         sys.stderr.write(str(result.json()))
         sys.stderr.write('\n')
 
-        url = "{}/projects/{}/genomes".format(OMICIA_API_URL, project_id)
+        url = "{}/projects/{}/genomes".format(FABRIC_API_URL, project_id)
         result = requests.get(url, auth=auth)
         sys.stderr.write(str(result.json()))
         sys.stderr.write('\n')
 
-        url = "{}/projects/{}/genomes/{}".format(OMICIA_API_URL, project_id, genome_id)
+        url = "{}/projects/{}/genomes/{}".format(FABRIC_API_URL, project_id, genome_id)
         result = requests.get(url, auth=auth)
         sys.stderr.write(str(result.json()))
         sys.stderr.write('\n')

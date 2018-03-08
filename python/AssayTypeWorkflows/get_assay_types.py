@@ -9,16 +9,16 @@ import sys
 import simplejson as json
 
 # Load environment variables for request authentication parameters
-if "OMICIA_API_PASSWORD" not in os.environ:
-    sys.exit("OMICIA_API_PASSWORD environment variable missing")
+if "FABRIC_API_PASSWORD" not in os.environ:
+    sys.exit("FABRIC_API_PASSWORD environment variable missing")
 
-if "OMICIA_API_LOGIN" not in os.environ:
-    sys.exit("OMICIA_API_LOGIN environment variable missing")
+if "FABRIC_API_LOGIN" not in os.environ:
+    sys.exit("FABRIC_API_LOGIN environment variable missing")
 
-OMICIA_API_LOGIN = os.environ['OMICIA_API_LOGIN']
-OMICIA_API_PASSWORD = os.environ['OMICIA_API_PASSWORD']
-OMICIA_API_URL = os.environ.get('OMICIA_API_URL', 'https://api.fabricgenomics.com')
-auth = HTTPBasicAuth(OMICIA_API_LOGIN, OMICIA_API_PASSWORD)
+FABRIC_API_LOGIN = os.environ['FABRIC_API_LOGIN']
+FABRIC_API_PASSWORD = os.environ['FABRIC_API_PASSWORD']
+FABRIC_API_URL = os.environ.get('FABRIC_API_URL', 'https://api.fabricgenomics.com')
+auth = HTTPBasicAuth(FABRIC_API_LOGIN, FABRIC_API_PASSWORD)
 
 
 def get_assay_type(assay_type_id):
@@ -26,7 +26,7 @@ def get_assay_type(assay_type_id):
     """
 
     # Construct request
-    url = "{}/assay_types/{}".format(OMICIA_API_URL, assay_type_id)
+    url = "{}/assay_types/{}".format(FABRIC_API_URL, assay_type_id)
 
     # Get request and return json object of an assay type
     result = requests.get(url, auth=auth)
@@ -38,7 +38,7 @@ def get_assay_types():
     """
 
     # Construct request
-    url = "{}/assay_types".format(OMICIA_API_URL)
+    url = "{}/assay_types".format(FABRIC_API_URL)
 
     # Get request and return json object of assay types
     result = requests.get(url, auth=auth)

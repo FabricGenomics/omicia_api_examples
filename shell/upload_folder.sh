@@ -4,12 +4,12 @@
 #     it gives admin access to Opal
 #  2) Set up your environment variables so that the API key and password are
 #     available as
-#       OMICIA_API_KEY
-#       OMICIA_API_PASSWORD
+#       FABRIC_API_KEY
+#       FABRIC_API_PASSWORD
 #
 #     For example, you could add the following to your .bashrc file
-#        export OMICIA_API_KEY=<YOUR KEY HERE>
-#        export OMICIA_API_PASSWORD=<YOUR KEY HERE>
+#        export FABRIC_API_KEY=<YOUR KEY HERE>
+#        export FABRIC_API_PASSWORD=<YOUR KEY HERE>
 #
 #   3) Make the script executable: chmod +x upload_folder.sh
 #
@@ -36,12 +36,12 @@ if [[ ! -d "$1" ]]; then
     exit 1
 fi
 
-login=$OMICIA_API_LOGIN
-password=$OMICIA_API_PASSWORD
+login=$FABRIC_API_LOGIN
+password=$FABRIC_API_PASSWORD
 
 if [ -z $login ] || [ -z $password ]
 then
-    echo "Please get an API key and set the OMICI_API_KEY and OMICIA_API_PASSWORD environment variables"
+    echo "Please get an API key and set the OMICI_API_KEY and FABRIC_API_PASSWORD environment variables"
     exit 1
 fi
 
