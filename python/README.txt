@@ -11,7 +11,7 @@ If these commands yield the correct credentials everything is set to go.
 If they are blank or incorrect, to set them to the correct values type:
 
 export FABRIC_API_LOGIN=<your api login string>
-export FABRIC_API_LOGIN=<your api password string>
+export FABRIC_API_PASSWORD=<your api password string>
 
 Any csv files used by these scripts should have linefeeds (\n) instead of
 carriage return (\r) at the end of each row. \r is incompatible with unix
