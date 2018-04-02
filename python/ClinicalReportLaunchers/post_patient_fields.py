@@ -38,7 +38,7 @@ def add_fields_to_cr(cr_id, patient_fields):
 
 
 def main():
-    """main function. Upload a specified VCF file to a specified project.
+    """main function. Upload patient fields to a clinical report by ID.
     """
     parser = argparse.ArgumentParser(description='Fill patient info fields for existing clinical reports.')
     parser.add_argument('c', metavar='clinical_report_id', type=int)
