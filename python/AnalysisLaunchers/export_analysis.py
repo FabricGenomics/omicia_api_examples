@@ -61,7 +61,7 @@ def main():
     parser.add_argument(
         "--structural", dest="structural", action="store_true", default=False
     )
-    parser.add_argument("--verbose", dest="verbose", action="store_true", default=False)
+    parser.add_argument("--verbose", dest="verbose", action="store_true", default=True)
 
     args = parser.parse_args()
 
