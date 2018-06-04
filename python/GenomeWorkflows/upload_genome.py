@@ -46,7 +46,7 @@ def upload_genome_to_project(project_id, label, sex, file_name, bam_file,
         url = "{}/genomes".format(FABRIC_API_URL)
         result = requests.get(url, auth=auth)
 
-        sys.stderr.write(str(result.json()))
+        sys.stderr.write(result.text)
         sys.stderr.write('\n')
 
         url = "{}/genomes/{}".format(FABRIC_API_URL, genome_id)

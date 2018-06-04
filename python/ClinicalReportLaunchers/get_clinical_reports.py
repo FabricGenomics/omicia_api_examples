@@ -90,7 +90,6 @@ def get_clinical_reports(accession_id, genome_id, external_id, genome_name):
     if url.endswith('&'):
         url = url[:-1]
     url = url.format(FABRIC_API_URL)
-    print url
 
     sys.stdout.flush()
     result = requests.get(url, auth=auth)
