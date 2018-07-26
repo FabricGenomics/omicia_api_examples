@@ -22,7 +22,7 @@ FABRIC_API_URL = os.environ.get('FABRIC_API_URL', 'https://api.fabricgenomics.co
 auth = HTTPBasicAuth(FABRIC_API_LOGIN, FABRIC_API_PASSWORD)
 
 
-def launch_family_report(report_type, score_indels, reporting_cutoff, accession_id, project_id, hpo_terms):
+def launch_family_report(report_type, score_indels, accession_id, project_id, hpo_terms):
     """Launch a family report. Return the JSON response.
     """
     # Construct url and request
@@ -37,7 +37,6 @@ def launch_family_report(report_type, score_indels, reporting_cutoff, accession_
                    'proband_sex': None,
                    'background': 'FULL',
                    'score_indels': score_indels,
-                   'reporting_cutoff': reporting_cutoff,
                    'accession_id': accession_id,
                    'project_id': project_id,
                    'hpo_terms': json.dumps(hpo_terms)}
@@ -58,7 +57,7 @@ def main():
                         type=str,
                         choices=['exome', 'Duo', 'Trio', 'Quad'])
     parser.add_argument('--indels', metavar='score_indels', type=bool, default=False)
-    parser.add_argument('--cutoff', metavar='reporting_cutoff', type=int)
+    parser.add_argument('--cutoff', type=int)
     parser.add_argument('acc', metavar='accession_id')
     parser.add_argument('--project_id', metavar='project_id', type=int)
     parser.add_argument('--hpo', metavar='hpo_terms')
@@ -66,7 +65,6 @@ def main():
 
     report_type = args.report_type
     score_indels = args.indels
-    reporting_cutoff = args.cutoff
     accession_id = args.acc
     project_id = args.project_id
     hpo_terms = args.hpo or None
@@ -76,7 +74,6 @@ def main():
     family_report_json = launch_family_report(
         report_type,
         score_indels,
-        reporting_cutoff,
         accession_id,
         project_id,
         hpo_terms)

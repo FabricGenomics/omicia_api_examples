@@ -29,7 +29,6 @@ def add_genomes_to_clinical_report(clinical_report_id,
                                    family_3,
                                    family_4,
                                    score_indels,
-                                   reporting_cutoff,
                                    project_id,
                                    hpo_terms):
     """Launch a flexible family report. Return the JSON response.
@@ -55,7 +54,6 @@ def add_genomes_to_clinical_report(clinical_report_id,
                     'family_4': family_4,
                     'background': 'FULL',
                     'score_indels': score_indels,
-                    'reporting_cutoff': reporting_cutoff,
                     'project_id': project_id,
                     'hpo_terms': json.dumps(hpo_terms) if hpo_terms else None}
 
@@ -97,7 +95,6 @@ def main():
     parser.add_argument('--family_4_label', metavar='family_4_label', type=str)
 
     parser.add_argument('--indels', metavar='score_indels', type=int, choices=[0,1], default=0)
-    parser.add_argument('--cutoff', metavar='reporting_cutoff', type=int)
     parser.add_argument('clinical_report_id', metavar='clinical_report_id')
     parser.add_argument('--project_id', metavar='project_id', type=int)
     parser.add_argument('--hpo', metavar='hpo_terms')
@@ -141,7 +138,6 @@ def main():
     }
 
     score_indels = bool(args.indels)
-    reporting_cutoff = args.cutoff
     clinical_report_id = args.clinical_report_id
     project_id = args.project_id
     hpo_terms = args.hpo or None
@@ -156,7 +152,6 @@ def main():
         family_3,
         family_4,
         score_indels,
-        reporting_cutoff,
         project_id,
         hpo_terms)
 
