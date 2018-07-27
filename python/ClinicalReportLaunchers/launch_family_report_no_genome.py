@@ -57,7 +57,6 @@ def main():
                         type=str,
                         choices=['exome', 'Duo', 'Trio', 'Quad'])
     parser.add_argument('--indels', metavar='score_indels', type=bool, default=False)
-    parser.add_argument('--cutoff', type=int)
     parser.add_argument('acc', metavar='accession_id')
     parser.add_argument('--project_id', metavar='project_id', type=int)
     parser.add_argument('--hpo', metavar='hpo_terms')
