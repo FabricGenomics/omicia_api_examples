@@ -28,9 +28,9 @@ def update_cr_status(cr_id, status):
     url = "{}/reports/{}/update_status/"
     url = url.format(FABRIC_API_URL, cr_id, status)
     # Build the patch payload
-    url_payload = json.dumps([{"op": "replace",
-                              "path": "/status",
-                              "value": status}])
+    url_payload = [{"op": "replace",
+                    "path": "/status",
+                    "value": "Ready to Review"}]
     headers = {"content-type": "application/json-patch+json"}
 
     sys.stdout.flush()
