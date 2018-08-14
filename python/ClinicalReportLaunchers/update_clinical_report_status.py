@@ -30,7 +30,7 @@ def update_cr_status(cr_id, status):
     # Build the patch payload
     url_payload = [{"op": "replace",
                     "path": "/status",
-                    "value": "Ready to Review"}]
+                    "value": "status_name"}]
     headers = {"content-type": "application/json-patch+json"}
 
     sys.stdout.flush()
