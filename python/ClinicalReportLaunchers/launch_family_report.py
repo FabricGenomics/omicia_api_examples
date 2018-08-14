@@ -130,7 +130,7 @@ def get_family_manifest_info(family_folder):
 
 def launch_family_report(mother_genome_id, father_genome_id,
                          proband_genome_id, proband_sex, score_indels,
-                         reporting_cutoff, accession_id):
+                         accession_id):
     """Launch a family report. Return the JSON response.
     """
     # Construct url and request
@@ -142,7 +142,6 @@ def launch_family_report(mother_genome_id, father_genome_id,
                    'proband_sex': ('f' if proband_sex == 'female' else 'm'),
                    'background': 'FULL',
                    'score_indels': bool(score_indels),
-                   'reporting_cutoff': int(reporting_cutoff),
                    'accession_id': accession_id}
 
     sys.stdout.write("Launching family report...\n")
@@ -207,13 +206,12 @@ def main(argv):
     """
     if len(argv) < 5:
         sys.exit("Usage: python launch_family_report.py <project_id> \
-        <family_folder> <score_indels> <reporting_cutoff> <accession_id> \
+        <family_folder> <score_indels> <accession_id> \
         optional: <patient_info_file>")
     project_id = argv[0]
     family_folder = argv[1]
     score_indels = argv[2]
-    reporting_cutoff = argv[3]
-    accession_id = argv[4]
+    accession_id = argv[3]
 
     family_genome_ids = upload_genomes_to_project(project_id, family_folder)
 
@@ -241,7 +239,6 @@ def main(argv):
         family_genome_ids['proband_genome']['id'],
         family_genome_ids['proband_genome']['sex'],
         score_indels,
-        reporting_cutoff,
         accession_id)
 
     # Confirm launched report data

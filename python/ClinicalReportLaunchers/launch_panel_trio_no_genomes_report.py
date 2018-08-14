@@ -97,7 +97,7 @@ def add_fields_to_cr(cr_id, patient_fields):
     return result.json()
 
 
-def launch_panel_trio_report(panel_id, filter_id, reporting_cutoff, accession_id, project_id):
+def launch_panel_trio_report(panel_id, filter_id, accession_id, project_id):
     """Launch a family report. Return the JSON response.
     """
     # Construct url and request
@@ -109,7 +109,6 @@ def launch_panel_trio_report(panel_id, filter_id, reporting_cutoff, accession_id
                    'father_genome_id': None,
                    'proband_genome_id': None,
                    'proband_sex': None,
-                   'reporting_cutoff': reporting_cutoff,
                    'accession_id': accession_id,
                    'project_id': project_id
                    }
@@ -127,21 +126,18 @@ def main():
     parser.add_argument('panel_id', metavar='panel_id', type=int)
     parser.add_argument('accession_id', metavar='accession_id', type=str)
     parser.add_argument('project_id', metavar='project_id', type=str)
-    parser.add_argument('--reporting_cutoff', metavar='reporting_cutoff', type=int)
     parser.add_argument('--filter_id', metavar='filter_id', type=int)
     parser.add_argument('--patient_info_file', metavar='patient_info_file', type=str)
     args = parser.parse_args()
 
     panel_id = args.panel_id
     filter_id = args.filter_id
-    reporting_cutoff = args.reporting_cutoff
     accession_id = args.accession_id
     project_id = args.project_id
     patient_info_file_name = args.patient_info_file
 
     family_report_json = launch_panel_trio_report(
         panel_id, filter_id,
-        reporting_cutoff,
         accession_id,
         project_id)
 

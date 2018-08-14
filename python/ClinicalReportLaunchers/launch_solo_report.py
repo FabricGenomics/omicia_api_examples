@@ -87,7 +87,7 @@ def add_fields_to_cr(cr_id, patient_fields):
 
 
 def launch_solo_report(proband_genome_id, proband_sex,
-                       score_indels, reporting_cutoff, accession_id):
+                       score_indels, accession_id):
     """Launch a family report. Return the JSON response.
     """
     # Construct url and request
@@ -97,7 +97,6 @@ def launch_solo_report(proband_genome_id, proband_sex,
                    'proband_sex': proband_sex,
                    'background': 'FULL',
                    'score_indels': score_indels,
-                   'reporting_cutoff': reporting_cutoff,
                    'accession_id': accession_id}
 
     sys.stdout.write("Launching solo report...\n")
@@ -137,7 +136,6 @@ def main():
     parser.add_argument('genome_format', metavar='genome_format', type=str)
     parser.add_argument('report_accession_id', metavar='report_accession_id', type=str)
     parser.add_argument('--score_indels', metavar='score_indels', type=bool, default=False)
-    parser.add_argument('--reporting_cutoff', metavar='reporting_cutoff', type=int)
     parser.add_argument('--patient_info', metavar='patient_info', type=str)
 
     args = parser.parse_args()
@@ -149,7 +147,6 @@ def main():
     genome_external_id = args.genome_external_id
     genome_format = args.genome_format
     score_indels = args.score_indels
-    reporting_cutoff = args.reporting_cutoff
     accession_id = args.report_accession_id
     patient_info_file_name = args.patient_info
 
@@ -170,7 +167,6 @@ def main():
                          proband_genome_id,
                          genome_sex,
                          score_indels,
-                         reporting_cutoff,
                          accession_id)
 
     # Confirm launched report data
