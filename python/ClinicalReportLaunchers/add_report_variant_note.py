@@ -29,7 +29,8 @@ def add_variant_note(cr_id, report_variant_id, note):
     url = url.format(FABRIC_API_URL, cr_id, report_variant_id)
 
     # Build the patch payload
-    url_payload = json.dumps({"note": note})
+    url_payload = {"note": note}
+
     sys.stdout.flush()
     result = requests.post(url, auth=auth, json=url_payload)
     return result

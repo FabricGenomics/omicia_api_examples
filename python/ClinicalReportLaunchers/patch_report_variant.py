@@ -32,10 +32,10 @@ def patch_cr_variant(cr_id, report_variant_id, patch_values):
 
     patch_attributes = [key for key, value in patch_values.items()]
     # Build the patch payload
-    url_payload = json.dumps([{"op": "replace",
+    url_payload = [{"op": "replace",
                                "path": "/{}".format(attribute),
                                "value": patch_values.get(attribute)}
-                              for attribute in patch_attributes])
+                              for attribute in patch_attributes]
     headers = {"content-type": "application/json-patch+json"}
     sys.stdout.flush()
     result = requests.patch(url, auth=auth, json=url_payload, headers=headers)
