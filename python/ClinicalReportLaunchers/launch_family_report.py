@@ -204,7 +204,7 @@ def upload_genomes_to_project(project_id, family_folder):
 def main(argv):
     """Main function, creates a panel report.
     """
-    if len(argv) < 5:
+    if len(argv) < 4:
         sys.exit("Usage: python launch_family_report.py <project_id> \
         <family_folder> <score_indels> <accession_id> \
         optional: <patient_info_file>")
@@ -228,8 +228,8 @@ def main(argv):
 
     # If a patient information file name is provided, use it. Otherwise
     # leave it empty as a None object.
-    if len(argv) == 6:
-        patient_info_file_name = argv[5]
+    if len(argv) == 5:
+        patient_info_file_name = argv[4]
     else:
         patient_info_file_name = None
 
