@@ -36,7 +36,7 @@ def get_panel_regions(panel_id):
 def main():
     """Main function. Get the regions in a panel and print out their gene symbols.
     """
-    parser = argparse.ArgumentParser(description='View quality control entries for existing clinical reports.')
+    parser = argparse.ArgumentParser(description='Get Panel Regions.')
     parser.add_argument('p', metavar='panel_id', type=int)
     args = parser.parse_args()
 
