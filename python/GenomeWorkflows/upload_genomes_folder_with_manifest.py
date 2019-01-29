@@ -78,6 +78,7 @@ def upload_genomes_to_project(project_id, folder):
                          genome_attrs["genome_sex"],
                          genome_attrs["external_id"])
         sys.stdout.write("uploading {}...".format(genome_file_name))
+        sys.stdout.flush()
 
         with open(folder + "/" + genome_file_name, 'rb') as file_handle:
             # Post request and store newly uploaded genome's information
