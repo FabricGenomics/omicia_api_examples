@@ -24,8 +24,32 @@ auth = HTTPBasicAuth(FABRIC_API_LOGIN, FABRIC_API_PASSWORD)
 
 def add_fields_to_cr(cr_id, patient_fields):
     """Use the Omicia API to fill in custom patient fields for a clinical report
+       patient_info_fields = {
+            "Patient Sex": "Male",
+            "First Name": "Eric",
+            "Last Name": "Kofman",
+            "Indication for Testing": "Ataxia",
+            "Patient Ethnicity": "White",
+            "Accession ID": "GID Report",
+            "Ordering Physician": "",
+            "Specimen Type": "",
+            "Patient Age": "25",
+            "Patient DOB": "10/09/1991"
+        }
+
+        Patient Age is not automatically computed by the system. If you want the
+        age field to be filled up provide it with the input data. For example in python
+        you could use the following:
+
+        from datetime import date
+        age = date.today().year - dob.year
+
+        and then subtract one if the birthday has not yet passed this year. However if you
+        are concerned about counting leap years and dealing with people born on February 29th
+        the answer may be a bit more complex.
+
     """
-    # Construct request
+
     url = "{}/reports/{}/patient_fields"
     url = url.format(FABRIC_API_URL, cr_id)
     url_payload = patient_fields
@@ -50,6 +74,7 @@ def main():
 
     json_response = add_fields_to_cr(cr_id, patient_fields)
     sys.stdout.write(json.dumps(json_response, indent=4))
+
 
 if __name__ == "__main__":
     main()
