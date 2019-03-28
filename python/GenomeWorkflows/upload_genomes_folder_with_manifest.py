@@ -77,16 +77,16 @@ def upload_genomes_to_project(project_id, folder):
                          genome_attrs["genome_label"],
                          genome_attrs["genome_sex"],
                          genome_attrs["external_id"])
-        sys.stdout.write("uploading {}...".format(genome_file_name))
-        sys.stdout.flush()
+        sys.stderr.write("uploading {}...".format(genome_file_name))
+        sys.stderr.flush()
 
         with open(folder + "/" + genome_file_name, 'rb') as file_handle:
             # Post request and store newly uploaded genome's information
             result = requests.put(url, auth=auth, data=file_handle)
             genome_json_objects.append(result.json())
 
-        sys.stdout.write("*\n")
-        sys.stdout.flush()
+        sys.stderr.write("*\n")
+        sys.stderr.flush()
 
     return genome_json_objects
 

@@ -114,7 +114,7 @@ def upload_genome_to_project(project_id, label, sex, file_name):
     url = "{}/projects/{}/genomes?genome_label={}&genome_sex={}&external_id=&assembly_version=hg19"
     url = url.format(FABRIC_API_URL, project_id, label, sex)
 
-    sys.stdout.write("Uploading genome...\n")
+    sys.stderr.write("Uploading genome...\n")
     with open(file_name, 'rb') as file_handle:
         #Post request and return id of newly uploaded genome
         result = requests.put(url, auth=auth, data=file_handle)

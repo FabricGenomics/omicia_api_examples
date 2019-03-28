@@ -41,7 +41,7 @@ def set_cr_variants(cr_id, file_name, _format):
     url = "{}/reports/{}/variants?format={}"
     url = url.format(FABRIC_API_URL, cr_id, _format)
 
-    sys.stdout.write("Uploading vcf file...\n")
+    sys.stderr.write("Uploading vcf file...\n")
     with open(file_name, 'rb') as file_handle:
         #Post request
         result = requests.put(url, auth=auth, data=file_handle)
