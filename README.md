@@ -15,7 +15,7 @@ against our database of API Keys, providing the login and password according
 to the HTTP basic access authentication method (see `Wikipedia - basic access`_).
 Please contact support_ to have them generate an API Key for your application.
 
-An API Key is tied to a specific Opal user, referred to as
+An API Key is tied to a specific Fabric Enterprise user, referred to as
 the API User hereon. Any email messages generated when using the Opal API are sent
 to the API User.
 
@@ -31,7 +31,7 @@ https://api.fabricgenomics.com) will return a 404 error response.
 Most invalid requests (e.g. for invalid parameter values) return an HTTP status of
 400, 404 or 422; authentication errors return an HTTP status of 401 or 403.
 
-All dates and times are returned in PST for the US server, GMT for the UK server.
+All dates and times are returned in PST for the US server, GMT for the EU server.
 
 Jump to:
 `Uploading Genomes`_,
@@ -46,7 +46,7 @@ Jump to:
 
 Uploading Genomes
 -----------------
-Once you obtain an API Key you can start uploading your samples to Opal for
+Once you obtain an API Key you can start uploading your samples to Fabric Enterprise for
 annotation, analysis and clinical report generation.  API Keys are associated with a single
 Workspace (a group of Projects and Users), and genomes must be uploaded to specific projects
 within that Workspace. You may either use an existing project, or leverage the API to
@@ -81,9 +81,9 @@ full genomes can take longer.
 If any genome fails to annotate, the system will send an email notification to
 the API User as well as the Fabric Genomics Support Team.
 
-Opal assigns a unique ID to all uploaded genomes. These IDs are used to
-identify the genome within Opal. External IDs are an alternate method
-to identify and find genomes within Opal. Opal does not enforce uniqueness of
+Fabric Enterprise assigns a unique ID to all uploaded genomes. These IDs are used to
+identify the genome within Fabric Enterprise. External IDs are an alternate method
+to identify and find genomes within Fabric Enterprise. Fabric Enterprise does not enforce uniqueness of
 the external ID.
 
 :ref:`Relevant example Python scripts:`
@@ -116,7 +116,7 @@ completed vaast report.
 - To launch an exome report you will need to specify a genome ID (or null), assay type, and a filter ID.
   Use the :ref:`create_report` endpoint to create a report in the queue. This action
   can be performed as soon as a successful genome upload is complete, and need not wait for
-  annotation.  The new report is queued in a "Waiting" state, and the Opal application
+  annotation.  The new report is queued in a "Waiting" state, and the Fabric Enterprise application
   will submit the report for processing as soon as the annotation finishes. For exomes
   this step will take several minutes.
 
@@ -133,7 +133,7 @@ completed vaast report.
 - To submit a panel report you must specify a genome ID (or null), assay type, panel ID and optionally a filter ID. Use the :ref:`create_report` endpoint to create a report
   in the queue.  This action can be performed as soon as a successful upload is complete,
   and need not wait for annotation.  The new report is queued in Waiting state, and the
-  Opal application will submit the report for processing as soon as the annotation finishes.
+  Fabric Enterprise application will submit the report for processing as soon as the annotation finishes.
 
 Once a clinical report has been created, the :ref:`post_patient_fields` endpoint can be used to upload
 custom Patient information.
@@ -182,7 +182,7 @@ To check which quality control entries are associated with a clincal report, the
 Extracting Report Variants
 --------------------------
 Once a clinical report has been completed and is ready to review,
-its variants can be interpreted using the Opal webapp, but can also be exported at any time using
+its variants can be interpreted using the Fabric Enterprise web application, but can also be exported at any time using
 the API.
 
 To check that a clinical report's status is indeed "Ready to Review", use the :ref:`get_one_report`
@@ -191,7 +191,7 @@ report status to check whether the report is ready to review (:ref:`get_reports`
 reports can be found by accession, by external ID or genome ID, also using the above endpoint.
 
 In the case that the user wishes to export all variants, for example to interpret them outside
-of the Opal system, the following endpoint can be used:
+of the Fabric Enterprise system, the following endpoint can be used:
 
    https://api.fabricgenomics.com/reports/203/variants
 
