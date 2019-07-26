@@ -121,6 +121,10 @@ def main(argv):
     parser.add_argument('--patient_info_file', metavar='patient_info_file', type=str)
     args = parser.parse_args()
 
+    sys.stdout.write('=================================================\n')
+    sys.stdout.write('NOTE: THIS WILL NOT WORK UNTIL FE 6.2 IS RELEASED\n')
+    sys.stdout.write('=================================================\n')
+
     genome_id = args.g
     filter_id = args.f
     panel_id = args.p
