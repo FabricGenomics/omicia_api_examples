@@ -1,0 +1,17 @@
+{
+  "members": [
+    {
+      "accession": "uniq_sample_456",
+      "affected": true,
+      "phi": {
+      },
+      "relationship": "PROBAND",
+      "sex": "MALE"
+    }
+  ],
+  "assembly_version": "b38",
+  "analysis_types": [
+    "PANEL"
+  ],
+  "test_id": 460737
+}
