@@ -1,0 +1,20 @@
+{
+    "members": [
+	{
+	    "accession": "uniq_sample_123",
+	    "affected": true,
+	    "phi": {
+	    },
+	    "relationship": "PROBAND",
+	    "sex": "MALE"
+	}
+    ],
+    "hpo_terms": [
+	"HP:0000118"
+    ],
+    "sequencing_platform": "ONT",
+    "assembly_version": "b38",
+    "analysis_types": [
+	"WGS"
+    ]
+}
